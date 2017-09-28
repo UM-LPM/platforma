@@ -1,0 +1,19 @@
+.menu
+{
+	float:left;
+	height:30px;
+	background-color:black;
+	width:100%;
+}
+
+#submitting
+{
+	display:none;
+	position:absolute;
+	height:400px;
+	width:400px;
+	left:50%;
+	top:50%;
+	margin-top:-200px;
+	margin-left:-200px;
+}

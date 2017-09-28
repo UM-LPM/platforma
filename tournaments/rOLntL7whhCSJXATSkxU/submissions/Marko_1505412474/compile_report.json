@@ -1,0 +1,1 @@
+{"error_list": ["tournaments/rOLntL7whhCSJXATSkxU/submissions/Marko_1505412474/klobasa.java:56: error: cannot find symbol","        System.out.prihhntln(\"Hello, World\");","                  ^","  symbol:   method prihhntln(String)","  location: variable out of type PrintStream","1 error","Error: Could not find or load main class klobasa"] }

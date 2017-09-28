@@ -1,0 +1,307 @@
+{
+	"not_authorized": {
+         "si": "Nimaš dovoljenja za dostop do strani.",
+		 "en": "You don`t have permission to access this page."
+     },
+	 "google_error": {
+		"si":"Napaka pri google avtentikaciji.",
+		"en":"Error authenticating with google."
+	 },
+	 "error_writting": {
+		"si":"Napaka pri zapisovanju datoteke. Imaš pravice za pisanje?",
+		"en":"Error writing file, do you have writing permissions?"
+	 },
+	 "invalid_tournament_config": 
+	 {
+		"si": "Ne najdem konfiguracijske datoteke za turnirje.",
+		"en": "Cannot read tournaments config file."
+	 },
+	 "error_saving_tournament_list": {
+		"si":"Napaka pri shranjevanju seznama turnirjev.",
+		"en":"Error saving tournaments list"
+	 },
+	 "error_creating_tournament_directory": {
+		"si":"Napaka pri zapisovanju mape za turnir.",
+		"en":"Error writting tournament directory"
+	 },
+	 "invalid_password_file_structure":{
+		"si":"Neveljavna struktura datoteke z gesli. Turnir je bil shranjen, datoteka s gesli je bila zavržena.",
+		"en":"Invalid password file structure. Your tournament was uploaded, but your passwords file was discarded."
+	 },
+	 "error_saving_passwords_file": {
+		"si":"Napaka pri zapisovanju datoteke. Turnir je bil shranjen, datoteka z gesli je bila zavržena.",
+		"en":"Password file could not be saved. Your tournament was saved but your passwords file was discarded."
+	 },
+	 "empty_send_data": {
+		"si":"Nisem prejel podatkov za zapisovanje.",
+		"en":"Empty send data."
+	 },
+	 "error_reading_passwords_file": {
+		"si":"Napaka pri branju datoteke z gesli.",
+		"en":"Error reading password file."
+	 },
+	 "tournament_not_found": {
+		"si":"Ne najdem iskanega turnirja.",
+		"en":"Tournament not found"
+	 },
+	 "error_deleting_empty_config": {
+		"si":"Ne morem izbrisati. Konfiguracijska datoteka je prazna.",
+		"en":"Cant delete,empty tournament list!"
+	 },
+	 "error_reading_config": {
+		"si":"Napaka pri branju konfiguracijske datoteke turnirjev.",
+		"en":"Cannot read tournaments config file"
+	 },
+	 "tournament_has_ended": {
+		"si":"Turnir je zaključen, oddaje so zaključene.",
+		"en":"Tournament has ended, submissions are finished."
+	 },
+	 "choose_file_upload": {
+		"si":"Izberi datoteko za nalaganje.",
+		"en":"Choose a file for upload."
+	 },
+	 "invalid_submission_password": {
+		"si":"Napačno geslo za oddajo.",
+		"en":"Invalid submission password."
+	 },
+	 "empty_submission_password": {
+		"si":"Za oddajo je potrebno vnesti geslo.",
+		"en":"Input password to submit files."
+	 },
+	 "submission_error_uploading": {
+		"si":"Napaka pri prenosu datoteke.",
+		"en":"Error uploading file."
+	 },
+	 "error_unzipping_file": {
+		"si":"Napaka pri unzipanju datoteke. Prenos datoteke prekinjen.",
+		"en":"File upload aborted, unable to unzip folder."
+	 },
+	 "error_reading_source_file": {
+		"si":"Napaka pri branju datoteke glavnega programa.",
+		"en":"Error reading source file"
+	 },
+	 "error_moving_submission": {
+		"si":"Napaka pri shranjevanju oddanih datotek v mapo z oddajami turnirja.",
+		"en":"Error moving file to submission folder."
+	 },
+	 "author_not_found": {
+		"si":"Ne najdem podatkov o avtorju programa. Poskrbi, da tvoja koda vključuje @author značko",
+		"en":"Author info not found. Make sure you include @author tag in your source code."
+	 },
+	 "no_main_programme_found": {
+		"si":"Ne najdem 'glavnega' programa. Poskrbi, da bo v korenski mapi tvoje oddaje java program z 'implements algorithm'.",
+		"en":"No 'main' source file found! Remember to put a java app in the roof folder of your submission that has 'implements algorithm line'."
+	 },
+	 "error_scanning_source": {
+		"si":"Napaka pri iskanju datoteke glavnega programa.",
+		"en":"Error while scanning for source files."
+	 },
+	 "error_uploading_tmp_folder": {
+		"si":"Napaka pri prenosu datoteke. Ne morem ustvariti mape za razširitev oddane ZIP datoteke.",
+		"en":"File upload aborted, unable to create tmp folder for extraction."
+	 },
+	 "max_upload_size": {
+		"si":"Največja dovoljena velikost datoteke je 5MB.",
+		"en":"Max allowed file size is 5MB."
+	 },
+	 "invalid_file_format": {
+		"si":"Neveljavna datoteka. Naložiš lahko samo JAVA ali ZIP datoteko.",
+		"en":"Invalid file format, you can only upload JAVA or ZIP files."
+	 },
+	 "inexsistent_submission": {
+		"si":"Neobstoječa oddaja naloge.",
+		"en":"Inexistent file submission."
+	 },
+	 "inexsistent_tournament": {
+		"si":"Neobstoječi turnir.",
+		"en":"Inexistent tournament."
+	 },
+	 "error_deleting_submission": {
+		"si":"Napaka pri brisanju oddane naloge.",
+		"en":"Error deleting submission file."
+	 },
+	 "error_retrieving_deletion_file": {
+		"si":"Napaka pri pridobivanju oddane naloge za brisanje.",
+		"en":"Error retrieving data for file deletion."
+	 },
+	 "error_deleting_image":{
+		"si":"Napaka pri brisanju slike.",
+		"en":"Error deleting image."
+	 },
+	 "invalid_login_credentials": {
+		"si":"Opala! Napačni podatki za prijavo!",
+		"en":"Oops! Invalid login credentials!"
+	 },
+	 "error_reading_submission_list": {
+		"si":"Napaka pri branju seznama oddanih nalog.",
+		"en":"Error reading submissions list."
+	 },
+	 "error_saving_submission_list": {
+		"si":"Napaka pri shranjevanju seznama oddanih nalog.",
+		"en":"Error saving submissions list."
+	 },
+	 "no_tournament_yet": {
+		"si":"Ni še objavljenih turnirjev!",
+		"en":"No published tournaments yet!"
+	 },
+	 "login": {
+		"si":"Prijava",
+		"en":"Login"
+	 },
+	 "profile": {
+		"si":"Profil",
+		"en":"Profile"
+	 },
+	 "email": {
+		"si":"Email",
+		"en":"Email"
+	 },
+	 "password": {
+		"si":"Geslo",
+		"en":"Password"
+	 },
+	 "google_login": {
+		"si":"Prijava z google:",
+		"en":"Login with google:"
+	 },
+	 "or_go": {
+		"si":"Ali pojdi",
+		"en":"Or go"
+	 },
+	 "home": {
+		"si":"domov",
+		"en":"home"
+	 },
+	 "choose_file_for_upload": {
+		"si":"Izberi datoteko za prenos.",
+		"en":"Choose a file for upload."
+	 },
+	 "file_upload_success": {
+		"si":"Datoteka uspešno naložena. Rezultate lahko vidiš tukaj:",
+		"en":"File uploaded successfully. You can view results here:"
+	 },
+	 "benchmarks": {
+		"si":"Testni primeri:",
+		"en":"Benchmarks: "
+	 },
+	 "submission_date":{
+		"si":"Rok oddaje:",
+		"en":"Submission date:"
+	 },
+	 "description": {
+		"si":"Opis:",
+		"en":"Description:"
+	 },
+	 "valid_types":{
+		"si":"Opomba: veljavne datoteke so JAVA datoteke ali ZIP datoteke z vašim programom.",
+		"en":"Note: valid file types are JAVA or ZIP containing your source file"
+	 },
+	 "submission_password":{
+		"si":"Geslo za oddajo:",
+		"en":"File submission password:"
+	 },
+	 "submit":{
+		"si":"Potrdi",
+		"en":"Submit"
+	 },
+	 "new_tournament":{
+		"si":"Novi turnir",
+		"en":"New tournament"
+	 },
+	 "edit_tournament":{
+		"si":"Uredi turnir",
+		"en":"Edit tournament"
+	 },
+	 "delete_submissions_confirmation":{
+		"si":"Si prepričan, da želiš izbrisati to nalogo?Vse pripadajoče datoteke bodo izbrisane!",
+		"en":"Are you sure you want to delete this tournament submission?All associated files will be removed!"
+	 },
+	 "delete_image_confirmation": {
+		"si":"Si prepričan, da želiš izbrisati to sliko?",
+		"en":"Are you sure you want to delete this image?"
+	 },
+	 "tournament_name":{
+		"si":"Naziv turnirja:",
+		"en":"Tournament name:"
+	 },
+	 "tournament_url":{
+		"si":"Url do turnirja(javni):",
+		"en":"Public tournament URL:"
+	 },
+	 "tournament_images":{
+		"si":"Slike:",
+		"en":"Tournament images:"
+	 },
+	 "tournament_passwordfile_desc":{
+		"si":"Datoteka z gesli(CSV):",
+		"en":"Password CSV file:"
+	 },
+	 "oldpasswordfile_desc":{
+		"si":"prejšnja datoteka z gesli",
+		"en":"previous passwords file"
+	 },
+	 "submissionpassword_desc":{
+		"si":"Splošno geslo za oddajo(opcijsko)",
+		"en":"File submission password (optional)"
+	 },
+	 "save_btn":{
+		"si":"Shrani",
+		"en":"Save"
+	 },
+	 "cancel_btn":{
+		"si":"Prekliči",
+		"en":"Cancel"
+	 },
+	 "submitted_desc":{
+		"si":"Oddane naloge",
+		"en":"Submitted files"
+	 },
+	 "delete_desc":{
+		"si":"Izbriši",
+		"en":"Delete"
+	 },
+	 "view_submission":{
+		"si":"Poglej oddano nalogo",
+		"en":"View submission"
+	 },
+	 "go_back":{
+		"si":"pojdi nazaj",
+		"en":"go back"
+	 },
+	 "control_panel":{
+		"si":"Nadzorna plošča",
+		"en":"Control panel"
+	 },
+	 "delete_tournament_confirmation":{
+		"si":"Si prepričan,da želiš izbrisati ta turnir?Vse pripadajoče datoteke bodo izbrisane!",
+		"en":"Are you sure you want to delete the tournament?All associated files will be removed!"
+	 },
+	 "logout":{
+		"si":"Odjava",
+		"en":"Logout"
+	 },
+	 "create_new_tournament":{
+		"si":"Ustvari novi turnir",
+		"en":"Create new tournament"
+	 },
+	 "author":{
+		"si":"Avtor:",
+		"en":"Author:"
+	 },
+	 "submitted_date":{
+		"si":"Datum oddaje:",
+		"en":"Submission date:"
+	 },
+	 "compile_report":{
+		"si":"Poročilo preverjanja:",
+		"en":"Compile report:"
+	 },
+	 "no_errors":{
+		"si":"Zakon! Nobene napake nisem odkril(zaenkrat).",
+		"en":"No errors found (so far)! HOORAY!"
+	 },
+	 "submission_being_processed":{
+		"si":"Tvoja oddaja je v obdelavi. Prosim počakaj na rezultate preverjanja.",
+		"en":"Your submission is being processed. Please wait for results."
+	 }
+}

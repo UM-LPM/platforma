@@ -1,0 +1,13 @@
+{
+	"benchmarks": [
+	{
+		"name":"Random Walk"
+	},
+	{
+		"name":"ACO"
+	},
+	{
+		"name":"PSO"
+	}
+	]
+}
