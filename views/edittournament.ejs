@@ -1,0 +1,217 @@
+﻿<!-- views/tournament.ejs -->
+<!doctype html>
+<html>
+<head>
+	<title><% if(typeof data!=="undefined" && data!=null) { %><%= edittournamentTxt %><% } else { %><%= newtournamentTxt %><% } %></title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<link rel="stylesheet" href="/styles/style.css"> <!-- load fontawesome -->
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
+	<script type="text/javascript">
+	$( document ).ready(function() 
+	{
+		var date = new Date();
+		date.setDate(date.getDate() + 1);
+		var month = date.getUTCMonth()+1;
+		if(month<10)
+			var month="0"+month;
+		var day = date.getUTCDate();
+		if(day<10)
+			var day="0"+day;
+		
+	
+		<% if(typeof data!=="undefined" && data!=null) 
+		{ %>
+			
+			var date = new Date(<%= data.timestamp*1000 %>);
+			var month = date.getUTCMonth()+1;
+			if(month<10)
+				var month="0"+month;
+			var day = date.getUTCDate();
+			if(day<10)
+				var day="0"+day;
+			
+			var hours = date.getUTCHours();
+		    if(hours<10)
+				var hours = "0"+hours;
+			
+			var minutes = date.getUTCMinutes()
+			if(minutes<10)
+				var minutes = "0"+minutes;	
+			
+			document.getElementById("end").setAttribute("min", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
+			
+			var date = new Date(<%= data.ends*1000 %>);
+			var month = date.getUTCMonth()+1;
+			if(month<10)
+				var month="0"+month;
+			var day = date.getUTCDate();
+			if(day<10)
+				var day="0"+day;
+			
+			var hours = date.getUTCHours();
+		    if(hours<10)
+				var hours = "0"+hours;
+			
+			var minutes = date.getUTCMinutes()
+			if(minutes<10)
+				var minutes = "0"+minutes;			
+	
+			document.getElementById("end").setAttribute("value", date.getUTCFullYear()+"-"+month+"-"+day+"T"+hours+":"+minutes);	
+			
+			
+		<% } else {%>
+		document.getElementById("end").setAttribute("min", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
+		document.getElementById("end").setAttribute("value", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
+		<% } %>
+	});
+	
+	function parseTimestamp(timestamp,targetId)
+	{
+		if(typeof timestamp!=="undefined" && timestamp!=null && timestamp>0)
+		{
+			var date = new Date(timestamp*1000);
+			var month = date.getUTCMonth()+1;
+			if(month<10)
+				var month="0"+month;
+			var day = date.getUTCDate();
+			if(day<10)
+				var day="0"+day;
+			var hours = date.getHours();
+		    if(hours<10)
+				var hours = "0"+hours;
+			
+			var minutes = date.getMinutes()
+			if(minutes<10)
+				var minutes = "0"+minutes;
+			document.getElementById(timestamp).innerHTML = day+'.'+month+'.'+date.getUTCFullYear()+"  "+hours+":"+minutes;	
+		}
+	}
+	
+	<% if(typeof data!=="undefined" && data!=null && typeof data.id!=="undefined" && data.id!=null) { %>
+	function deleteSubmission(submissionId)
+	{
+		if(typeof submissionId!=="undefined" && submissionId!=null && submissionId.length>0)
+		{
+			var r = confirm("<%= deleteSubmissionConfirmation %>");
+			if(r==true)
+			{
+				window.location.href = '/deleteSubmission?submissionId='+submissionId+'&tournamentId=<%= data.id %>';
+			}
+		}
+	}
+	<% } %>
+	
+	<% if(typeof images!=="undefined" && images!=null && images.length>0) { %>
+	function deleteImg(filename)
+	{
+		if(typeof filename!=="undefined" && filename!=null && filename.length>0)
+		{
+			var r = confirm("<%= deleteimageConfirmation %>");
+			if(r==true)
+			{
+				window.location.href = '/deleteTournamentImage?fileName='+filename+'&tournamentId=<%= data.id %>';
+			}
+		}
+	}
+	<% } %>
+	
+  $( function() {
+    $( "#accordion" ).accordion();
+  } );
+ 
+	</script>
+</head>
+<body>
+
+<div class="menu">
+<%  if(!loggedIn) { %>
+<a style="float:right;height:30px;"href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= loginTxt %></a>
+<% } else { %>
+<a style="float:right;height:30px;"href="/profile" class="btn btn-default"><span class="fa fa-user"></span><%= profileTxt %></a>
+<% } %>
+</div>
+
+<div class="container">
+
+<div class="col-sm-6">
+
+	<h1><span class="fa fa-sign-in"></span><% if(typeof data!=="undefined" && data!=null) { %> <%= edittournamentTxt %> <%=data.name %> <% } else { %> <%= newtournamentTxt %><% } %></h1>
+	<form <% if(typeof data!=="undefined" && data!=null) { %> action="/editTournament/<%=data.id %>" <% } else { %> action="/newTournament" <% } %> method="post" enctype="multipart/form-data">
+	<% if(typeof data!=="undefined" && data!=null) { %>
+		<input type="hidden" name="id" value="<%=data.id %>" />
+	<% } %>	
+    <div class="form-group">
+      <label for="name"><%= tournamentnameTxt %></label>
+      <input type="text" id="name" name="name" <% if(typeof data!=="undefined" && data!=null) { %> value="<%=data.name %>" <% } %> class="form-control" />
+    </div>
+    <div class="form-group">
+      <label for="end"><%= submissiondateTxt %></label>
+      <input type="datetime-local" id="end" name="ends" class="form-control" value="2017-09-10T00:00" />
+    </div>
+	<div class="form-group">
+      <label for="bnch"><%= behcmarksTxt %></label>
+      <select id="bnch" name="benchmarks"class="form-control">
+	  <% benchmarks.benchmarks.forEach(function(entry) { %>
+	  <option <% if(typeof data!=="undefined" && data!=null && data.benchmarks==entry.name) {%> selected <% } %>><%= entry.name %></option>
+	  <% }); %>
+	  </select>
+    </div>
+	<div class="form-group">
+      <label for="pth"><%= tournamentUrlTxt %></label>
+      <input type="text" id="pth" name="path" <% if(typeof data!=="undefined" && data!=null) { %> value="<%=data.path %>" <% } %> class="form-control /">
+    </div>
+	<div class="form-group">
+      <label for="dsc"><%= descTxt %></label>
+      <textarea name="description" id="dsc" class="form-control"><% if(typeof data!=="undefined" && data!=null) { %><%=data.description %> <% } %></textarea>
+    </div>
+	<div class="form-group">
+	 <label for="imgs"><%= imgdescTxt %></label>
+	 <input id="imgs" name="tournamentimages" type="file" accept="image/*" multiple />
+	</div>
+	<div class="form-group">
+      <label for="pwdfile"><%= passwordfileDesc %></label>
+	  <input type="file" id="pwdfile" name="passwordfile" class="form-control" accept=".csv" />
+	  <% if(typeof passwordfile!=="undefined" && passwordfile!=null && passwordfile.length>0) { %>
+		<p><a href="<%=passwordfile %>"><%= oldpasswordDesc %></a></p>
+	  <% } %>
+    </div>
+	<div class="form-group" <% if(typeof passwordfile!=="undefined" && passwordfile!=null && passwordfile.length>0) { %> style="display:none;" <% } %>>
+      <label for="pwd"><%= submissionpasswordDesc %>:</label>
+	  <input type="text" id="pwd" name="password" placeholder="<%= submissionpasswordDesc %>" <% if(typeof data!=="undefined" && typeof data.password!=="undefined" && data.password!=null && data.password.length>0) { %> value="<%=data.password %>" <% } %> class="form-control" />
+    </div>
+	<button type="submit" class="btn btn-warning btn-lg"><%= saveDesc %></button><button type="button" style="margin-left:5px;" onclick="location.href = '/profile';" class="btn btn-warning btn-lg"><%= cancelDesc %></button>
+  </form>
+</div>
+
+<% if(typeof data!=="undefined" && data!=null) { %>
+<div class="col-sm-6" id="accordion" style="margin-top:90px;">
+<h3><%= imgdescTxt %> (<% if(typeof images!=="undefined" && images!=null && images.length>0) { %><%=images.length%><%} else {%>0<%}%>)</h3>
+<div style="max-height:300px;overflow-y:scroll;">
+<ul>
+<% if(typeof images!=="undefined" && images!=null && images.length>0) { images.forEach(function(img) { %>
+<li id="<%=img%>"><a href="/tournament/<%=data.id%>/images/<%=img%>"><%=img%></a>   <a href="#" onclick="deleteImg('<%=img%>');"><%= deleteDesc %></a></li>
+<% }); } %>
+</ul>
+</div>
+
+<h3><%= submittedDesc %> (<% if(typeof submissions!=="undefined" && submissions!=null && typeof submissions.submissions!=="undefined" && submissions.submissions!=null){ %><%= submissions.submissions.length %><% } else { %>0<% } %>)</h3>
+<div style="max-height:700px;overflow-y:scroll;">
+<% if(typeof submissions!=="undefined" && submissions!=null && typeof submissions.submissions!=="undefined" && submissions.submissions!=null){  submissions.submissions.forEach(function(entry) { %>
+				<div class="well">
+					<h3><span class="fa fa-user"></span><%= entry.author %></h3>
+						<p id="<%= entry.timestamp %>"><script>parseTimestamp(<%= entry.timestamp %>);</script></p>
+						<p><a href="<%= entry.submissionUrl %>"> <%= viewSubmission %></a></p>
+						<p><a href="#/" onclick="deleteSubmission('<%= entry.id %>');"><%= deleteDesc %></a></p>
+				</div>
+			<%	}); %>
+</div>
+<% } %>
+</div>
+<% } %>
+</div>
+</body>
+</html>	 

@@ -1,0 +1,60 @@
+<!-- views/index.ejs -->
+<!doctype html>
+<html>
+<head>
+	<title>Evolutionary algorithms submission and rating system</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<link rel="stylesheet" href="/styles/style.css"> <!-- load fontawesome -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<script type="text/javascript">
+$( document ).ready(function() 
+{
+	<% if (typeof tournaments!=="undefined" && typeof tournaments.tournaments!=="undefined" && tournaments.tournaments!=null && tournaments.tournaments.length > 0) { %>
+	var result = "";
+	<% tournaments.tournaments.forEach(function(entry) { %>
+	var date = new Date(<%= entry.ends*1000 %>);
+			var month = date.getUTCMonth()+1;
+			if(month<10)
+				var month="0"+month;
+			var day = date.getUTCDate();
+			if(day<10)
+				var day="0"+day;
+			var hours = date.getUTCHours();
+		    if(hours<10)
+				var hours = "0"+hours;
+			
+			var minutes = date.getUTCMinutes()
+			if(minutes<10)
+				var minutes = "0"+minutes;
+		
+	result+='<li class="list-group-item"><a href="/tournament/<%= entry.path %>"><%= entry.name %></a> <span class="badge"';
+	if(date>new Date().getTime())
+		result+=' style="background-color: #29a329;"';
+	result+='>'+day+'.'+month+'.'+date.getUTCFullYear()+" "+hours+":"+minutes+'</span></li>';
+	<% }); %>
+	document.getElementById("tournamentList").innerHTML = result;
+	<% } else { %>
+	document.getElementById("tournamentList").innerHTML = "<%= nothingYet %>";
+	<% } %>
+});
+</script>
+<body>
+
+<div class="menu">
+<%  if(!loggedIn) { %>
+<a style="float:right;height:30px;"href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= loginTxt %></a>
+<% } else { %>
+<a style="float:right;height:30px;"href="/profile" class="btn btn-default"><span class="fa fa-user"></span><%= profileTxt %></a>
+<% } %>
+</div>
+
+<div class="container" style="float:left;">
+<h1>Tournaments list</h1>
+
+<ul class="list-group" style="width:30%;" id="tournamentList"> </ul>
+</div>
+</body>
+</html>

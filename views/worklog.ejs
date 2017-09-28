@@ -1,0 +1,62 @@
+﻿<!-- views/tournament.ejs -->
+<!doctype html>
+<html>
+<head>
+	<title><% if(typeof data!=="undefined" && data!=null) { %> <%=data.name%> <% } %></title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<link rel="stylesheet" href="/styles/style.css"> <!-- load fontawesome -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+<div class="menu">
+<%  if(!loggedIn) { %>
+<a style="float:right;height:30px;"href="/login" class="btn btn-default"><span class="fa fa-user"></span>Login</a>
+<% } else { %>
+<a style="float:right;height:30px;"href="/profile" class="btn btn-default"><span class="fa fa-user"></span>Profile</a>
+<% } %>
+</div>
+
+<div class="container">
+<div class="col-sm-6 col-sm-offset-3">
+<h1>What has been done (cannot be undone)</h1>
+
+<ul class="list-group">
+  <li class="list-group-item">prijava/odjava admina</li>
+  <li class="list-group-item">forme in backend za vnos/urejanje/brisanje turnirjev</li>
+  <li class="list-group-item">narjene funkcije: brisanje komplet folderjev z datotekami, preverjanje sessionov</li>
+  <li class="list-group-item">nalaganje/refresh config datotek s turnirji</li>
+  <li class="list-group-item">izdelan Validathor ki poizkuša scompileat oddan JAVA file in zapiše report v JSON</li>
+  <li class="list-group-item">bralnik compiler reporta in izdelan extractor podatkov o avtorju (ime in email) iz java filetov</li>
+  <li class="list-group-item">izdelan generator poročila za oddane naloge</li>
+  <li class="list-group-item">narejen sistem za pregled oddanih nalog in pripadajočih podatkih o avtorju in compile reportov</li>
+  <li class="list-group-item">narejen iskalnik znotraj extractanih zip datotek, zahteva je da je v root folderju zip datoteke edini file glavni program, ki se ga compile-a, oz vzame prvega najdenega in predvideva da je source</li>
+  <li class="list-group-item">spremenjeno brisanje "nepraznih" folderjev, uporabljem rimraf</li>
+  <li class="list-group-item">narejen generator submission seznamov</li>
+  <li class="list-group-item">prikaz submission seznamov znotraj "admina" pri urejanju turnirja</li>
+  <li class="list-group-item">narjeno brisanje oddanih nalog iz adminpanela</li>
+  <li class="list-group-item">implementirano OAuth2</li>
+  <li class="list-group-item">dodatno preverjanje ali obstaj asubmissions folder posameznega turnirja in generacija po potrebi</li>
+  <li class="list-group-item">fix brisanja turnijev, sedaj se ustrezno refresha page po brisanju</li>
+  <li class="list-group-item">postavitev vsega na CENTOSu</li>
+  <li class="list-group-item">vpeljava default url parametra</li>
+  <li class="list-group-item">parsanje avtorjevih oznak sedaj zamenjuje presledke z underline</li>
+  <li class="list-group-item">rework admin seznama, možnost večih adminov, predelave plain avtentikacije in OAuth2</li>
+  <li class="list-group-item">rework oddaje/kreiranja novih turnirjev, možnost izbire ure in minut kdaj se konča turnir</li>
+  <li class="list-group-item">dodana možnost izbire benchmarka iz dropdowna, ki se naloži iz configa</li>
+  <li class="list-group-item">narjeno branje in parsanje passwords.csv posameznega turnirja in potem matchanje avtorjev po prebranih geslih ob oddaji</li>
+  <li class="list-group-item">narjeno uploadanje passwords.csv datoteke in ustvarjene route za download že obstoječih password datotek</li>
+  <li class="list-group-item">uploadanje slik na posamezen turnir in njihovo listanje ter brisanje</li>
+  <li class="list-group-item">validacija csv datotek</li>
+  <li class="list-group-item">narjena mini galerija za turnirje</li>
+  <li class="list-group-item">spisani prevodi, vsi errorji se hendlajo preko zaradi tega narejena viewja, ne izpisuje se več v konzolo</li>
+  <li class="list-group-item">dodatne omejitve v file inputu pri oddaju naloge</li>
+  <li class="list-group-item">pri izpisu poročila o preverjanju naloge se izpiše celoten timestamp z urami in minutami</li>
+  <li class="list-group-item">fixanje errorjev pri reloadanje filesubmission page-a</li>
+  <li class="list-group-item">iskanje "implements" algorithm datoteke znotraj root folderja, da najdemo "main"</li>
+</ul>
+</div>
+</div>
+</body>
+</html>	 

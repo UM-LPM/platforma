@@ -1,0 +1,69 @@
+<!-- views/profile.ejs -->
+<!doctype html>
+<html>
+<head>
+	<title><%= controlPanel %></title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<link rel="stylesheet" href="/styles/style.css"> <!-- load fontawesome -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
+	<script type="text/javascript">
+	function deleteTournament(tournamentId)
+	{
+		if(typeof tournamentId!=="undefined" && tournamentId!=null && tournamentId.length>0)
+		{
+			var r = confirm("<%= deleteTournamentConfirm %>");
+			if(r==true)
+			{
+				$.post('/deleteTournament/'+tournamentId);
+				location.reload();
+			}
+		}
+	}
+	</script>
+</head>
+<body>
+
+<div class="menu">
+<%  if(!loggedIn) { %>
+<a style="float:right;height:30px;"href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= loginTxt %></a>
+<% } else { %>
+<a style="float:right;height:30px;"href="/profile" class="btn btn-default"><span class="fa fa-user"></span><%= profileTxt %></a>
+<% } %>
+</div>
+
+<div class="container">
+
+	<div class="page-header text-center">
+		<h1><span class="fa fa-anchor"></span> <%= controlPanel %></h1>
+		<a href="/logout" class="btn btn-default btn-sm"><%= logoutTxt %></a>
+	</div>
+
+	<div class="row">
+
+		<!-- LOCAL INFORMATION -->
+		<div class="col-sm-6">
+		
+			<div class="well">
+				<h3><span class="fa fa-user"></span> <%= newTournamentDesc %></h3>
+					<p><a href="/newTournament"><strong> <%= createnewTournametDesc %></strong></a></p>
+			</div>
+		</div>
+		
+		<% if (typeof tournaments!=="undefined" && typeof tournaments.tournaments!=="undefined" && tournaments.tournaments!=null && tournaments.tournaments.length > 0) { %>
+		<div class="col-sm-6">
+				<% tournaments.tournaments.forEach(function(entry) { %>
+				<div class="well">
+					<h3><span class="fa fa-user"></span><a href="/tournament/<%= entry.path %>" target="_blank"> <%= entry.name %></a></h3>
+						<p><a href="/editTournament/<%=entry.id%>"> <%= editDesc %></a></p>
+						<p><a href="#/" onclick="deleteTournament('<%=entry.id%>');"> <%= deleteDesc %></a></p>
+				</div>
+			<%	}); %>
+		</div>
+		<% } %>
+	</div>
+
+</div>
+</body>
+</html>

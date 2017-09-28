@@ -1,0 +1,120 @@
+﻿<!-- views/tournament.ejs -->
+<!doctype html>
+<html>
+<head>
+	<title><% if(typeof data!=="undefined" && data!=null) { %> <%=data.name%> <% } %></title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<link rel="stylesheet" href="/styles/style.css"> <!-- load fontawesome -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
+	<script type="text/javascript">
+	$( document ).ready(function() 
+	{
+		
+		<% if(typeof data!=="undefined" && data!=null) 
+		{ %>
+			var date = new Date(<%= data.ends*1000 %>);
+			var month = date.getUTCMonth()+1;
+			if(month<10)
+				var month="0"+month;
+			var day = date.getUTCDate();
+			if(day<10)
+				var day="0"+day;
+			document.getElementById("end").innerHTML+=day+'.'+month+'.'+date.getUTCFullYear();
+			
+			<% if(typeof successmessage=="undefined" || successmessage.length <= 0) { %>
+			if(date.getTime()>new Date().getTime())
+			{
+				document.getElementById("submissionForm").enabled = true;
+				document.getElementById("submissionForm").style.display = "block";
+			} <% } %>
+		<% } else {%>
+		document.getElementById("end").innerHTML+=day+'.'+month+'.'+date.getUTCFullYear();	
+		<% } %>	
+	});
+	
+	
+	function validateData()
+	{
+		var value = document.getElementById("submissionFile").value;
+		var length = value.length;
+		if (value != "")
+		{
+			if (value.substring(length-4,length) == "java" ||
+					value.substring(length-4,length) == "JAVA" ||
+					value.substring(length-3,length) == "zip" ||
+					value.substring(length-3,length) == "ZIP")
+			{
+				if(document.getElementById("submissionFile").files[0].size/1024/1024<5)
+				{
+					<% if(typeof data.password!=="undefined" && data.password!=null && data.password.length>0) { %>
+					if(document.getElementById("pwd").value=="")
+					{
+						alert("<%= passwordTxt %>");
+						return;
+					}
+					<% } %>
+					document.getElementById("submitting").style.display='block';
+					document.getElementById("submissionForm").style.display='none';
+					$("#submissionForm").submit();
+				}
+				else
+					alert("<%= maxsizeTxt %>");
+			}
+			else
+				alert("<%= invalidformatTxt %>");
+		}
+		else
+			alert("<%= choosefileTxt %>");
+	}
+	
+	</script>
+</head>
+<body>
+<div class="menu">
+<%  if(typeof loggedinIn=="undefined" || loggedIn==null || !loggedIn) { %>
+<a style="float:right;height:30px;"href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= loginTxt %></a>
+<% } else { %>
+<a style="float:right;height:30px;"href="/profile" class="btn btn-default"><span class="fa fa-user"></span><%= profileTxt %></a>
+<% } %>
+</div>
+
+<img id="submitting" src="/images/loader_big.gif" alt="yarrrrrrr she loads!" />
+<div class="container">
+	
+	<% if (typeof successmessage!=="undefined" && successmessage.length > 0) { %>
+		<div class="alert alert-success" style="margin-top:20px;">
+		<p><%= uploadSuccessTxt %></p><p><a href="<%= successmessage %>"><%= successmessage %></a></p>
+		</div>
+	<% }else if (typeof message!=="undefined" && message.length > 0) { %>
+		<div class="alert alert-danger" style="margin-top:20px;"><%= message %></div>
+	<% } %>
+	
+	<h1><span class="fa"><%=data.name%></h1>
+	<p><%= benchTxt %> <%=data.benchmarks%></p>
+	<p id="end"><%= submissionTxt %> </p>
+	<p><%= descTxt %> <%=data.description%></p>
+		
+	<% if(typeof images!=="undefined" && images!=null && images.length>0) { images.forEach(function(img) { %>
+	<a href="/tournament/<%=data.id%>/images/<%=img%>"><div class="gallery_product col-lg-4 col-md-4 col-sm-4 col-xs-6 filter hdpe" style="background-image:url('/tournament/<%=data.id%>/images/<%=img%>');background-size:auto 100%;height:200px;background-position:center center;">
+	</div></a>
+	<% });  } %>
+
+	
+	<form id="submissionForm" disabled style="display:none;float:left;margin-top:20px;" action="/fileSubmission" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="id" value="<%=data.id%>" />
+	<input type="file" name="submissionFile" id="submissionFile" class="form-control" accept=".java,.zip" />
+	<p><%= typesTxt %></p>
+	<% if(typeof password!=="undefined" && password!=null && password) { %>
+	<p><%= filepasswordTxt %></p>
+	<input type="text" name="password" id="pwd" class="form-control" placeholder="input file submission password" />
+	<% } %>
+	<br />
+	<button type="button" onclick="validateData();" class="btn btn-warning btn-lg"><%= submitTxt %></button>
+	</form>
+	
+	
+</div>
+</body>
+</html>	 
