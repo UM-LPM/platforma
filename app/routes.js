@@ -4,9 +4,10 @@
 /*config file being cached problems with deleting*/
 
 module.exports = function(app, passport) {
-	const defaultUrl = "http:/yourWebPAGE:8080/";
 	
-	const ClientId = 'YourGoogleClientId';
+	const defaultUrl = "https://www.yourodmain.com/";
+	
+	const ClientId = 'YourClientId';
 	const ClientSecret = "YourClientSecret";
 	const RedirectionUrl = defaultUrl+"auth/google/callback";
 	
@@ -85,15 +86,28 @@ module.exports = function(app, passport) {
 						
 						if(!found)
 						{
-							res.render('login.ejs', { message: myLocalize.translate("not_authorized"), googleAuthUrl:getAuthUrl() });
+							res.render('login.ejs', { message: myLocalize.translate("not_authorized"), googleAuthUrl:getAuthUrl(),
+							emailTxt:myLocalize.translate("email"), passwordTxt:myLocalize.translate("password"),
+							loginTxt:myLocalize.translate("login"),googleTxt:myLocalize.translate("google_login"), orgoTxt:myLocalize.translate("or_go"),homeTxt:myLocalize.translate("home") });
 							return;
 						}
+					}
+					else
+					{
+						res.render('error.ejs',{
+						loggedIn:true,
+						message:myLocalize.translate("google_error"),
+						gobackTxt:myLocalize.translate("go_back"),
+						link:"/"});
+						return;
 					}
 				}
 			})
 		  }
 		  else{
-			res.render('login.ejs', { message: myLocalize.translate("google_error"), googleAuthUrl:getAuthUrl() });
+			res.render('login.ejs', { message: myLocalize.translate("google_error"), googleAuthUrl:getAuthUrl(),
+			emailTxt:myLocalize.translate("email"), passwordTxt:myLocalize.translate("password"),
+			loginTxt:myLocalize.translate("login"),googleTxt:myLocalize.translate("google_login"), orgoTxt:myLocalize.translate("or_go"),homeTxt:myLocalize.translate("home") });
 			return;
 		  }
 		});
@@ -263,7 +277,6 @@ module.exports = function(app, passport) {
 				fs.stat(configFile, function (err, stats)
 				{
 				  if (err) {
-					return;
 					res.render('error.ejs',{
 					loggedIn:true,
 					message:myLocalize.translate("error_writting"),
