@@ -5,10 +5,10 @@
 
 module.exports = function(app, passport) {
 	
-	const defaultUrl = "https://www.yourodmain.com/";
+	const defaultUrl = "https://www.onemustfall.info/";
 	
-	const ClientId = 'YourClientId';
-	const ClientSecret = "YourClientSecret";
+	const ClientId = '301458360227-q4saaj7q7j6gs5tk7hf42dl4notmi3hl.apps.googleusercontent.com';
+	const ClientSecret = "dUMOUYkKATvBf-hCdHfPhfz7";
 	const RedirectionUrl = defaultUrl+"auth/google/callback";
 	
 	var google = require('googleapis');
@@ -977,7 +977,7 @@ module.exports = function(app, passport) {
 													try
 													{
 														var tmp = fs.readFileSync(tmp_dir+"/"+file,"UTF-8");
-														if(tmp.indexOf('implements algorithm') >= 0)
+														if(tmp.indexOf('extends Algorithm') >= 0)
 														{
 															source_file = file;
 														}
@@ -1159,7 +1159,7 @@ module.exports = function(app, passport) {
 							}
 							else if(ext=="java" || ext=="JAVA")
 							{
-								if(data.indexOf('implements algorithm')>=0)
+								if(data.indexOf('extends Algorithm')>=0)
 								{
 									if(typeof req.authordata=="undefined" || req.authordata==null) //if general submission we dont have author data yet
 										var authordata = extractAuthorAndEmail(data);

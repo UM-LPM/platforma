@@ -89,8 +89,8 @@
 		"en":"Author info not found. Make sure you include @author tag in your source code."
 	 },
 	 "no_main_programme_found": {
-		"si":"Ne najdem 'glavnega' programa. Poskrbi, da bo v korenski mapi tvoje oddaje java program z 'implements algorithm'.",
-		"en":"No 'main' source file found! Remember to put a java app in the roof folder of your submission that has 'implements algorithm line'."
+		"si":"Ne najdem 'glavnega' programa. Poskrbi, da bo v korenski mapi tvoje oddaje java program z 'extends Algorithm(case sensitive!)'.",
+		"en":"No 'main' source file found! Remember to put a java app in the roof folder of your submission that has 'extends Algorithm(case sensitive!)' line."
 	 },
 	 "error_scanning_source": {
 		"si":"Napaka pri iskanju datoteke glavnega programa.",
