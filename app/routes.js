@@ -26,7 +26,6 @@ module.exports = function(app, passport) {
 
 
 	function getOAuthClient () {
-		console.log(ClientId);
 		return new OAuth2(ClientId ,  ClientSecret, RedirectionUrl);
 	}
 	 
