@@ -5,11 +5,16 @@
 
 module.exports = function(app, passport) {
 	
-	const defaultUrl = "https://YourWebpageUrl";
 	
-	const ClientId = 'YourClientId';
-	const ClientSecret = "YourClientSecret";
-	const RedirectionUrl = defaultUrl+"auth/google/callback";
+	try
+	{	
+		var settings = require("../config/config.js")
+		const defaultUrl = settings.defaultUrl;
+		const ClientId = settings.GoogleClientId;
+		const ClientSecret = settings.GoogleClientSecret;
+		const RedirectionUrl = defaultUrl+settings.RedirectionUrl;
+	}
+	catch(MissingConfig) { console.log("Missing config.js file in config folder!" ); process.exit(); }
 	
 	var google = require('googleapis');
 	var OAuth2 = google.auth.OAuth2;
@@ -17,7 +22,7 @@ module.exports = function(app, passport) {
 	
 	var Localize = require('localize');
 	var myLocalize = new Localize('./language/');
-	myLocalize.setLocale("si");
+	myLocalize.setLocale(settings.setLanguage);
 	
 
 
@@ -1309,7 +1314,8 @@ module.exports = function(app, passport) {
 			{
 				var compile_report;
 				var submission_report;
-				
+				var info_txt;
+				var error_txt;
 				
 				try {
 				  var obj = fs.readFileSync(submissionFolder+"/compile_report.json","UTF-8");
@@ -1322,10 +1328,22 @@ module.exports = function(app, passport) {
 				  var obj = fs.readFileSync(submissionFolder+"/submission_report.json","UTF-8");
 				  submission_report = JSON.parse(obj);
 				}
-				catch (e) {}	
+				catch (e) {}
+
+				try {
+				  info_txt = fs.readFileSync(submissionFolder+"/info.txt","UTF-8");
+				}
+				catch (e) {}
+				
+				try {
+				  error_txt = fs.readFileSync(submissionFolder+"/error.txt","UTF-8");
+				}
+				catch (e) {  }
+				
 				
 				res.render('showresults.ejs',{
 				data:tournament, submission_report:submission_report, compile_report:compile_report,loggedIn:loggedIn,
+				error_txt:error_txt,info_txt:info_txt,
 				passwordRequired:myLocalize.translate("empty_submission_password"),maxsizeDesc:myLocalize.translate("max_upload_size"),
 				invalidFormat:myLocalize.translate("invalid_file_format"),chooseFile:myLocalize.translate("choose_file_for_upload"),
 				loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),uploadSuccess:myLocalize.translate("file_upload_success"),
@@ -1630,8 +1648,7 @@ function extractAuthorAndEmail(text)
 			else if(author.indexOf('\n\r')>0)
 				author = author.substring(0,author.indexOf('\n\r'));
 			else return { "success":false }; 	//no newline found, throw error
-			author = author.replace(/ +(?= )/g,''); //remove multiple whitespace (usually start and end of string)
-			author = author.replace(/ /g,'_'); //remove any spaces left with underscore, usually between name and surname
+			author = cleanUpAuthorName(author);
 			if(author.length>0 && author.substring(0,1)=="_")
 				author = author.substring(1,author.length);
 			if(author.length>0)
@@ -1654,6 +1671,35 @@ function extractAuthorAndEmail(text)
 			else return { "success":false };
 		}
 		else return { "success":false };
+	}
+}
+
+function cleanUpAuthorName(authorName)
+{
+	if(typeof authorName!=="undefined" && authorName.length>0)
+	{
+		authorName = authorName.replace(/Č/g,"c");
+		authorName = authorName.replace(/č/g,"c");
+		authorName = authorName.replace(/Ć/g,"c");
+		authorName = authorName.replace(/ć/g,"c");
+		authorName = authorName.replace(/Ž/g,"z");
+		authorName = authorName.replace(/ž/g,"z");
+		authorName = authorName.replace(/Š/g,"s");
+		authorName = authorName.replace(/š/g,"s");
+		authorName = authorName.replace(/Đ/g,"d");
+		authorName = authorName.replace(/đ/g,"d");
+		authorName = authorName.replace(/Ä/g,"a");
+		authorName = authorName.replace(/ä/g,"a");
+		authorName = authorName.replace(/Ö/g,"o");
+		authorName = authorName.replace(/ö/g,"o");
+		authorName = authorName.replace(/Ü/g,"u");
+		authorName = authorName.replace(/ü/g,"u");
+		authorName = authorName.replace(/Ë/g,"e");
+		authorName = authorName.replace(/ë/g,"e");
+		authorName = authorName.replace(/ +(?= )/g,''); //remove multiple whitespace (usually start and end of string)
+		authorName = authorName.replace(/ /g,'_'); //remove any spaces left with underscore, usually between name and surname
+		authorName = authorName.replace(/,/g,"_");
+		return authorName;
 	}
 }
 

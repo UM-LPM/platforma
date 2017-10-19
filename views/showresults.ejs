@@ -108,6 +108,15 @@
 	<p><%= submissionProcessing %> </p>
 	<% } %>
 	
+	<% if (typeof info_txt!=="undefined" && info_txt.length > 0) { %>
+	<div class="alert alert-success"><p><%= info_txt %></p></div>
+	<% } %>
+	
+	<% if (typeof error_txt!=="undefined" && error_txt.length > 0) { %>
+	<div class="alert alert-danger"><p><%= error_txt %></p></div>
+	<% } else { %>
+	<div class="alert alert-success"><p><%= noErrors %></p></div>
+	<% } %>
 </div>
 </div>
 </body>
