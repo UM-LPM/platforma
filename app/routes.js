@@ -4,15 +4,14 @@
 /*config file being cached problems with deleting*/
 
 module.exports = function(app, passport) {
-	
-	
+
 	try
 	{	
 		var settings = require("../config/config.js")
-		const defaultUrl = settings.defaultUrl;
-		const ClientId = settings.GoogleClientId;
-		const ClientSecret = settings.GoogleClientSecret;
-		const RedirectionUrl = defaultUrl+settings.RedirectionUrl;
+		var defaultUrl = settings.defaultUrl;
+		var ClientId = settings.GoogleClientId;
+		var ClientSecret = settings.GoogleClientSecret;
+		var RedirectionUrl = defaultUrl+settings.RedirectionUrl;
 	}
 	catch(MissingConfig) { console.log("Missing config.js file in config folder!" ); process.exit(); }
 	
@@ -27,6 +26,7 @@ module.exports = function(app, passport) {
 
 
 	function getOAuthClient () {
+		console.log(ClientId);
 		return new OAuth2(ClientId ,  ClientSecret, RedirectionUrl);
 	}
 	 
