@@ -3,3 +3,7 @@ config/auth.js
 config/passport.js
 config/master.json
 server.js
+/tournaments
+/tmp
+package.json
+package-lock.json
