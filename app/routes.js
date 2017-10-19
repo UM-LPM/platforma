@@ -5,10 +5,10 @@
 
 module.exports = function(app, passport) {
 	
-	const defaultUrl = "https://www.onemustfall.info/";
+	const defaultUrl = "https://YourWebpageUrl";
 	
-	const ClientId = '301458360227-q4saaj7q7j6gs5tk7hf42dl4notmi3hl.apps.googleusercontent.com';
-	const ClientSecret = "dUMOUYkKATvBf-hCdHfPhfz7";
+	const ClientId = 'YourClientId';
+	const ClientSecret = "YourClientSecret";
 	const RedirectionUrl = defaultUrl+"auth/google/callback";
 	
 	var google = require('googleapis');
