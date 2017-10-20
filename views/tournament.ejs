@@ -73,7 +73,7 @@
 </head>
 <body>
 <div class="menu">
-<%  if(typeof loggedinIn=="undefined" || loggedIn==null || !loggedIn) { %>
+<%  if(typeof loggedIn=="undefined" || loggedIn==null || !loggedIn) { %>
 <a style="float:right;height:30px;"href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= loginTxt %></a>
 <% } else { %>
 <a style="float:right;height:30px;"href="/profile" class="btn btn-default"><span class="fa fa-user"></span><%= profileTxt %></a>

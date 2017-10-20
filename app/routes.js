@@ -201,9 +201,9 @@ module.exports = function(app, passport) {
 	app.get('/tournament/:url', loadConfigFile, function(req , res)
 	{
 		var tournaments = res.tournaments;
-		if (typeof tournaments.tournaments!=="undefined" && tournaments.tournaments!=null && tournaments.tournaments.length>0) 
+		if (typeof tournaments!=="undefined" && tournaments!=null && tournaments.length>0) 
 		{ 
-			tournaments.tournaments.forEach(function(entry) 
+			tournaments.forEach(function(entry) 
 			{
 				if(entry.id!=="undefined" && entry.id!=null && entry.id.length>0 && entry.path==req.params.url)
 				{
@@ -233,11 +233,15 @@ module.exports = function(app, passport) {
 							  images.push(file);
 							})
 						}						
-						
+						loggedIn = false;
+						if(typeof req.session.email!=="undefined" && req.session.email!=null && req.session.email.length>0)
+							loggedIn = true;
+							
 						res.render('tournament.ejs',{
 						data:entry,
 						password:password,
 						images:images,
+						loggedIn:loggedIn,
 						passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
@@ -303,15 +307,13 @@ module.exports = function(app, passport) {
 					else 
 					{
 						var hash = makeid();
-						var obj = {
-						   tournaments: []
-						};
+						var obj = [];
 						try { obj = JSON.parse(data); } catch(ex) { /*probs empty*/} 
 						
 						var end = Date.parse(req.body.ends);
 						end = end/1000;
-						obj.tournaments.push({id:hash,name: req.body.name, timestamp:Math.floor(new Date() / 1000), ends:end, benchmarks:req.body.benchmarks, path:req.body.path, description:req.body.description, password:req.body.password}); //add some data
-						obj.tournaments.sort(function(a, b) {
+						obj.push({id:hash,name: req.body.name, timestamp:Math.floor(new Date() / 1000), ends:end, benchmarks:req.body.benchmarks, path:req.body.path, description:req.body.description, password:req.body.password}); //add some data
+						obj.sort(function(a, b) {
 						return parseInt(b.timestamp) - parseInt(a.timestamp); //sort in descending order
 						});
 						json = JSON.stringify(obj); //convert it back to json
@@ -338,7 +340,7 @@ module.exports = function(app, passport) {
 						
 						var fs = require('fs');
 						fs.mkdir("tournaments/"+hash+"/submissions"); //create submissions folder
-						fs.mkdir("tournaments/"+hash+"/images"); //create images folder
+						fs.mkdirSync("tournaments/"+hash+"/images"); //create images folder
 						if(typeof req.files.passwordfile!=="undefined" && req.files.passwordfile!=null && req.files.passwordfile.size>0)
 						{
 						
@@ -407,24 +409,25 @@ module.exports = function(app, passport) {
 							}
 						}
 						
-						if(typeof req.files.tournamentimages!=="undefined" && req.files.tournamentimages!=null && req.files.tournamentimages.length>0)
+						if(typeof req.files.tournamentimages!=="undefined" && req.files.tournamentimages!=null)
 						{
-							var fs = require('fs');
-							if(!fs.existsSync("tournaments/"+hash+"/images"))
-								fs.mkdir("tournaments/"+hash+"/images");
-							
-							req.files.tournamentimages.forEach(function(img)
+							var files = []; 
+							files = files.concat(req.files.tournamentimages);
+							if(files.length>0)
 							{
-								fs.rename(img.path, "tournaments/"+hash+"/images/"+img.name, function(err) {
-								if (err) throw err;
+								files.forEach(function(img)
+								{
+									if(fs.existsSync(img.path) && fs.existsSync("tournaments/"+hash+"/images"))
+										fs.rename(img.path, "tournaments/"+hash+"/images/"+img.name, function(err) {
+									if (err) throw err;
+									});
 								});
-							});						
+							}						
 						}
 						
 						res.redirect("/editTournament/"+hash);
 						});
 
-						
 					}});
 				   
 				  }
@@ -447,9 +450,9 @@ module.exports = function(app, passport) {
 		var tournaments = res.tournaments;
 		var found = false;
 		var tournament;
-		for(var i=0; i<tournaments.tournaments.length; i++)
+		for(var i=0; i<tournaments.length; i++)
 		{
-			tournament = tournaments.tournaments[i];
+			tournament = tournaments[i];
 			if(tournament.id==req.params.url)
 			{
 				found = true;
@@ -469,9 +472,9 @@ module.exports = function(app, passport) {
 		var tournaments = res.tournaments;
 		var found = false;
 		var tournament;
-		for(var i=0; i<tournaments.tournaments.length; i++)
+		for(var i=0; i<tournaments.length; i++)
 		{
-			tournament = tournaments.tournaments[i];
+			tournament = tournaments[i];
 			if(tournament.id==req.params.url)
 			{
 				found = true;
@@ -491,9 +494,9 @@ module.exports = function(app, passport) {
 		var tournaments = res.tournaments;
 		var found = false;
 		var tournament;
-		for(var i=0; i<tournaments.tournaments.length; i++)
+		for(var i=0; i<tournaments.length; i++)
 		{
-			tournament = tournaments.tournaments[i];
+			tournament = tournaments[i];
 			if(tournament.id==req.params.url)
 			{
 				found = true;
@@ -513,10 +516,12 @@ module.exports = function(app, passport) {
 				  var obj =  fs.readFileSync("tournaments/"+tournament.id+"/submissions/submission_list.json","UTF-8");
 				  if(obj.length>0)
 				  {
-					var submissions = {
-						 submissions: []
-					};
-					submissions = JSON.parse(obj); 
+					var submissions = [];
+					try
+					{
+						submissions = JSON.parse(obj);
+					}
+					catch(JSONException) {}
 				  }
 				}
 				catch (subseciption) {}
@@ -569,27 +574,30 @@ module.exports = function(app, passport) {
 		try 
 		{
 		  var data = fs.readFileSync(configFile,"UTF-8");
-		  var obj = {
-			   tournaments: []
-			};
+		  var obj = [];
 			
-			obj = JSON.parse(data);
-			if(typeof obj.tournaments!=="undefined" && obj.tournaments!=null && obj.tournaments.length>0)
+			try
+			{
+				obj = JSON.parse(data);
+			}
+			catch(JSONError) {}
+			
+			if(typeof obj!=="undefined" && obj!=null && obj.length>0)
 			{
 				var newList = [];
-				for(var i=0; i<obj.tournaments.length; i++)
+				for(var i=0; i<obj.length; i++)
 				{
-					var tournament = obj.tournaments[i];
+					var tournament = obj[i];
 					if(tournament.id!=req.params.id) //generate the new list without the one we are deleting
 						newList.push(tournament);
 					else //delete the folder and files containing our tournament
 						deleteFolderAndContents('tournaments/'+tournament.id);
 				}
 				
-				if(obj.tournaments.length>newList.length) //check if we actually removed anythin
+				if(obj.length>newList.length) //check if we actually removed anythin
 				{
-					obj.tournaments = newList;
-					obj.tournaments.sort(function(a, b) {
+					obj = newList;
+					obj.sort(function(a, b) {
 					return parseInt(b.timestamp) - parseInt(a.timestamp); //sort in descending order
 					});
 					json = JSON.stringify(obj); //convert it back to json
@@ -650,9 +658,9 @@ module.exports = function(app, passport) {
 			   tournaments: []
 			};
 			obj = JSON.parse(data); 
-			for(var i=0; i<obj.tournaments.length; i++)
+			for(var i=0; i<obj.length; i++)
 			{
-				var tournament = obj.tournaments[i];
+				var tournament = obj[i];
 				if(tournament.id==req.body.id)
 				{
 					tournament.name = req.body.name;
@@ -675,7 +683,7 @@ module.exports = function(app, passport) {
 			if(found)
 			{	
 				var fs = require('fs');
-				obj.tournaments.sort(function(a, b) {
+				obj.sort(function(a, b) {
 				return parseInt(b.timestamp) - parseInt(a.timestamp); //sort in descending order
 				});
 				json = JSON.stringify(obj); //convert it back to json
@@ -757,18 +765,23 @@ module.exports = function(app, passport) {
 					}
 				}
 				
-				if(typeof req.files.tournamentimages!=="undefined" && req.files.tournamentimages!=null && req.files.tournamentimages.length>0)
+				if(typeof req.files.tournamentimages!=="undefined" && req.files.tournamentimages!=null)
 				{
 					var fs = require('fs');
 					if(!fs.existsSync("tournaments/"+tournament.id+"/images"))
 						fs.mkdir("tournaments/"+tournament.id+"/images");
-					
-					req.files.tournamentimages.forEach(function(img)
+					var files = [];
+						files = files.concat(req.files.tournamentimages);
+
+					if(files.length>0)
 					{
-						fs.rename(img.path, "tournaments/"+tournament.id+"/images/"+img.name, function(err) {
-						if (err) throw err;
-						});
-					});						
+						files.forEach(function(img)
+						{
+							fs.rename(img.path, "tournaments/"+tournament.id+"/images/"+img.name, function(err) {
+							if (err) throw err;
+							});
+						});		
+					}					
 				}
 			}
 			else
@@ -792,17 +805,17 @@ module.exports = function(app, passport) {
 	
 	app.post('/fileSubmission', loadConfigFile, function(req, res) 
 	{
-		if(typeof res.tournaments!=="undefined" && res.tournaments!=null && typeof res.tournaments.tournaments!=="undefined"
-			&& res.tournaments.tournaments.length>0)
+		if(typeof res.tournaments!=="undefined" && res.tournaments!=null && typeof res.tournaments!=="undefined"
+			&& res.tournaments.length>0)
 		{
 			var found = false;
 			var tournament;
 			var password = false;
 			req.authordata = null;
 			
-			for(var i=0; i<res.tournaments.tournaments.length; i++)
+			for(var i=0; i<res.tournaments.length; i++)
 			{
-				tournament = res.tournaments.tournaments[i];
+				tournament = res.tournaments[i];
 				if(tournament.id==req.body.id)
 				{
 					if(tournament.ends>new Date().getTime()/1000)
@@ -1293,9 +1306,9 @@ module.exports = function(app, passport) {
 		var tournaments = res.tournaments;
 		var found = false;
 		var tournament;
-		for(var i=0; i<tournaments.tournaments.length; i++)
+		for(var i=0; i<tournaments.length; i++)
 		{
-			tournament = tournaments.tournaments[i];
+			tournament = tournaments[i];
 			if(tournament.path==req.params.url)
 			{
 				found = true;
@@ -1527,11 +1540,12 @@ function loadConfigFile(req,res,next)
 	
 	if(data.length>0)
 	{
-		var obj = {
-		   tournaments: []
-		};
-		obj = JSON.parse(data); 
-		res.tournaments = obj;
+
+		try 
+		{
+		  res.tournaments = JSON.parse(data);
+		}
+		catch(JSONError) {}
 	}
 	
 	return next();	
@@ -1781,13 +1795,18 @@ function updateTournamentSubmissionList(tournament,author,timestamp,submissionUr
 			} 
 			else 
 			{
-				var obj = {
-				   submissions: []
-				};
+				var obj = [];
 				if(data.length>0)
-					obj = JSON.parse(data); 
-				obj.submissions.push({id:makeid(),author:author,timestamp:timestamp,submissionUrl:submissionUrl});
-				obj.submissions.sort(function(a, b) {
+				{
+					try
+					{
+						obj = JSON.parse(data); 
+					}
+					catch(JSONError) {}
+				}
+				
+				obj.push({id:makeid(),author:author,timestamp:timestamp,submissionUrl:submissionUrl});
+				obj.sort(function(a, b) {
 				return parseInt(b.timestamp) - parseInt(a.timestamp); //sort in descending order
 				});
 				json = JSON.stringify(obj); //convert it back to json
@@ -1821,25 +1840,28 @@ function deleteTournamentSubmission(tournamentId,submissionId)
 				  var obj =  fs.readFileSync("tournaments/"+tournamentId+"/submissions/submission_list.json","UTF-8");
 				  if(obj.length>0)
 				  {
-					var submissions = {
-						 submissions: []
-					};
-					submissions = JSON.parse(obj);
-					if(typeof submissions.submissions!=="undefined" && submissions.submissions!=null && submissions.submissions.length>0)
+					var submissions = [];
+					try
+					{
+						submissions = JSON.parse(obj);
+					}
+					catch(JSONError) {}
+					
+					if(typeof submissions!=="undefined" && submissions!=null && submissions.length>0)
 					{
 						var newList = [];
-						for(var i=0; i<submissions.submissions.length; i++)
+						for(var i=0; i<submissions.length; i++)
 						{
-							if(submissions.submissions[i].id!=submissionId) //generate the new list without the one we are deleting
-								newList.push(submissions.submissions[i]);
+							if(submissions[i].id!=submissionId) //generate the new list without the one we are deleting
+								newList.push(submissions[i]);
 							else //delete the folder and files containing our tournament
-								deleteFolderAndContents("tournaments/"+tournamentId+"/submissions/"+submissions.submissions[i].author+"_"+submissions.submissions[i].timestamp);
+								deleteFolderAndContents("tournaments/"+tournamentId+"/submissions/"+submissions[i].author+"_"+submissions[i].timestamp);
 						}
 						
-						if(submissions.submissions.length>newList.length) //check if we actually removed anythin
+						if(submissions.length>newList.length) //check if we actually removed anythin
 						{
-							submissions.submissions = newList;
-							submissions.submissions.sort(function(a, b) {
+							submissions = newList;
+							submissions.sort(function(a, b) {
 							return parseInt(b.timestamp) - parseInt(a.timestamp); //sort in descending order
 							});
 							json = JSON.stringify(submissions); //convert it back to json
