@@ -418,9 +418,7 @@ module.exports = function(app, passport) {
 								files.forEach(function(img)
 								{
 									if(fs.existsSync(img.path) && fs.existsSync("tournaments/"+hash+"/images"))
-										fs.rename(img.path, "tournaments/"+hash+"/images/"+img.name, function(err) {
-									if (err) throw err;
-									});
+										fs.writeFileSync("tournaments/"+hash+"/images/"+img.name, fs.readFileSync(img.path));
 								});
 							}						
 						}
@@ -777,9 +775,8 @@ module.exports = function(app, passport) {
 					{
 						files.forEach(function(img)
 						{
-							fs.rename(img.path, "tournaments/"+tournament.id+"/images/"+img.name, function(err) {
-							if (err) throw err;
-							});
+							if(fs.existsSync(img.path) && fs.existsSync("tournaments/"+tournament.id+"/images"))
+								fs.writeFileSync("tournaments/"+tournament.id+"/images/"+img.name, fs.readFileSync(img.path));
 						});		
 					}					
 				}
