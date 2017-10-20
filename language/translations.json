@@ -61,7 +61,7 @@
 		"en":"Choose a file for upload."
 	 },
 	 "invalid_submission_password": {
-		"si":"Napačno geslo za oddajoo.",
+		"si":"Napačno geslo za oddajo.",
 		"en":"Invalid submission password."
 	 },
 	 "empty_submission_password": {
