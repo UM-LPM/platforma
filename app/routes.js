@@ -279,7 +279,6 @@ module.exports = function(app, passport) {
 					fs.mkdir("tournaments/list.json");
 				  }
 				});
-				
 				//check if the file was created
 				var configFile = "tournaments/list.json";
 				fs.stat(configFile, function (err, stats)
@@ -417,7 +416,8 @@ module.exports = function(app, passport) {
 							{
 								files.forEach(function(img)
 								{
-									if(fs.existsSync(img.path) && fs.existsSync("tournaments/"+hash+"/images"))
+									if(fs.existsSync(img.path) && typeof img.originalFilename!=="undefined" && img.originalFilename!=null 
+										&& (img.originalFilename.indexOf(".jpg")>0 || img.originalFilename.indexOf(".JPG")>0 || img.originalFilename.indexOf(".png")>0 ||  img.originalFilename.indexOf(".PNG")>0))
 										fs.writeFileSync("tournaments/"+hash+"/images/"+img.name, fs.readFileSync(img.path));
 								});
 							}						
@@ -775,7 +775,9 @@ module.exports = function(app, passport) {
 					{
 						files.forEach(function(img)
 						{
-							if(fs.existsSync(img.path) && fs.existsSync("tournaments/"+tournament.id+"/images"))
+							if(typeof img.originalFilename!=="undefined" && img.originalFilename!=null 
+								&& (img.originalFilename.indexOf(".jpg")>0 || img.originalFilename.indexOf(".JPG")>0 || img.originalFilename.indexOf(".png")>0 ||  img.originalFilename.indexOf(".PNG")>0) 
+								&& fs.existsSync(img.path) && fs.existsSync("tournaments/"+tournament.id+"/images"))
 								fs.writeFileSync("tournaments/"+tournament.id+"/images/"+img.name, fs.readFileSync(img.path));
 						});		
 					}					
