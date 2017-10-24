@@ -1526,6 +1526,12 @@ function loadConfigFile(req,res,next)
 	var myLocalize = new Localize('./language/');
 	myLocalize.setLocale("si");
 	
+	if(!fs.existsSync("tournaments/list.json"))
+		fs.writeFileSync("tournaments/list.json");
+		
+	if(!fs.existsSync("tmp"))
+		fs.mkdirSync("tmp");
+	
 	fs.readFile("tournaments/list.json", 'utf8', function readFileCallback(err, data){
 	if (err)
 	{
