@@ -849,6 +849,9 @@ module.exports = function(app, passport) {
 			}
 			
 			var fs = require('fs');
+			if(!fs.exists("tournaments/"+tournament.id+"/Benchmark_result_files"))
+				fs.mkdir("tournaments/"+tournament.id+"/Benchmark_result_files");
+			
 			if(fs.existsSync("tournaments/"+tournament.id+"/passwords.csv"))
 			{
 				if(typeof req.body.password!=="undefined" && req.body.password!=null && req.body.password.length>0)
