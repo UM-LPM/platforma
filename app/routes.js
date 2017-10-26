@@ -339,6 +339,7 @@ module.exports = function(app, passport) {
 						
 						var fs = require('fs');
 						fs.mkdir("tournaments/"+hash+"/submissions"); //create submissions folder
+						fs.mkdir("tournaments/"+hash+"/Benchmark_result_files"); //create benchmark results folder
 						fs.mkdirSync("tournaments/"+hash+"/images"); //create images folder
 						if(typeof req.files.passwordfile!=="undefined" && req.files.passwordfile!=null && req.files.passwordfile.size>0)
 						{
