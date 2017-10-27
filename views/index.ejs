@@ -12,9 +12,9 @@
 <script type="text/javascript">
 $( document ).ready(function() 
 {
-	<% if (typeof tournaments!=="undefined" && typeof tournaments.tournaments!=="undefined" && tournaments.tournaments!=null && tournaments.tournaments.length > 0) { %>
+	<% if (typeof tournaments!=="undefined" && typeof tournaments!=="undefined" && tournaments!=null && tournaments.length > 0) { %>
 	var result = "";
-	<% tournaments.tournaments.forEach(function(entry) { %>
+	<% tournaments.forEach(function(entry) { %>
 	var date = new Date(<%= entry.ends*1000 %>);
 			var month = date.getUTCMonth()+1;
 			if(month<10)

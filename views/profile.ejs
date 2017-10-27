@@ -51,9 +51,9 @@
 			</div>
 		</div>
 		
-		<% if (typeof tournaments!=="undefined" && typeof tournaments.tournaments!=="undefined" && tournaments.tournaments!=null && tournaments.tournaments.length > 0) { %>
+		<% if (typeof tournaments!=="undefined" && typeof tournaments!=="undefined" && tournaments!=null && tournaments.length > 0) { %>
 		<div class="col-sm-6">
-				<% tournaments.tournaments.forEach(function(entry) { %>
+				<% tournaments.forEach(function(entry) { %>
 				<div class="well">
 					<h3><span class="fa fa-user"></span><a href="/tournament/<%= entry.path %>" target="_blank"> <%= entry.name %></a></h3>
 						<p><a href="/editTournament/<%=entry.id%>"> <%= editDesc %></a></p>

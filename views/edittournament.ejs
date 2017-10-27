@@ -198,9 +198,9 @@
 </ul>
 </div>
 
-<h3><%= submittedDesc %> (<% if(typeof submissions!=="undefined" && submissions!=null && typeof submissions.submissions!=="undefined" && submissions.submissions!=null){ %><%= submissions.submissions.length %><% } else { %>0<% } %>)</h3>
+<h3><%= submittedDesc %> (<% if(typeof submissions!=="undefined" && submissions!=null){ %><%= submissions.length %><% } else { %>0<% } %>)</h3>
 <div style="max-height:700px;overflow-y:scroll;">
-<% if(typeof submissions!=="undefined" && submissions!=null && typeof submissions.submissions!=="undefined" && submissions.submissions!=null){  submissions.submissions.forEach(function(entry) { %>
+<% if(typeof submissions!=="undefined" && submissions!=null){ submissions.forEach(function(entry) { %>
 				<div class="well">
 					<h3><span class="fa fa-user"></span><%= entry.author %></h3>
 						<p id="<%= entry.timestamp %>"><script>parseTimestamp(<%= entry.timestamp %>);</script></p>
