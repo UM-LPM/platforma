@@ -339,7 +339,7 @@ module.exports = function(app, passport) {
 						
 						var fs = require('fs');
 						fs.mkdir("tournaments/"+hash+"/submissions"); //create submissions folder
-						fs.mkdir("tournaments/"+hash+"/Benchmark_result_files"); //create benchmark results folder
+						fs.mkdir("tournaments/"+hash+"/benchmark_result_files"); //create benchmark results folder
 						fs.mkdirSync("tournaments/"+hash+"/images"); //create images folder
 						if(typeof req.files.passwordfile!=="undefined" && req.files.passwordfile!=null && req.files.passwordfile.size>0)
 						{
@@ -849,8 +849,8 @@ module.exports = function(app, passport) {
 			}
 			
 			var fs = require('fs');
-			if(!fs.exists("tournaments/"+tournament.id+"/Benchmark_result_files"))
-				fs.mkdir("tournaments/"+tournament.id+"/Benchmark_result_files");
+			if(!fs.exists("tournaments/"+tournament.id+"/benchmark_result_files"))
+				fs.mkdir("tournaments/"+tournament.id+"/benchmark_result_files");
 			
 			if(fs.existsSync("tournaments/"+tournament.id+"/passwords.csv"))
 			{
