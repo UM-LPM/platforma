@@ -1,0 +1,4 @@
+#place this file into your .git/hooks folder
+#make sure it has executable rights(chmod +x post-merge) !
+#!/bin/sh
+pm2 restart server
