@@ -246,6 +246,10 @@ module.exports = function(app, passport) {
 								
 								if(result_data.length>0)
 									results = JSON.parse(result_data); 
+									
+								results.sort(function(a, b) {
+									return parseInt(b.ratingIntervalRight) + parseInt(a.ratingIntervalRight); //sort in ascending order
+								});	
 							}
 							catch(Emptyresults) { console.log("Error reading results file"); }
 							
