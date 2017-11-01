@@ -52,6 +52,10 @@
                     }],
                     yAxes: [{
                         display: true,
+						 ticks: {
+							beginAtZero: true,
+							max: <%= results.length*3 %>
+						},
                         scaleLabel: {
                             display: false,
                             labelString: 'Value'
