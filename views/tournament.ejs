@@ -21,10 +21,10 @@
                     label: "<%= results[i].playerId %>",
                     backgroundColor: window.chartColors.red,
                     borderColor: window.chartColors.red,
-                    data: [{x: <%= results.ratingIntervalLeft %>, y: <%= i %>},  {x: <%= results.ratingIntervalRight %>,y: <%= i %>}],
+                    data: [{x: <%= results[i].ratingIntervalLeft %>, y: <%= i+1 %>},  {x: <%= results[i].ratingIntervalRight %>,y: <%= i+1 %>}],
                     fill: false,
                 }
-				<% if(i!=0 && i<results.length-1) { %>,<% } } %>
+				<% if(i<results.length-1) { %>,<% } } %>
 				]
             },
             options: {
