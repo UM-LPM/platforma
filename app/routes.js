@@ -236,12 +236,27 @@ module.exports = function(app, passport) {
 						loggedIn = false;
 						if(typeof req.session.email!=="undefined" && req.session.email!=null && req.session.email.length>0)
 							loggedIn = true;
+						var results = [];
+						
+						if(fs.existsSync("tournaments/"+entry.id+"/benchmark_result_files/results.json"))
+						{
+							try
+							{
+								var result_data = fs.readFileSync("tournaments/"+entry.id+"/benchmark_result_files/results.json", 'utf8');
+								
+								if(result_data.length>0)
+									results = JSON.parse(result_data); 
+							}
+							catch(Emptyresults) { console.log("Error reading results file"); }
 							
+						}	
+													
 						res.render('tournament.ejs',{
 						data:entry,
 						password:password,
 						images:images,
 						loggedIn:loggedIn,
+						results:results,
 						passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
