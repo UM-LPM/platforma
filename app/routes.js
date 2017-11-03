@@ -248,7 +248,7 @@ module.exports = function(app, passport) {
 									results = JSON.parse(result_data); 
 									
 								results.sort(function(a, b) {
-									return a.rating-b.rating; //sort in ascending order
+									return a.ratingIntervalRight - b.ratingIntervalRight; //sort in ascending order
 								});	
 								
 							}
