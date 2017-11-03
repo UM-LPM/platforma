@@ -18,10 +18,10 @@
                 datasets: [
 				<% for(i=0; i<results.length; i++) { var randomColor='#'+(Math.random()*0xFFFFFF<<0).toString(16); %>
 				{
-                    label: "<%= results[i].playerId %>",
+                    label: "<%= results[i].playerId.substring(0,15) %> (<%= results[i].rating.toFixed(2) %>)",
                     backgroundColor: "<%= randomColor %>",
                     borderColor: "<%= randomColor %>",
-                    data: [{x: <%= results[i].ratingIntervalLeft %>, y: <%= i+1 %>},  {x: <%= results[i].ratingIntervalRight %>,y: <%= i+1 %>}],
+                    data: [{x: <%= results[i].ratingIntervalLeft %>, y: <%= i+1 %>},{x: <%= results[i].rating %>,y: <%= i+1 %>},{x: <%= results[i].ratingIntervalRight %>,y: <%= i+1 %>}],
                     fill: false,
                 }
 				<% if(i<results.length-1) { %>,<% } } %>
