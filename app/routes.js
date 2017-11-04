@@ -1313,7 +1313,7 @@ module.exports = function(app, passport) {
 									
 									req.flash('submissionMessage',noExtendsMsg); 
 									res.render('tournament.ejs',{
-									data:tournamentbenchmark:benchmark,message:req.flash('submissionMessage'),
+									data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 									passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 									choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 									uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
