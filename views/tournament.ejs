@@ -162,8 +162,8 @@
 	<p><%= benchTxt %> <%=data.benchmarks%></p>
 	<p id="end"><%= submissionTxt %> </p>
 	<p><%= descTxt %> <%=data.description%></p>
-	<% if(typeof benchmark!="undefined" && benchmark!=null && benchmark.length>0) { %>
-		<p><%= benchTypeTxt %> <%=benchmark.type%></p>
+	<% if(typeof data.selectedBenchmark!="undefined" && data.selectedBenchmark.type!="undefined") { %>
+		<p><%= benchTypeTxt %> <%=data.selectedBenchmark.type%></p>
 	<% } %>
 		
 	<% if(typeof images!=="undefined" && images!=null && images.length>0) { images.forEach(function(img) { %>
