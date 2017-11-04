@@ -162,6 +162,9 @@
 	<p><%= benchTxt %> <%=data.benchmarks%></p>
 	<p id="end"><%= submissionTxt %> </p>
 	<p><%= descTxt %> <%=data.description%></p>
+	<% if(typeof benchmark!="undefined" && benchmark!=null && benchmark.length>0) { %>
+		<p><%= benchTypeTxt %> <%=benchmark.type%></p>
+	<% } %>
 		
 	<% if(typeof images!=="undefined" && images!=null && images.length>0) { images.forEach(function(img) { %>
 	<a href="/tournament/<%=data.id%>/images/<%=img%>"><div class="gallery_product col-lg-4 col-md-4 col-sm-4 col-xs-6 filter hdpe" style="background-image:url('/tournament/<%=data.id%>/images/<%=img%>');background-size:auto 100%;height:200px;background-position:center center;">

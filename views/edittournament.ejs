@@ -155,9 +155,10 @@
 	<div class="form-group">
       <label for="bnch"><%= behcmarksTxt %></label>
       <select id="bnch" name="benchmarks"class="form-control">
-	  <% benchmarks.benchmarks.forEach(function(entry) { %>
-	  <option <% if(typeof data!=="undefined" && data!=null && data.benchmarks==entry.name) {%> selected <% } %>><%= entry.name %></option>
-	  <% }); %>
+	  <% if(typeof benchmarks!=="undefined" && benchmarks!=null && benchmarks.length>0) {
+		benchmarks.forEach(function(entry) { %>
+	  <option <% if(typeof data!=="undefined" && data!=null && data.benchmarks==entry.name) {%> selected <% } %>><%= entry.name %>(<%=entry.type%>)</option>
+	  <% }); } %>
 	  </select>
     </div>
 	<div class="form-group">

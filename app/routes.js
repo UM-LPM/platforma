@@ -253,11 +253,11 @@ module.exports = function(app, passport) {
 								
 							}
 							catch(Emptyresults) { console.log("Error reading results file"); }
-							
-						}	
-													
+						}
+						
 						res.render('tournament.ejs',{
 						data:entry,
+						benchmark:findBenchmarkByName(entry.benchmarks),
 						password:password,
 						images:images,
 						loggedIn:loggedIn,
@@ -266,7 +266,7 @@ module.exports = function(app, passport) {
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 						descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-						submitTxt:myLocalize.translate("submit")});
+						submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 						return;
 					  }
 					});
@@ -527,6 +527,7 @@ module.exports = function(app, passport) {
 			var submissions;
 			var images = [];
 			var fs = require('fs');
+			
 			if(fs.existsSync("tournaments/"+tournament.id+"/submissions/submission_list.json"))
 			{
 				var fs = require('fs');
@@ -831,6 +832,7 @@ module.exports = function(app, passport) {
 			var found = false;
 			var tournament;
 			var password = false;
+			var benchmark = [];
 			req.authordata = null;
 			
 			for(var i=0; i<res.tournaments.length; i++)
@@ -838,17 +840,19 @@ module.exports = function(app, passport) {
 				tournament = res.tournaments[i];
 				if(tournament.id==req.body.id)
 				{
+					benchmark = findBenchmarkByName(tournament.benchmarks);
+					
 					if(tournament.ends>new Date().getTime()/1000)
 						found = true;
 					else
 					{
 						req.flash('submissionMessage',myLocalize.translate("tournament_has_ended")); 
 						res.render('tournament.ejs',{
-						data:tournament, message:req.flash('submissionMessage'),passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
+						data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 						descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-						submitTxt:myLocalize.translate("submit")});	
+						submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});	
 						return;
 					}
 					break;
@@ -860,11 +864,11 @@ module.exports = function(app, passport) {
 				
 				req.flash('submissionMessage',myLocalize.translate("choose_file_upload")); 
 				res.render('tournament.ejs',{
-				data:tournament, message:req.flash('submissionMessage'),passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
+				data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 				choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 				uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 				descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-				submitTxt:myLocalize.translate("submit")});				
+				submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});				
 				return;
 			}
 			
@@ -892,12 +896,12 @@ module.exports = function(app, passport) {
 						{
 							req.flash('submissionMessage',myLocalize.translate("invalid_submission_password")); 
 							res.render('tournament.ejs',{
-							data:tournament, message:req.flash('submissionMessage'), password:password,
+							data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'), password:password,
 							passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 							choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 							uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 							descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-							submitTxt:myLocalize.translate("submit")});
+							submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 							return;
 						}
 					}
@@ -905,12 +909,12 @@ module.exports = function(app, passport) {
 					{
 						req.flash('submissionMessage',myLocalize.translate("error_reading_passwords_file")); 
 						res.render('tournament.ejs',{
-						data:tournament, message:req.flash('submissionMessage'), password:password,
+						data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'), password:password,
 						passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 						descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-						submitTxt:myLocalize.translate("submit")});
+						submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 						return;
 					}
 				}
@@ -918,12 +922,12 @@ module.exports = function(app, passport) {
 				{
 					req.flash('submissionMessage',myLocalize.translate("empty_submission_password")); 
 					res.render('tournament.ejs',{
-					data:tournament, message:req.flash('submissionMessage'), password:password,
+					data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'), password:password,
 					passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 					choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 					uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 					descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-					submitTxt:myLocalize.translate("submit")});
+					submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 					return;
 				}
 			}		
@@ -933,12 +937,12 @@ module.exports = function(app, passport) {
 				password = true;
 				req.flash('submissionMessage',myLocalize.translate("invalid_submission_password")); 
 				res.render('tournament.ejs',{
-				data:tournament, message:req.flash('submissionMessage'), password:password,
+				data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'), password:password,
 				passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 				choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 				uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 				descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-				submitTxt:myLocalize.translate("submit")});
+				submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 				return;
 			}
 			
@@ -966,12 +970,12 @@ module.exports = function(app, passport) {
 							fs.unlink(req.files.submissionFile.path,function(err,data) {});
 							req.flash('submissionMessage',myLocalize.translate("submission_error_uploading")); 
 							res.render('tournament.ejs',{
-							data:tournament, message:req.flash('submissionMessage'),
+							data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 							passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 							choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 							uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 							descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-							submitTxt:myLocalize.translate("submit"),password:password});
+							submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 							return;
 						}
 						else
@@ -997,12 +1001,12 @@ module.exports = function(app, passport) {
 											fs.rmdir(tmp_dir,function(err,data) {});
 											req.flash('submissionMessage',myLocalize.translate("error_unzipping_file")); 
 											res.render('tournament.ejs',{
-											data:tournament, message:req.flash('submissionMessage'),
+											data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 											passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 											choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 											uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 											descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-											submitTxt:myLocalize.translate("submit"),password:password});
+											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											return;
 										});
 										//successfull ZIP extraction
@@ -1017,7 +1021,12 @@ module.exports = function(app, passport) {
 													try
 													{
 														var tmp = fs.readFileSync(tmp_dir+"/"+file,"UTF-8");
-														if(tmp.indexOf('extends Algorithm') >= 0)
+														if(typeof benchmark!=="undefined" && benchmark!=null && typeof benchmark.type!=="undefined" 
+															&& benchmark.type=="MOAlgorithm" && tmp.indexOf('extends MOAlgorithm') >= 0)
+														{
+															source_file = file;
+														}
+														else if(tmp.indexOf('extends Algorithm') >= 0)
 														{
 															source_file = file;
 														}
@@ -1035,12 +1044,12 @@ module.exports = function(app, passport) {
 														fs.unlink(req.files.submissionFile.path,function(err,data) {});
 														req.flash('submissionMessage',myLocalize.translate("error_reading_source_file")); 
 														res.render('tournament.ejs',{
-														data:tournament, message:req.flash('submissionMessage'),
+														data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 														passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 														choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 														uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 														descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-														submitTxt:myLocalize.translate("submit"),password:password});
+														submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 														deleteFolderAndContents(tmp_dir);
 														return;			
 													}
@@ -1075,12 +1084,12 @@ module.exports = function(app, passport) {
 																	fs.unlink(req.files.submissionFile.path,function(err,data) {});
 																	req.flash('submissionMessage',myLocalize.translate("error_unzipping_file")); 
 																	res.render('tournament.ejs',{
-																	data:tournament, message:req.flash('submissionMessage'),
+																	data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 																	passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 																	choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 																	uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 																	descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-																	submitTxt:myLocalize.translate("submit"),password:password});
+																	submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 																	deleteFolderAndContents(tmp_dir);
 																	return;
 																});	
@@ -1092,12 +1101,12 @@ module.exports = function(app, passport) {
 																var submissionUrl = defaultUrl+tournament.path+'/submission/'+authordata['author']+"_"+submissionTimestamp;
 																req.flash('submissionMessage',submissionUrl); 
 																res.render('tournament.ejs',{
-																data:tournament, successmessage:req.flash('submissionMessage'),
+																data:tournament,benchmark:benchmark,successmessage:req.flash('submissionMessage'),
 																passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 																choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 																uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 																descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-																submitTxt:myLocalize.translate("submit"),password:password});
+																submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 																generateSubmissionReport(destFolder,authordata,submissionTimestamp);
 																deleteFolderAndContents(tmp_dir);
 																updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl)
@@ -1109,12 +1118,12 @@ module.exports = function(app, passport) {
 																fs.unlink(req.files.submissionFile.path,function(err,data) {});
 																req.flash('submissionMessage',myLocalize.translate("error_moving_submission")); 
 																res.render('tournament.ejs',{
-																data:tournament, message:req.flash('submissionMessage'),
+																data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 																passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 																choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 																uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 																descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-																submitTxt:myLocalize.translate("submit"),password:password});
+																submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 																deleteFolderAndContents(tmp_dir);
 																return;
 															});
@@ -1125,12 +1134,12 @@ module.exports = function(app, passport) {
 															fs.unlink(req.files.submissionFile.path,function(err,data) {});
 															req.flash('submissionMessage',myLocalize.translate("author_not_found")); 
 															res.render('tournament.ejs',{
-															data:tournament, message:req.flash('submissionMessage'),
+															data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 															passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 															choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 															uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 															descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-															submitTxt:myLocalize.translate("submit"),password:password});
+															submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 															deleteFolderAndContents(tmp_dir);
 															return;
 														}
@@ -1138,15 +1147,23 @@ module.exports = function(app, passport) {
 												}
 												else //no source (java) files found in root folder
 												{
+													if(typeof benchmark!=="undefined" && benchmark!=null && typeof benchmark.type!=="undefined" 
+															&& benchmark.type=="MOAlgorithm")
+													{
+														var noExtendsMsg = myLocalize.translate("no_main_programme_found_mo");
+													}
+													else
+														var noExtendsMsg = myLocalize.translate("no_main_programme_found_so");												
+													
 													fs.unlink(req.files.submissionFile.path,function(err,data) {});
-													req.flash('submissionMessage',myLocalize.translate("no_main_programme_found")); 
+													req.flash('submissionMessage',noExtendsMsg); 
 													res.render('tournament.ejs',{
-													data:tournament, message:req.flash('submissionMessage'),
+													data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 													passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 													choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 													uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 													descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-													submitTxt:myLocalize.translate("submit"),password:password});
+													submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 													deleteFolderAndContents(tmp_dir);
 													return;
 												}
@@ -1156,12 +1173,12 @@ module.exports = function(app, passport) {
 												fs.unlink(req.files.submissionFile.path,function(err,data) {});
 												req.flash('submissionMessage',myLocalize.translate("error_scanning_source")); 
 												res.render('tournament.ejs',{
-												data:tournament, message:req.flash('submissionMessage'),
+												data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 												passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 												choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 												uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 												descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-												submitTxt:myLocalize.translate("submit"),password:password});
+												submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 												deleteFolderAndContents(tmp_dir);
 												return;
 											}
@@ -1174,12 +1191,12 @@ module.exports = function(app, passport) {
 										fs.rmdir(tmp_dir,function(err,data) {});
 										req.flash('submissionMessage',myLocalize.translate("error_uploading_tmp_folder")); 
 										res.render('tournament.ejs',{
-										data:tournament, message:req.flash('submissionMessage'),
+										data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 										passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 										choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 										uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 										descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-										submitTxt:myLocalize.translate("submit"),password:password});
+										submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 										return;
 									});
 								}
@@ -1188,18 +1205,30 @@ module.exports = function(app, passport) {
 									fs.unlink(req.files.submissionFile.path,function(err,data) {});
 									req.flash('submissionMessage',myLocalize.translate("error_uploading_tmp_folder")); 
 									res.render('tournament.ejs',{
-									data:tournament, message:req.flash('submissionMessage'),
+									data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 									passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 									choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 									uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 									descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-									submitTxt:myLocalize.translate("submit"),password:password});
+									submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 									return;
 								}
 							}
 							else if(ext=="java" || ext=="JAVA")
 							{
-								if(data.indexOf('extends Algorithm')>=0)
+								
+								var extendsFound = false; 
+								
+								if(typeof benchmark!=="undefined" && benchmark!=null && typeof benchmark.type!=="undefined" 
+									&& benchmark.type=="MOAlgorithm" && data.indexOf('extends MOAlgorithm')>=0)
+								{
+									extendsFound = true;
+								}
+								else if(data.indexOf('extends Algorithm')>=0)
+									extendsFound = true;
+							
+							
+								if(extendsFound)
 								{
 									if(typeof req.authordata=="undefined" || req.authordata==null) //if general submission we dont have author data yet
 										var authordata = extractAuthorAndEmail(data);
@@ -1227,12 +1256,12 @@ module.exports = function(app, passport) {
 											var submissionUrl = defaultUrl+tournament.path+'/submission/'+authordata['author']+"_"+submissionTimestamp;
 											req.flash('submissionMessage',submissionUrl); 
 											res.render('tournament.ejs',{
-											data:tournament, successmessage:req.flash('submissionMessage'),
+											data:tournament,benchmark:benchmark,successmessage:req.flash('submissionMessage'),
 											passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 											choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 											uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 											descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-											submitTxt:myLocalize.translate("submit"),password:password});
+											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											generateSubmissionReport(destFolder,authordata,submissionTimestamp)
 											compileSource(destFolder+'/'+req.files.submissionFile.name);
 											updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl)
@@ -1244,12 +1273,12 @@ module.exports = function(app, passport) {
 											fs.unlink(req.files.submissionFile.path,function(err,data) {});
 											req.flash('submissionMessage',myLocalize.translate("error_moving_submission")); 
 											res.render('tournament.ejs',{
-											data:tournament, message:req.flash('submissionMessage'),
+											data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 											passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 											choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 											uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 											descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-											submitTxt:myLocalize.translate("submit"),password:password});
+											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											return;
 										});
 						
@@ -1260,12 +1289,12 @@ module.exports = function(app, passport) {
 										fs.unlink(req.files.submissionFile.path,function(err,data) {});
 										req.flash('submissionMessage',myLocalize.translate("author_not_found")); 
 										res.render('tournament.ejs',{
-										data:tournament, message:req.flash('submissionMessage'),
+										data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 										passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 										choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 										uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 										descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-										submitTxt:myLocalize.translate("submit"),password:password});
+										submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 										return;
 									}
 								}
@@ -1273,14 +1302,23 @@ module.exports = function(app, passport) {
 								{
 									var fs = require('fs');
 									fs.unlink(req.files.submissionFile.path,function(err,data) {});
-									req.flash('submissionMessage',myLocalize.translate("no_main_programme_found")); 
+									
+									if(typeof benchmark!=="undefined" && benchmark!=null && typeof benchmark.type!=="undefined" 
+											&& benchmark.type=="MOAlgorithm")
+									{
+										var noExtendsMsg = myLocalize.translate("no_main_programme_found_mo");
+									}
+									else
+										var noExtendsMsg = myLocalize.translate("no_main_programme_found_so");	
+									
+									req.flash('submissionMessage',noExtendsMsg); 
 									res.render('tournament.ejs',{
-									data:tournament, message:req.flash('submissionMessage'),
+									data:tournamentbenchmark:benchmark,message:req.flash('submissionMessage'),
 									passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 									choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 									uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 									descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-									submitTxt:myLocalize.translate("submit"),password:password});
+									submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 									return;
 								}
 							}
@@ -1293,12 +1331,12 @@ module.exports = function(app, passport) {
 						fs.unlink(req.files.submissionFile.path,function(err,data) {});
 						req.flash('submissionMessage',myLocalize.translate("max_upload_size")); 
 						res.render('tournament.ejs',{
-						data:tournament, message:req.flash('submissionMessage'),
+						data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 						passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 						descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-						submitTxt:myLocalize.translate("submit"),password:password});
+						submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 						return;
 					}
 				}
@@ -1308,12 +1346,12 @@ module.exports = function(app, passport) {
 					fs.unlink(req.files.submissionFile.path,function(err,data) {});
 					req.flash('submissionMessage',myLocalize.translate("invalid_file_format")); 
 					res.render('tournament.ejs',{
-					data:tournament, message:req.flash('submissionMessage'),
+					data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),
 					passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 					choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 					uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 					descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
-					submitTxt:myLocalize.translate("submit"),password:password});
+					submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 					return;
 				}
 			}
@@ -1584,32 +1622,62 @@ function loadConfigFile(req,res,next)
 function loadBenchmarks(req,res,next)
 {
 	var fs = require('fs');
-	var Localize = require('localize');
-	var myLocalize = new Localize('./language/');
-	myLocalize.setLocale("si");
+	res.benchmarks = [];
 	
-	fs.readFile("config/benchmarks.json", 'utf8', function readFileCallback(err, data){
-	if (err)
+	if(fs.existsSync("config/benchmarks.json"))
 	{
-		res.render('error.ejs',{
-		loggedIn:true,
-		message:myLocalize.translate("invalid_tournament_config"),
-		gobackTxt:myLocalize.translate("go_back"),
-		link:"/" });
-		return;
-	} 
-	
-	if(data.length>0)
-	{
-		var obj = {
-		   benchmarks: []
-		};
-		obj = JSON.parse(data); 
-		res.benchmarks = obj;
+		var Localize = require('localize');
+		var myLocalize = new Localize('./language/');
+		myLocalize.setLocale("si");
+		
+		fs.readFile("config/benchmarks.json", 'utf8', function readFileCallback(err, data){
+		if (err)
+		{
+			res.render('error.ejs',{
+			loggedIn:true,
+			message:myLocalize.translate("invalid_tournament_config"),
+			gobackTxt:myLocalize.translate("go_back"),
+			link:"/" });
+			return;
+		} 
+		
+		if(data.length>0)
+		{
+			try
+			{
+				res.benchmarks = JSON.parse(data);
+			}
+			catch(JSONError) { }
+		}
 	}
 	
 	return next();	
 	});
+}
+
+function findBenchmarkByName(searchString)
+{
+	if(typeof searchString!=="undefined" && searchString!=null && searchString.length>0)
+	{
+		var fs = require('fs');
+		if(fs.existsSync("config/benchmarks.json"))
+		{
+			var data = 	fs.readFileSync("config/benchmarks.json","UTF-8"); 
+			if(typeof data!=="undefined" && data!=null && data.length>0)
+			{
+				try
+				{
+					var benchmarks = JSON.parse(data);
+					benchmarks.forEach(function(bench) 
+					{
+						if(bench.name==searchString)
+							return bench;
+					});
+				}
+				catch(JSONError) {}	
+			}
+		}
+	}
 }
 
 function compileSource(filePath)

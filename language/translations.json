@@ -88,9 +88,13 @@
 		"si":"Ne najdem podatkov o avtorju programa. Poskrbi, da tvoja koda vključuje @author značko",
 		"en":"Author info not found. Make sure you include @author tag in your source code."
 	 },
-	 "no_main_programme_found": {
+	 "no_main_programme_found_so": {
 		"si":"Ne najdem 'glavnega' programa. Poskrbi, da bo v korenski mapi tvoje oddaje java program z 'extends Algorithm(case sensitive!)'.",
 		"en":"No 'main' source file found! Remember to put a java app in the roof folder of your submission that has 'extends Algorithm(case sensitive!)' line."
+	 },
+	 "no_main_programme_found_mo": {
+		"si":"Ne najdem 'glavnega' programa. Poskrbi, da bo v korenski mapi tvoje oddaje java program z 'extends MOAlgorithm(case sensitive!)'.",
+		"en":"No 'main' source file found! Remember to put a java app in the roof folder of your submission that has 'extends MOAlgorithm(case sensitive!)' line."
 	 },
 	 "error_scanning_source": {
 		"si":"Napaka pri iskanju datoteke glavnega programa.",
@@ -191,6 +195,10 @@
 	 "description": {
 		"si":"Opis:",
 		"en":"Description:"
+	 },
+	  "benchmark_type": {
+		"si":"Tip benchmarka:",
+		"en":"Benchmark type:"
 	 },
 	 "valid_types":{
 		"si":"Opomba: veljavne datoteke so JAVA datoteke ali ZIP datoteke z vašim programom.",
