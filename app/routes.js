@@ -1018,9 +1018,10 @@ module.exports = function(app, passport) {
 													{
 														var tmp = fs.readFileSync(tmp_dir+"/"+file,"UTF-8");
 														if(typeof tournament.selectedBenchmark!=="undefined" && typeof tournament.selectedBenchmark.type!=="undefined" && tournament.selectedBenchmark.type!=null
-															&& tournament.selectedBenchmark.type=="MOAlgorithm" && tmp.indexOf('extends MOAlgorithm') >= 0)
+															&& tournament.selectedBenchmark.type=="MOAlgorithm")
 														{
-															source_file = file;
+															if(tmp.indexOf('extends MOAlgorithm')>=0)
+																source_file = file;
 														}
 														else if(tmp.indexOf('extends Algorithm') >= 0)
 														{
@@ -1214,11 +1215,11 @@ module.exports = function(app, passport) {
 							{
 								
 								var extendsFound = false; 
-								
 								if(typeof tournament.selectedBenchmark!=="undefined" && typeof tournament.selectedBenchmark.type!=="undefined" && tournament.selectedBenchmark.type!=null 
-									&& tournament.selectedBenchmark.type=="MOAlgorithm" && data.indexOf('extends MOAlgorithm')>=0)
+									&& tournament.selectedBenchmark.type=="MOAlgorithm")
 								{
-									extendsFound = true;
+									if(data.indexOf('extends MOAlgorithm')>=0)
+										extendsFound = true;
 								}
 								else if(data.indexOf('extends Algorithm')>=0)
 									extendsFound = true;
