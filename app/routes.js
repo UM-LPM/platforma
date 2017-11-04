@@ -894,8 +894,6 @@ module.exports = function(app, passport) {
 								req.authordata = { "success":true, "author":user.name, "email":user.email };
 						});	
 						
-						password = true;
-
 						if(typeof req.authordata=="undefined" || req.authordata==null)
 						{
 							req.flash('submissionMessage',myLocalize.translate("invalid_submission_password")); 
@@ -938,7 +936,6 @@ module.exports = function(app, passport) {
 			else if(typeof tournament.password!=="undefined" && tournament.password!=null && tournament.password.length>0
 				&& tournament.password!=req.body.password)
 			{
-				password = true;
 				req.flash('submissionMessage',myLocalize.translate("invalid_submission_password")); 
 				res.render('tournament.ejs',{
 				data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'), password:password,
