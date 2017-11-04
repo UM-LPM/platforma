@@ -841,7 +841,7 @@ module.exports = function(app, passport) {
 				if(tournament.id==req.body.id)
 				{
 					var password = false;
-					if((typeof entry.password!=="undefined" && entry.password!=null && entry.password!=null) || fs.existsSync("tournaments/"+entry.id+"/passwords.csv"))
+					if((typeof tournament.password!=="undefined" && tournament.password!=null && tournament.password!=null) || fs.existsSync("tournaments/"+tournament.id+"/passwords.csv"))
 						password = true;
 							
 					benchmark = findBenchmarkByName(tournament.benchmarks);
