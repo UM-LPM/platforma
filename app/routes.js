@@ -1649,7 +1649,7 @@ function loadBenchmarks(req,res,next)
 			}
 			catch(JSONError) { }
 		}
-	}
+	});
 	
 	return next();	
 	});
