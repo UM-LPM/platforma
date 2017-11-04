@@ -1017,8 +1017,8 @@ module.exports = function(app, passport) {
 													try
 													{
 														var tmp = fs.readFileSync(tmp_dir+"/"+file,"UTF-8");
-														if(typeof benchmark!=="undefined" && benchmark!=null && typeof benchmark.type!=="undefined" 
-															&& benchmark.type=="MOAlgorithm" && tmp.indexOf('extends MOAlgorithm') >= 0)
+														if(typeof tournament.selectedBenchmark!=="undefined" && typeof tournament.selectedBenchmark.type!=="undefined" && tournament.selectedBenchmark.type!=null
+															&& tournament.selectedBenchmark.type=="MOAlgorithm" && tmp.indexOf('extends MOAlgorithm') >= 0)
 														{
 															source_file = file;
 														}
@@ -1215,8 +1215,8 @@ module.exports = function(app, passport) {
 								
 								var extendsFound = false; 
 								
-								if(typeof benchmark!=="undefined" && benchmark!=null && typeof benchmark.type!=="undefined" 
-									&& benchmark.type=="MOAlgorithm" && data.indexOf('extends MOAlgorithm')>=0)
+								if(typeof tournament.selectedBenchmark!=="undefined" && typeof tournament.selectedBenchmark.type!=="undefined" && tournament.selectedBenchmark.type!=null 
+									&& tournament.selectedBenchmark.type=="MOAlgorithm" && data.indexOf('extends MOAlgorithm')>=0)
 								{
 									extendsFound = true;
 								}
