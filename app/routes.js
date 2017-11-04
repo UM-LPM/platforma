@@ -1649,10 +1649,10 @@ function loadBenchmarks(req,res,next)
 			}
 			catch(JSONError) { }
 		}
-	});
 	
-	return next();	
-	});
+		return next();	
+		});
+	}
 }
 
 function findBenchmarkByName(searchString)
