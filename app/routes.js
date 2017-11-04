@@ -831,8 +831,8 @@ module.exports = function(app, passport) {
 		{
 			var found = false;
 			var tournament;
-			var password = false;
 			var benchmark = [];
+			var password = false;
 			req.authordata = null;
 			
 			for(var i=0; i<res.tournaments.length; i++)
@@ -840,6 +840,10 @@ module.exports = function(app, passport) {
 				tournament = res.tournaments[i];
 				if(tournament.id==req.body.id)
 				{
+					var password = false;
+					if((typeof entry.password!=="undefined" && entry.password!=null && entry.password!=null) || fs.existsSync("tournaments/"+entry.id+"/passwords.csv"))
+						password = true;
+							
 					benchmark = findBenchmarkByName(tournament.benchmarks);
 					
 					if(tournament.ends>new Date().getTime()/1000)
@@ -848,7 +852,7 @@ module.exports = function(app, passport) {
 					{
 						req.flash('submissionMessage',myLocalize.translate("tournament_has_ended")); 
 						res.render('tournament.ejs',{
-						data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
+						data:tournament,password:password,benchmark:benchmark,message:req.flash('submissionMessage'),passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 						descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
@@ -864,7 +868,7 @@ module.exports = function(app, passport) {
 				
 				req.flash('submissionMessage',myLocalize.translate("choose_file_upload")); 
 				res.render('tournament.ejs',{
-				data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'),passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
+				data:tournament,password:password,benchmark:benchmark,message:req.flash('submissionMessage'),passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 				choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 				uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 				descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
@@ -922,7 +926,7 @@ module.exports = function(app, passport) {
 				{
 					req.flash('submissionMessage',myLocalize.translate("empty_submission_password")); 
 					res.render('tournament.ejs',{
-					data:tournament,benchmark:benchmark,message:req.flash('submissionMessage'), password:password,
+					data:tournament,password:password,benchmark:benchmark,message:req.flash('submissionMessage'), password:password,
 					passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 					choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 					uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
