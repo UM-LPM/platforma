@@ -1018,7 +1018,7 @@ module.exports = function(app, passport) {
 													{
 														var tmp = fs.readFileSync(tmp_dir+"/"+file,"UTF-8");
 														if(typeof tournament.selectedBenchmark!=="undefined" && typeof tournament.selectedBenchmark.type!=="undefined" && tournament.selectedBenchmark.type!=null
-															&& tournament.selectedBenchmark.type=="MOAlgorithm")
+															&& tournament.selectedBenchmark.type=="Multi-Objective")
 														{
 															if(tmp.indexOf('extends MOAlgorithm')>=0)
 																source_file = file;
@@ -1145,7 +1145,7 @@ module.exports = function(app, passport) {
 												else //no source (java) files found in root folder
 												{
 													if(typeof tournament.selectedBenchmark!=="undefined" && tournament.selectedBenchmark!=null && typeof tournament.selectedBenchmark.type!=="undefined" 
-															&& tournament.selectedBenchmark.type=="MOAlgorithm")
+															&& tournament.selectedBenchmark.type=="Multi-Objective")
 													{
 														var noExtendsMsg = myLocalize.translate("no_main_programme_found_mo");
 													}
@@ -1216,7 +1216,7 @@ module.exports = function(app, passport) {
 								
 								var extendsFound = false; 
 								if(typeof tournament.selectedBenchmark!=="undefined" && typeof tournament.selectedBenchmark.type!=="undefined" && tournament.selectedBenchmark.type!=null 
-									&& tournament.selectedBenchmark.type=="MOAlgorithm")
+									&& tournament.selectedBenchmark.type=="Multi-Objective")
 								{
 									if(data.indexOf('extends MOAlgorithm')>=0)
 										extendsFound = true;
@@ -1301,7 +1301,7 @@ module.exports = function(app, passport) {
 									fs.unlink(req.files.submissionFile.path,function(err,data) {});
 									
 									if(typeof tournament.selectedBenchmark!=="undefined" && tournament.selectedBenchmark!=null && typeof tournament.selectedBenchmark.type!=="undefined" 
-											&& tournament.selectedBenchmark.type=="MOAlgorithm")
+											&& tournament.selectedBenchmark.type=="Multi-Objective")
 									{
 										var noExtendsMsg = myLocalize.translate("no_main_programme_found_mo");
 									}
