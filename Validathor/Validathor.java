@@ -30,8 +30,10 @@ public class Validathor {
 		if (args.length == 2) {
 			String targetFile = args[1];
 			String userAlgorithmFolder = new File(args[0]).getParentFile().toString();
-			String earsPath = new File(args[0]).getParentFile().getParentFile().getParentFile().getParentFile().toString()+"/EARS/ears.jar";
+			String earsPath = new File(args[0]).getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().toString()+"/EARS/ears.jar";
 			String userAlgorithmFilename = new File(args[0]).getName().toString();
+			
+			System.out.println(earsPath);
 			
 			try {
 			ProcessBuilder pb = new ProcessBuilder("javac","-sourcepath",userAlgorithmFolder,"-cp",earsPath,userAlgorithmFilename);
