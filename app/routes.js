@@ -1690,7 +1690,7 @@ function compileSource(filePath)
 				if(fs.existsSync(folderPath))
 				{
 					const { exec } = require('child_process');
-					exec('java -cp Validathor Validathor '+ filePath +" "+folderPath+"/compile_report.json", (error, stdout, stderr) => {
+					exec('java -cp EARS Validathor '+ filePath +" "+folderPath+"/compile_report.json", (error, stdout, stderr) => {
 					  if (error) {
 						console.error(`exec error: ${error}`);
 						return  { "success":false };
