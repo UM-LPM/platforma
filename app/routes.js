@@ -12,8 +12,6 @@ module.exports = function(app, passport) {
 		var ClientId = settings.GoogleClientId;
 		var ClientSecret = settings.GoogleClientSecret;
 		var RedirectionUrl = defaultUrl+settings.RedirectionUrl;
-		var appPath = settings.appPath;
-		var earsPath = settings.earsPath;
 	}
 	catch(MissingConfig) {  console.log("Missing config.js file in config folder!" ); process.exit(); }
 	
@@ -1095,7 +1093,7 @@ module.exports = function(app, passport) {
 																fs.unlink(req.files.submissionFile.path,function(err) {  });
 																unzipExtractor2.on('close', function() 
 																{
-																	compileSource(destFolder+'/'+source_file,appPath+"/"+earsPath);
+																	compileSource(destFolder+'/'+source_file);
 																});
 																var submissionUrl = defaultUrl+tournament.path+'/submission/'+authordata['author']+"_"+submissionTimestamp;
 																req.flash('submissionMessage',submissionUrl); 
@@ -1262,7 +1260,7 @@ module.exports = function(app, passport) {
 											descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
 											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											generateSubmissionReport(destFolder,authordata,submissionTimestamp)
-											compileSource(destFolder+'/'+req.files.submissionFile.name,appPath+"/"+earsPath);
+											compileSource(destFolder+'/'+req.files.submissionFile.name);
 											updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl)
 											return;
 										});
@@ -1678,7 +1676,7 @@ function loadBenchmarks(req,res,next)
 }
 
 
-function compileSource(filePath,earsPath)
+function compileSource(filePath)
 {
 	if(typeof filePath!=="undefined" && filePath!=null && filePath.length>0)
 	{
@@ -1692,7 +1690,7 @@ function compileSource(filePath,earsPath)
 				if(fs.existsSync(folderPath))
 				{
 					const { exec } = require('child_process');
-					exec('java -cp Validathor Validathor '+ filePath +" "+folderPath+"/compile_report.json "+earsPath, (error, stdout, stderr) => {
+					exec('java -cp Validathor Validathor '+ filePath +" "+folderPath+"/compile_report.json", (error, stdout, stderr) => {
 					  if (error) {
 						console.error(`exec error: ${error}`);
 						return  { "success":false };

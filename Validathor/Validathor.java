@@ -27,11 +27,29 @@ public class Validathor {
 
 	public static void main(String[] args) {
 		errors = new StringBuilder();
-		if (args.length == 3) {
+		if (args.length == 2) {
 			String targetFile = args[1];
 			String userAlgorithmFolder = new File(args[0]).getParentFile().toString();
-			String earsPath = args[2];
 			String userAlgorithmFilename = new File(args[0]).getName().toString();
+			final File f = new File(Validathor.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			String earsPath = f.getParent()+File.separator.toString();
+		
+			try{
+						
+			File file = new File(earsPath+"config"+File.separator+"config.js");
+			final Scanner scanner = new Scanner(file);
+			while (scanner.hasNextLine()) {
+			   final String lineFromFile = scanner.nextLine();
+			   if(lineFromFile.contains("earsPath")) { 
+				   earsPath+=lineFromFile.substring(lineFromFile.indexOf("\"")+1,lineFromFile.lastIndexOf("\""));
+				   break;
+			   }
+			}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
 			
 			try {
 			ProcessBuilder pb = new ProcessBuilder("javac","-sourcepath",userAlgorithmFolder,"-cp",earsPath,userAlgorithmFilename);
