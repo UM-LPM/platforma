@@ -12,8 +12,10 @@ module.exports = function(app, passport) {
 		var ClientId = settings.GoogleClientId;
 		var ClientSecret = settings.GoogleClientSecret;
 		var RedirectionUrl = defaultUrl+settings.RedirectionUrl;
+		var appPath = settings.appPath;
+		var earsPath = settings.earsPath;
 	}
-	catch(MissingConfig) { console.log("Missing config.js file in config folder!" ); process.exit(); }
+	catch(MissingConfig) {  console.log("Missing config.js file in config folder!" ); process.exit(); }
 	
 	var google = require('googleapis');
 	var OAuth2 = google.auth.OAuth2;
@@ -1093,7 +1095,7 @@ module.exports = function(app, passport) {
 																fs.unlink(req.files.submissionFile.path,function(err) {  });
 																unzipExtractor2.on('close', function() 
 																{
-																	compileSource(destFolder+'/'+source_file);
+																	compileSource(destFolder+'/'+source_file,appPath+"/"+earsPath);
 																});
 																var submissionUrl = defaultUrl+tournament.path+'/submission/'+authordata['author']+"_"+submissionTimestamp;
 																req.flash('submissionMessage',submissionUrl); 
@@ -1260,7 +1262,7 @@ module.exports = function(app, passport) {
 											descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
 											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											generateSubmissionReport(destFolder,authordata,submissionTimestamp)
-											compileSource(destFolder+'/'+req.files.submissionFile.name);
+											compileSource(destFolder+'/'+req.files.submissionFile.name,appPath+"/"+earsPath);
 											updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl)
 											return;
 										});
@@ -1676,7 +1678,7 @@ function loadBenchmarks(req,res,next)
 }
 
 
-function compileSource(filePath)
+function compileSource(filePath,earsPath)
 {
 	if(typeof filePath!=="undefined" && filePath!=null && filePath.length>0)
 	{
@@ -1690,7 +1692,7 @@ function compileSource(filePath)
 				if(fs.existsSync(folderPath))
 				{
 					const { exec } = require('child_process');
-					exec('java -cp Validathor Validathor '+ filePath +" "+folderPath+"/compile_report.json", (error, stdout, stderr) => {
+					exec('java -cp Validathor Validathor '+ filePath +" "+folderPath+"/compile_report.json "+earsPath, (error, stdout, stderr) => {
 					  if (error) {
 						console.error(`exec error: ${error}`);
 						return  { "success":false };

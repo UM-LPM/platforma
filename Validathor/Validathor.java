@@ -27,10 +27,10 @@ public class Validathor {
 
 	public static void main(String[] args) {
 		errors = new StringBuilder();
-		if (args.length == 2) {
+		if (args.length == 3) {
 			String targetFile = args[1];
 			String userAlgorithmFolder = new File(args[0]).getParentFile().toString();
-			String earsPath = "/var/www/ears/platforma/EARS/ears.jar";
+			String earsPath = args[2];
 			String userAlgorithmFilename = new File(args[0]).getName().toString();
 			
 			try {
