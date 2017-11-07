@@ -311,5 +311,21 @@
 	 "submission_being_processed":{
 		"si":"Tvoja oddaja je v obdelavi. Prosim počakaj na rezultate preverjanja.",
 		"en":"Your submission is being processed. Please wait for results."
+	 },
+	 "run_ears":{
+		"si":"Zaženi EARS",
+		"en":"Run EARS"
+	 },
+	 "run_ears_confirm":{
+		"si":"Si prepričan, da želiš zagnati EARS(lahko traja nekaj časa)?",
+		"en":"Are you sure you want to run EARS(it could take a while)?"
+	 },
+	 "run_ears_failed":{
+		"si":"Pri zagonu EARSa je prišlo do napake.",
+		"en":"EARS run failed."
+	 },
+	 "run_ears_success":{
+		"si":"It worked!",
+		"en":"It worked!"
 	 }
 }

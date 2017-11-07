@@ -11,6 +11,7 @@ module.exports = function(app, passport) {
 		var defaultUrl = settings.defaultUrl;
 		var ClientId = settings.GoogleClientId;
 		var ClientSecret = settings.GoogleClientSecret;
+		var earsPath = settings.earsPath;
 		var RedirectionUrl = defaultUrl+settings.RedirectionUrl;
 	}
 	catch(MissingConfig) {  console.log("Missing config.js file in config folder!" ); process.exit(); }
@@ -172,6 +173,10 @@ module.exports = function(app, passport) {
 			logoutTxt:myLocalize.translate("logout"),newTournamentDesc:myLocalize.translate("new_tournament"),
 			createnewTournametDesc:myLocalize.translate("create_new_tournament"),deleteDesc:myLocalize.translate("delete_desc"),
 			editDesc:myLocalize.translate("edit_tournament"),
+			runEars:myLocalize.translate("run_ears"),
+			runEarsConfirm:myLocalize.translate("run_ears_confirm"),
+			runEarsFailed:myLocalize.translate("run_ears_failed"),
+			runEarsSuccess:myLocalize.translate("run_ears_success"),
 			loggedIn:true
 		});
 	});
@@ -1514,6 +1519,16 @@ module.exports = function(app, passport) {
 			}
 	});
 	
+	app.get('/runEars', isLoggedIn, function(req, res) 
+	{
+		try
+		{
+			var result = runEARS(earsPath);
+			res.json({"success": result['success']});
+		}
+		catch(EarsError) { res.json({"success": false});}
+	});
+	
 	app.post('/deleteTournamentImage', function(req,res)
 	{
 		res.redirect('/');
@@ -1675,6 +1690,28 @@ function loadBenchmarks(req,res,next)
 	}
 }
 
+function runEARS(earsPath)
+{
+	if(typeof earsPath!=="undefined" && earsPath!=null && earsPath.length>0)
+	{
+		var fs = require('fs');
+		if(fs.existsSync(earsPath))
+		{
+			const { exec } = require('child_process');
+			exec('java -jar '+earsPath, (error, stdout, stderr) => {
+			  if (error) {
+				console.error(`exec error: ${error}`);
+				return  { "success":false };
+			  }
+			});
+			return  { "success":true };
+		}
+		else
+			return  { "success":false };
+	}
+	else
+		return  { "success":false };
+}
 
 function compileSource(filePath)
 {

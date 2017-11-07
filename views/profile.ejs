@@ -21,6 +21,34 @@
 			}
 		}
 	}
+	
+	function runEars(sender)
+	{
+		if(typeof sender!=="undefined" && sender!=null)
+		{
+			var r = confirm("<%= runEarsConfirm %>");
+			if(r==true)
+			{
+				$(this).prop('disabled', true);
+				$.ajax({
+				type: 'GET',
+				url: "/runEars",
+				success: function(data)
+				{
+					try
+					{
+						if(!data.success)
+							alert("<%= runEarsFailed %>");
+						else
+							alert("<%= runEarsSuccess %>");
+						$(this).prop('disabled', false);	
+					}
+					catch(JSONError) { console.log(JSONError); }
+				}
+				}); 
+			}
+		}
+	}
 	</script>
 </head>
 <body>
@@ -38,6 +66,14 @@
 	<div class="page-header text-center">
 		<h1><span class="fa fa-anchor"></span> <%= controlPanel %></h1>
 		<a href="/logout" class="btn btn-default btn-sm"><%= logoutTxt %></a>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-6" style="margin-bottom:10px;">
+			 <button type="button" class="btn btn-default btn-sm" onclick="runEars(this);">
+			  <span class="fa fa-flash"></span> <%= runEars %> 
+			</button>
+		</div>	
 	</div>
 
 	<div class="row">
