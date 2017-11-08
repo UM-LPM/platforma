@@ -1016,6 +1016,8 @@ module.exports = function(app, passport) {
 											try {
 												var fs = require('fs');
 												var source_file;
+												var algorithmName = "";
+												
 												fs.readdirSync(tmp_dir).forEach(file => {
 												  if(file.indexOf(".java")>0 || file.indexOf(".JAVA")>0)
 												  {
@@ -1027,10 +1029,12 @@ module.exports = function(app, passport) {
 														{
 															if(tmp.indexOf('extends MOAlgorithm')>=0)
 																source_file = file;
+															algorithmName = extractAlgorithmName(source_file,"extends MOAlgorithm");	
 														}
 														else if(tmp.indexOf('extends Algorithm') >= 0)
 														{
 															source_file = file;
+															algorithmName = extractAlgorithmName(source_file,"extends MOAlgorithm");	
 														}
 													}
 													catch(errorreading) { console.log(errorreading);}
@@ -1111,7 +1115,7 @@ module.exports = function(app, passport) {
 																submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 																generateSubmissionReport(destFolder,authordata,submissionTimestamp);
 																deleteFolderAndContents(tmp_dir);
-																updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl)
+																updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl,algorithmName);
 																return;
 															});
 															
@@ -1220,15 +1224,20 @@ module.exports = function(app, passport) {
 							{
 								
 								var extendsFound = false; 
+								var algorithmName = "";
+								
 								if(typeof tournament.selectedBenchmark!=="undefined" && typeof tournament.selectedBenchmark.type!=="undefined" && tournament.selectedBenchmark.type!=null 
 									&& tournament.selectedBenchmark.type=="Multi-Objective")
 								{
 									if(data.indexOf('extends MOAlgorithm')>=0)
 										extendsFound = true;
+									algorithmName = extractAlgorithmName(data,"extends MOAlgorithm");	
 								}
 								else if(data.indexOf('extends Algorithm')>=0)
+								{
 									extendsFound = true;
-							
+									algorithmName = extractAlgorithmName(data,"extends Algorithm");
+								}
 							
 								if(extendsFound)
 								{
@@ -1266,7 +1275,7 @@ module.exports = function(app, passport) {
 											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											generateSubmissionReport(destFolder,authordata,submissionTimestamp)
 											compileSource(destFolder+'/'+req.files.submissionFile.name);
-											updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl)
+											updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl,algorithmName);
 											return;
 										});
 										
@@ -1893,10 +1902,10 @@ function generateSubmissionReport(folderPath,author,timestamp)
 	}
 }
 
-function updateTournamentSubmissionList(tournament,author,timestamp,submissionUrl)
+function updateTournamentSubmissionList(tournament,author,timestamp,submissionUrl,algorithmName)
 {
-	if(typeof tournament!=="undefined" && typeof author!=="undefined" &&  typeof timestamp!=="undefined" && typeof submissionUrl!=="undefined"
-		&& tournament!=null && author!=null && timestamp!=null && submissionUrl!=null && submissionUrl.length>0 && author.length>0 && timestamp>0)
+	if(typeof tournament!=="undefined" && typeof author!=="undefined" &&  typeof timestamp!=="undefined" && typeof submissionUrl!=="undefined" && typeof algorithmName!=="undefined"
+		&& tournament!=null && author!=null && timestamp!=null && submissionUrl!=null  && algorithmName!=null && submissionUrl.length>0 && author.length>0 && algorithmName.length>0 && timestamp>0)
 	{
 		var Localize = require('localize');
 		var myLocalize = new Localize('./language/');
@@ -1931,7 +1940,7 @@ function updateTournamentSubmissionList(tournament,author,timestamp,submissionUr
 					catch(JSONError) {}
 				}
 				
-				obj.push({id:makeid(),author:author,timestamp:timestamp,submissionUrl:submissionUrl});
+				obj.push({id:makeid(),author:author,timestamp:timestamp,algorithm:algorithmName,submissionUrl:submissionUrl});
 				obj.sort(function(a, b) {
 				return parseInt(b.timestamp) - parseInt(a.timestamp); //sort in descending order
 				});
@@ -2019,4 +2028,21 @@ function deleteTournamentSubmission(tournamentId,submissionId)
 	}
 	else
 		return false;
+}
+
+function extractAlgorithmName(sourceFile,type)
+{
+	if(typeof sourceFile!=="undefined" && sourceFile!=null && sourceFile.length>0 && typeof type!=="undefined" && type!=null && type.length>0)
+	{
+		try
+		{
+			if(sourceFile.indexOf(type)>0)
+			{
+				sourceFile = sourceFile.substring(0,sourceFile.indexOf(type)-1);
+				sourceFile = sourceFile.substring(sourceFile.lastIndexOf("class")+6,sourceFile.length);
+				return sourceFile;
+			}
+		}
+		catch(AlgorithmParseError) {}
+	}
 }
