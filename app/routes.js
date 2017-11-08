@@ -1524,9 +1524,11 @@ module.exports = function(app, passport) {
 		try
 		{
 			var result = runEARS(earsPath);
-			res.json({"success": result['success']});
+			//console.log("suc: "+result.success);
+			//console.log("mes: "+result.message);
+			res.json({"success": result.success, "message":result.message});
 		}
-		catch(EarsError) { res.json({"success": false});}
+		catch(EarsError) { console.log(EarsError); res.json({"success": false});}
 	});
 	
 	app.post('/deleteTournamentImage', function(req,res)
@@ -1697,14 +1699,8 @@ function runEARS(earsPath)
 		var fs = require('fs');
 		if(fs.existsSync(earsPath))
 		{
-			const { exec } = require('child_process');
-			exec('java -jar '+earsPath, (error, stdout, stderr) => {
-			  if (error) {
-				console.error(`exec error: ${error}`);
-				return  { "success":false };
-			  }
-			});
-			return  { "success":true };
+			var result = require('child_process').execSync('java -jar '+earsPath).toString();
+			return  { "success":true, "message":result };
 		}
 		else
 			return  { "success":false };
