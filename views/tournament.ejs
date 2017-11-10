@@ -159,7 +159,7 @@
 	<% } %>
 	
 	<h1><span class="fa"><%=data.name%></h1>
-	<p><%= benchTxt %> <%=data.benchmarks%></p>
+	<p><%= benchTxt %><% if(data.benchmarks.length>40) data.benchmarks=data.benchmarks.substring(0,40)+'...';%> <%=data.benchmarks%></p>
 	<p id="end"><%= submissionTxt %> </p>
 	<p><%= descTxt %> <%=data.description%></p>
 	<% if(typeof data.selectedBenchmark!="undefined" && data.selectedBenchmark.type!="undefined") { %>
