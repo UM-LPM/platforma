@@ -203,7 +203,7 @@
       <select id="bnch" name="benchmarks"class="form-control">
 	  <% if(typeof benchmarks!=="undefined" && benchmarks!=null && benchmarks.length>0) {
 		benchmarks.forEach(function(entry) { %>
-	  <option <% if(typeof data!=="undefined" && data!=null && data.benchmarks!=="undefined" && data.benchmarks!=null && data.benchmarks==entry.fileName) {%> selected <% } %> value="<%=entry.name%>" ><%= entry.name %>(<%=entry.type%>)</option>
+	  <option <% if(typeof data!=="undefined" && data!=null && data.benchmarks!=="undefined" && data.benchmarks!=null && data.benchmarks==entry.fileName) {%> selected <% } %> value="<%=entry.fileName%>" ><%= entry.name %>(<%=entry.type%>)</option>
 	  <% }); } %>
 	  </select>
     </div>
