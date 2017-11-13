@@ -15,6 +15,7 @@ module.exports = function(app, passport) {
 		var RedirectionUrl = defaultUrl+settings.RedirectionUrl;
 		var appMailAddress = settings.appMailAddress;
 		var appMailPassword = settings.appMailPassword;
+		var setLanguage = settings.setLanguage;
 	}
 	catch(MissingConfig) {  console.log("Missing config.js file in config folder!" ); process.exit(); }
 	
@@ -24,7 +25,7 @@ module.exports = function(app, passport) {
 	
 	var Localize = require('localize');
 	var myLocalize = new Localize('./language/');
-	myLocalize.setLocale(settings.setLanguage);
+	myLocalize.setLocale(setLanguage);
 	
 
 
