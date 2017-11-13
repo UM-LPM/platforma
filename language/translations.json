@@ -335,5 +335,9 @@
 	 "delete_password_file":{
 		"si":"Izbrišem datoteko z gesli?",
 		"en":"Are you sure you want to delete passwords file?"
+	 },
+	 "invalid_passwords_filename":{
+		"si":"Datoteka z gesli mora biti poimenovana passwords.csv !",
+		"en":"Password file must be named passwords.csv !"
 	 }
 }

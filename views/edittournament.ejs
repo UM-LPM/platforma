@@ -72,12 +72,11 @@
 	
 	function validateForm()
 	{
-		var valid = true;
-		
+
 		if($("input[name=name]").val() == "")
 		{
 			$("input[name=name]").css("border","1px solid red");
-			valid = false;
+			return false;
 		}
 		else
 			$("input[name=name]").css("border","1px solid #ccc");
@@ -86,7 +85,7 @@
 		if($("input[name=path]").val() == "")
 		{
 			$("input[name=path]").css("border","1px solid red");
-			valid = false;
+			return false;
 		}
 		else
 			$("input[name=path]").css("border","1px solid #ccc");
@@ -94,12 +93,18 @@
 		if($("textarea[name=description]").val() == "")
 		{
 			$("textarea[name=description]").css("border","1px solid red");
-			valid = false;
+			return false;
 		}
 		else
 			$("textarea[name=description]").css("border","1px solid #ccc");
-		
-		return valid;
+			
+		if($('input[type=file][name=passwordfile]').val().length>0 && $('input[type=file][name=passwordfile]').val().split('\\').pop()!="passwords.csv")
+		{
+			$('input[type=file][name=passwordfile]').val("");
+			alert("<%=invalidPasswordsFilename%>");
+			return false;
+		}
+		return true;
 	}
 	
 	function parseTimestamp(timestamp,targetId)

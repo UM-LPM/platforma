@@ -286,7 +286,7 @@ module.exports = function(app, passport) {
 		tournamentUrlTxt:myLocalize.translate("tournament_url"),descTxt:myLocalize.translate("description"),imgdescTxt:myLocalize.translate("tournament_images"),
 		passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 		submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
-		deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),
+		deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),invalidPasswordsFilename:myLocalize.translate("invalid_passwords_filename"),
 		submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission")} );
 		return;
 	});
@@ -588,7 +588,7 @@ module.exports = function(app, passport) {
 						passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 						submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
 						submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
-						deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),
+						deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),invalidPasswordsFilename:myLocalize.translate("invalid_passwords_filename"),
 						hasErrors:myLocalize.translate("submission_has_errors")});
 						return;
 		}
