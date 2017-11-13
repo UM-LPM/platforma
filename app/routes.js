@@ -543,8 +543,19 @@ module.exports = function(app, passport) {
 					try
 					{
 						submissions = JSON.parse(obj);
+						submissions.forEach(function(sub)
+						{
+							sub.hasErrors = false;
+							if(fs.existsSync("tournaments/"+tournament.id+"/submissions/"+sub.author+"_"+sub.timestamp+"/compile_report.json"))
+							{
+								var error = fs.readFileSync("tournaments/"+tournament.id+"/submissions/"+sub.author+"_"+sub.timestamp+"/compile_report.json");
+								error = JSON.parse(error);
+								if(typeof error.error_list!=="undefined" && error.error_list!=null && error.error_list.length>0)
+									sub.hasErrors = true;
+							}
+						});
 					}
-					catch(JSONException) {}
+					catch(JSONException) { console.log(JSONException); }
 				  }
 				}
 				catch (subseciption) {}
@@ -575,7 +586,8 @@ module.exports = function(app, passport) {
 						tournamentUrlTxt:myLocalize.translate("tournament_url"),descTxt:myLocalize.translate("description"),imgdescTxt:myLocalize.translate("tournament_images"),
 						passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 						submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
-						submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission")});
+						submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
+						hasErrors:myLocalize.translate("submission_has_errors")});
 						return;
 		}
 		else
@@ -1016,6 +1028,8 @@ module.exports = function(app, passport) {
 											try {
 												var fs = require('fs');
 												var source_file;
+												var algorithmName = "";
+												
 												fs.readdirSync(tmp_dir).forEach(file => {
 												  if(file.indexOf(".java")>0 || file.indexOf(".JAVA")>0)
 												  {
@@ -1027,10 +1041,12 @@ module.exports = function(app, passport) {
 														{
 															if(tmp.indexOf('extends MOAlgorithm')>=0)
 																source_file = file;
+															algorithmName = extractAlgorithmName(source_file,"extends MOAlgorithm");	
 														}
 														else if(tmp.indexOf('extends Algorithm') >= 0)
 														{
 															source_file = file;
+															algorithmName = extractAlgorithmName(source_file,"extends MOAlgorithm");	
 														}
 													}
 													catch(errorreading) { console.log(errorreading);}
@@ -1111,7 +1127,7 @@ module.exports = function(app, passport) {
 																submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 																generateSubmissionReport(destFolder,authordata,submissionTimestamp);
 																deleteFolderAndContents(tmp_dir);
-																updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl)
+																updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl,algorithmName);
 																return;
 															});
 															
@@ -1220,15 +1236,20 @@ module.exports = function(app, passport) {
 							{
 								
 								var extendsFound = false; 
+								var algorithmName = "";
+								
 								if(typeof tournament.selectedBenchmark!=="undefined" && typeof tournament.selectedBenchmark.type!=="undefined" && tournament.selectedBenchmark.type!=null 
 									&& tournament.selectedBenchmark.type=="Multi-Objective")
 								{
 									if(data.indexOf('extends MOAlgorithm')>=0)
 										extendsFound = true;
+									algorithmName = extractAlgorithmName(data,"extends MOAlgorithm");	
 								}
 								else if(data.indexOf('extends Algorithm')>=0)
+								{
 									extendsFound = true;
-							
+									algorithmName = extractAlgorithmName(data,"extends Algorithm");
+								}
 							
 								if(extendsFound)
 								{
@@ -1266,7 +1287,7 @@ module.exports = function(app, passport) {
 											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											generateSubmissionReport(destFolder,authordata,submissionTimestamp)
 											compileSource(destFolder+'/'+req.files.submissionFile.name);
-											updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl)
+											updateTournamentSubmissionList(tournament,authordata['author'],submissionTimestamp,submissionUrl,algorithmName);
 											return;
 										});
 										
@@ -1524,9 +1545,11 @@ module.exports = function(app, passport) {
 		try
 		{
 			var result = runEARS(earsPath);
-			res.json({"success": result['success']});
+			//console.log("suc: "+result.success);
+			//console.log("mes: "+result.message);
+			res.json({"success": result.success, "message":result.message});
 		}
-		catch(EarsError) { res.json({"success": false});}
+		catch(EarsError) { console.log(EarsError); res.json({"success": false});}
 	});
 	
 	app.post('/deleteTournamentImage', function(req,res)
@@ -1600,6 +1623,9 @@ function loadConfigFile(req,res,next)
 	var myLocalize = new Localize('./language/');
 	myLocalize.setLocale("si");
 	
+	if(!fs.existsSync("tournaments"))
+		fs.mkdirSync("tournaments");
+	
 	if(!fs.existsSync("tournaments/list.json"))
 		fs.writeFileSync("tournaments/list.json");
 		
@@ -1636,7 +1662,7 @@ function loadConfigFile(req,res,next)
 						{
 							benchmarks.forEach(function(bench) 
 							{
-								if(tournament.benchmarks==bench.name)
+								if(tournament.benchmarks==bench.fileName)
 									tournament.selectedBenchmark = bench;
 							});
 						});
@@ -1697,14 +1723,8 @@ function runEARS(earsPath)
 		var fs = require('fs');
 		if(fs.existsSync(earsPath))
 		{
-			const { exec } = require('child_process');
-			exec('java -jar '+earsPath, (error, stdout, stderr) => {
-			  if (error) {
-				console.error(`exec error: ${error}`);
-				return  { "success":false };
-			  }
-			});
-			return  { "success":true };
+			var result = require('child_process').execSync('java -jar '+earsPath).toString();
+			return  { "success":true, "message":result };
 		}
 		else
 			return  { "success":false };
@@ -1897,10 +1917,10 @@ function generateSubmissionReport(folderPath,author,timestamp)
 	}
 }
 
-function updateTournamentSubmissionList(tournament,author,timestamp,submissionUrl)
+function updateTournamentSubmissionList(tournament,author,timestamp,submissionUrl,algorithmName)
 {
-	if(typeof tournament!=="undefined" && typeof author!=="undefined" &&  typeof timestamp!=="undefined" && typeof submissionUrl!=="undefined"
-		&& tournament!=null && author!=null && timestamp!=null && submissionUrl!=null && submissionUrl.length>0 && author.length>0 && timestamp>0)
+	if(typeof tournament!=="undefined" && typeof author!=="undefined" &&  typeof timestamp!=="undefined" && typeof submissionUrl!=="undefined" && typeof algorithmName!=="undefined"
+		&& tournament!=null && author!=null && timestamp!=null && submissionUrl!=null  && algorithmName!=null && submissionUrl.length>0 && author.length>0 && algorithmName.length>0 && timestamp>0)
 	{
 		var Localize = require('localize');
 		var myLocalize = new Localize('./language/');
@@ -1935,7 +1955,7 @@ function updateTournamentSubmissionList(tournament,author,timestamp,submissionUr
 					catch(JSONError) {}
 				}
 				
-				obj.push({id:makeid(),author:author,timestamp:timestamp,submissionUrl:submissionUrl});
+				obj.push({id:makeid(),author:author,timestamp:timestamp,algorithm:algorithmName,submissionUrl:submissionUrl});
 				obj.sort(function(a, b) {
 				return parseInt(b.timestamp) - parseInt(a.timestamp); //sort in descending order
 				});
@@ -2023,4 +2043,21 @@ function deleteTournamentSubmission(tournamentId,submissionId)
 	}
 	else
 		return false;
+}
+
+function extractAlgorithmName(sourceFile,type)
+{
+	if(typeof sourceFile!=="undefined" && sourceFile!=null && sourceFile.length>0 && typeof type!=="undefined" && type!=null && type.length>0)
+	{
+		try
+		{
+			if(sourceFile.indexOf(type)>0)
+			{
+				sourceFile = sourceFile.substring(0,sourceFile.indexOf(type)-1);
+				sourceFile = sourceFile.substring(sourceFile.lastIndexOf("class")+6,sourceFile.length);
+				return sourceFile;
+			}
+		}
+		catch(AlgorithmParseError) {}
+	}
 }

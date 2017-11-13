@@ -29,6 +29,7 @@
 			var r = confirm("<%= runEarsConfirm %>");
 			if(r==true)
 			{
+				$("#loader").css("display","block");
 				$(this).prop('disabled', true);
 				$.ajax({
 				type: 'GET',
@@ -40,10 +41,17 @@
 						if(!data.success)
 							alert("<%= runEarsFailed %>");
 						else
-							alert("<%= runEarsSuccess %>");
+						{
+							if(typeof data.message!=="undefined" && data.message!=null && data.message.length>0)
+							{
+								$("#earsMessage").html(data.message);
+								$("#earsMessageContainer").css("display","block");
+ 							}
+						}
 						$(this).prop('disabled', false);	
 					}
 					catch(JSONError) { console.log(JSONError); }
+					$("#loader").css("display","none");
 				}
 				}); 
 			}
@@ -62,6 +70,14 @@
 </div>
 
 <div class="container">
+	
+	<img id="loader" src="images/loader_big.gif" class="well" style="overflow-x:hidden;display:none;width:200px;height:200px;position:fixed;top:50%;left:50%;margin-top:-75px;margin-left:-100px;z-index:12;overflow-y:scroll;" />
+
+	
+	<div id="earsMessageContainer" class="well" style="overflow-x:hidden;display:none;width:400px;position:fixed;top:20%;left:50%;margin-left:-200px;z-index:12;overflow-y:scroll;height:300px;">
+	<a href="#/" onclick="$('#earsMessageContainer').css('display','none');$('#earsMessage').html();" style="position:absolute;top:2px;right:2px;">X</a>
+	<p id="earsMessage"></p>
+	</div>
 
 	<div class="page-header text-center">
 		<h1><span class="fa fa-anchor"></span> <%= controlPanel %></h1>

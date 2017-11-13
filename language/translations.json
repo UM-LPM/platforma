@@ -327,5 +327,9 @@
 	 "run_ears_success":{
 		"si":"It worked!",
 		"en":"It worked!"
+	 },
+	 "submission_has_errors":{
+	 "si":"Ta oddaja ima napake",
+	 "en":"This submission has errors"
 	 }
 }
