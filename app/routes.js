@@ -13,6 +13,8 @@ module.exports = function(app, passport) {
 		var ClientSecret = settings.GoogleClientSecret;
 		var earsPath = settings.earsPath;
 		var RedirectionUrl = defaultUrl+settings.RedirectionUrl;
+		var appMailAddress = settings.appMailAddress;
+		var appMailPassword = settings.appMailPassword;
 	}
 	catch(MissingConfig) {  console.log("Missing config.js file in config folder!" ); process.exit(); }
 	
@@ -1119,6 +1121,7 @@ module.exports = function(app, passport) {
 																	compileSource(destFolder+'/'+source_file);
 																});
 																var submissionUrl = defaultUrl+tournament.path+'/submission/'+authordata['author']+"_"+submissionTimestamp;
+																sendMail(tournament.name,authordata,submissionUrl);
 																req.flash('submissionMessage',submissionUrl); 
 																res.render('tournament.ejs',{
 																data:tournament,successmessage:req.flash('submissionMessage'),
@@ -1279,6 +1282,7 @@ module.exports = function(app, passport) {
 										{
 											fs.unlink(req.files.submissionFile.path,function(err,data) {});
 											var submissionUrl = defaultUrl+tournament.path+'/submission/'+authordata['author']+"_"+submissionTimestamp;
+											sendMail(tournament.name,authordata,submissionUrl);
 											req.flash('submissionMessage',submissionUrl); 
 											res.render('tournament.ejs',{
 											data:tournament,successmessage:req.flash('submissionMessage'),
@@ -1587,6 +1591,40 @@ module.exports = function(app, passport) {
 	{
 		res.redirect('/');
 	});
+	
+	function sendMail(title,authordata,submissionUrl)
+	{	
+		var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		if(typeof title!=="undefined" && title!=null && title.length>0 && typeof authordata['email']!=="undefined"
+			&& authordata['email']!=null && authordata['email'].length>0 && typeof submissionUrl!=="undefined"
+			&& submissionUrl!=null && submissionUrl.length>0 && re.test(authordata['email']) && typeof appMailAddress!=="undefined" && appMailAddress!=null
+			&& appMailAddress.length>0 && typeof appMailPassword!=="undefined" && appMailPassword!=null && appMailPassword.length>0)
+		{
+			var nodemailer = require('nodemailer');
+			var transporter = nodemailer.createTransport({
+			  service: 'gmail',
+			  auth: {
+				user: appMailAddress,
+				pass: appMailPassword
+			  }
+			});
+
+			var mailOptions = {
+			  from: appMailAddress,
+			  to: authordata['email'],
+			  subject: title.substring(0,30),
+			  text: myLocalize.translate("mail_body")+submissionUrl
+			};
+
+			transporter.sendMail(mailOptions, function(error, info){
+			  if (error) {
+				console.log(error);
+			  } else {
+				console.log('Email sent: ' + info.response);
+			  }
+			});
+		}	
+	}
 };
 
 // route middleware to make sure
@@ -1893,6 +1931,7 @@ function cleanUpAuthorName(authorName)
 		authorName = authorName.replace(/ +(?= )/g,''); //remove multiple whitespace (usually start and end of string)
 		authorName = authorName.replace(/ /g,'_'); //remove any spaces left with underscore, usually between name and surname
 		authorName = authorName.replace(/,/g,"_");
+		authorName = authorName.trim();
 		return authorName;
 	}
 }

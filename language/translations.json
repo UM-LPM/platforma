@@ -339,5 +339,9 @@
 	 "invalid_passwords_filename":{
 		"si":"Datoteka z gesli mora biti poimenovana passwords.csv !",
 		"en":"Password file must be named passwords.csv !"
+	 },
+	 "mail_body":{
+		"si":"Pozdravljen! Tvoja oddaja je bila sprejeta, rezultate in poročila preverjanj si lahko ogledaš tukaj: ",
+		"en":"Hello! Your submission was recieved. You will find your results and rating on the following link: "
 	 }
 }
