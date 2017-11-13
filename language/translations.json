@@ -331,5 +331,9 @@
 	 "submission_has_errors":{
 	 "si":"Ta oddaja ima napake",
 	 "en":"This submission has errors"
+	 },
+	 "delete_password_file":{
+		"si":"Izbrišem datoteko z gesli?",
+		"en":"Are you sure you want to delete passwords file?"
 	 }
 }

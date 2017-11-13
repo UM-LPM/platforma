@@ -286,6 +286,7 @@ module.exports = function(app, passport) {
 		tournamentUrlTxt:myLocalize.translate("tournament_url"),descTxt:myLocalize.translate("description"),imgdescTxt:myLocalize.translate("tournament_images"),
 		passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 		submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
+		deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),
 		submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission")} );
 		return;
 	});
@@ -571,7 +572,7 @@ module.exports = function(app, passport) {
 				  images.push(file);
 				})
 			}
-				
+
 			res.render('edittournament.ejs',{
 						data:tournament,
 						loggedIn:true,
@@ -587,6 +588,7 @@ module.exports = function(app, passport) {
 						passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 						submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
 						submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
+						deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),
 						hasErrors:myLocalize.translate("submission_has_errors")});
 						return;
 		}
@@ -765,10 +767,6 @@ module.exports = function(app, passport) {
 									gobackTxt:myLocalize.translate("go_back"),
 									link:"/editTournament/"+tournament.id });
 									return;
-								}
-								else //if password file is uploaded, clear any previous passwords
-								{
-									tournament.password = "";
 								}
 							}
 							else
@@ -1524,6 +1522,35 @@ module.exports = function(app, passport) {
 				if(fs.existsSync("tournaments/"+req.query.tournamentId+"/images/"+ req.query.fileName))
 				{
 					fs.unlinkSync("tournaments/"+req.query.tournamentId+"/images/"+ req.query.fileName);
+					res.redirect(tournamentLink);
+				}
+				else
+				{
+					res.render('error.ejs',{
+					message:myLocalize.translate("error_deleting_image"),
+					gobackTxt:myLocalize.translate("go_back"),
+					link:tournamentLink});
+					return;
+				}
+			}
+			else
+			{
+				res.render('error.ejs',{
+				message:myLocalize.translate("error_retrieving_deletion_file"),
+				gobackTxt:myLocalize.translate("go_back")});
+				return;
+			}
+	});
+	
+	app.get('/deleteTournamentPasswordFile', isLoggedIn, function(req, res) 
+	{
+		if(req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0)
+			{
+				var tournamentLink = defaultUrl+'editTournament/'+req.query.tournamentId;
+				var fs = require('fs');
+				if(fs.existsSync("tournaments/"+req.query.tournamentId+"/passwords.csv"))
+				{
+					fs.unlinkSync("tournaments/"+req.query.tournamentId+"/passwords.csv");
 					res.redirect(tournamentLink);
 				}
 				else

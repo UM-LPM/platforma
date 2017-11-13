@@ -155,7 +155,15 @@
   $( function() {
     $( "#accordion" ).accordion();
   } );
- 
+	
+	<% if(typeof passwordfile!=="undefined" && passwordfile!=null && passwordfile.length>0) { %>
+	function confirmDeletePasswordFile()
+	{
+		var r = confirm("<%= deletePasswordFileConfirmation %>");
+		if(r==true)
+			window.location.href = '/deleteTournamentPasswordFile?tournamentId=<%= data.id %>';
+	}
+	<% } %>
 	</script>
 </head>
 <body>
@@ -210,7 +218,7 @@
       <label for="pwdfile"><%= passwordfileDesc %></label>
 	  <input type="file" id="pwdfile" name="passwordfile" class="form-control" accept=".csv" />
 	  <% if(typeof passwordfile!=="undefined" && passwordfile!=null && passwordfile.length>0) { %>
-		<p><a href="<%=passwordfile %>"><%= oldpasswordDesc %></a></p>
+		<p><a href="<%=passwordfile %>"><%= oldpasswordDesc %></a><a style="margin-left:15px;" href="#/" onclick="confirmDeletePasswordFile();"><%= deleteDesc %></a></p>
 	  <% } %>
     </div>
 	<div class="form-group" <% if(typeof passwordfile!=="undefined" && passwordfile!=null && passwordfile.length>0) { %> style="display:none;" <% } %>>
