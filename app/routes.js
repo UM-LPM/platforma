@@ -754,6 +754,10 @@ module.exports = function(app, passport) {
 									link:"/editTournament/"+tournament.id });
 									return;
 								}
+								else //if password file is uploaded, clear any previous passwords
+								{
+									tournament.password = "";
+								}
 							}
 							else
 							{
