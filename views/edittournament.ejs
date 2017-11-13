@@ -157,7 +157,7 @@
       <select id="bnch" name="benchmarks"class="form-control">
 	  <% if(typeof benchmarks!=="undefined" && benchmarks!=null && benchmarks.length>0) {
 		benchmarks.forEach(function(entry) { %>
-	  <option <% if(typeof data!=="undefined" && data!=null && data.benchmarks==entry.name) {%> selected <% } %> value="<%=entry.name%>" ><%= entry.name %>(<%=entry.type%>)</option>
+	  <option <% if(typeof data!=="undefined" && data!=null && data.benchmarks!=="undefined" && data.benchmarks!=null && data.benchmarks==entry.fileName) {%> selected <% } %> value="<%=entry.name%>" ><%= entry.name %>(<%=entry.type%>)</option>
 	  <% }); } %>
 	  </select>
     </div>
@@ -203,7 +203,7 @@
 <div style="max-height:700px;overflow-y:scroll;">
 <% if(typeof submissions!=="undefined" && submissions!=null){ submissions.forEach(function(entry) { %>
 				<div class="well">
-					<h3><span class="fa fa-user"></span><%= entry.author %></h3>
+					<h3><span class="fa fa-user" style="margin-right:10px;"></span><%= entry.author %><% if(typeof entry.hasErrors!=="undefined" && entry.hasErrors) {%><span style="color:red;margin-left:10px;" class="glyphicon glyphicon-fire" title="<%= hasErrors %>"></span><%}%></h3>
 						<p id="<%= entry.timestamp %>"><script>parseTimestamp(<%= entry.timestamp %>);</script></p>
 						<p><a href="<%= entry.submissionUrl %>"> <%= viewSubmission %></a></p>
 						<p><a href="#/" onclick="deleteSubmission('<%= entry.id %>');"><%= deleteDesc %></a></p>

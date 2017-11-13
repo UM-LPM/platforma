@@ -543,8 +543,19 @@ module.exports = function(app, passport) {
 					try
 					{
 						submissions = JSON.parse(obj);
+						submissions.forEach(function(sub)
+						{
+							sub.hasErrors = false;
+							if(fs.existsSync("tournaments/"+tournament.id+"/submissions/"+sub.author+"_"+sub.timestamp+"/compile_report.json"))
+							{
+								var error = fs.readFileSync("tournaments/"+tournament.id+"/submissions/"+sub.author+"_"+sub.timestamp+"/compile_report.json");
+								error = JSON.parse(error);
+								if(typeof error.error_list!=="undefined" && error.error_list!=null && error.error_list.length>0)
+									sub.hasErrors = true;
+							}
+						});
 					}
-					catch(JSONException) {}
+					catch(JSONException) { console.log(JSONException); }
 				  }
 				}
 				catch (subseciption) {}
@@ -575,7 +586,8 @@ module.exports = function(app, passport) {
 						tournamentUrlTxt:myLocalize.translate("tournament_url"),descTxt:myLocalize.translate("description"),imgdescTxt:myLocalize.translate("tournament_images"),
 						passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 						submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
-						submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission")});
+						submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
+						hasErrors:myLocalize.translate("submission_has_errors")});
 						return;
 		}
 		else
@@ -1615,6 +1627,9 @@ function loadConfigFile(req,res,next)
 	var myLocalize = new Localize('./language/');
 	myLocalize.setLocale("si");
 	
+	if(!fs.existsSync("tournaments"))
+		fs.mkdirSync("tournaments");
+	
 	if(!fs.existsSync("tournaments/list.json"))
 		fs.writeFileSync("tournaments/list.json");
 		
@@ -1651,7 +1666,7 @@ function loadConfigFile(req,res,next)
 						{
 							benchmarks.forEach(function(bench) 
 							{
-								if(tournament.benchmarks==bench.name)
+								if(tournament.benchmarks==bench.fileName)
 									tournament.selectedBenchmark = bench;
 							});
 						});
