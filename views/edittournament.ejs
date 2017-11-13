@@ -67,7 +67,40 @@
 		document.getElementById("end").setAttribute("min", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
 		document.getElementById("end").setAttribute("value", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
 		<% } %>
+		
 	});
+	
+	function validateForm()
+	{
+		var valid = true;
+		
+		if($("input[name=name]").val() == "")
+		{
+			$("input[name=name]").css("border","1px solid red");
+			valid = false;
+		}
+		else
+			$("input[name=name]").css("border","1px solid #ccc");
+						
+		
+		if($("input[name=path]").val() == "")
+		{
+			$("input[name=path]").css("border","1px solid red");
+			valid = false;
+		}
+		else
+			$("input[name=path]").css("border","1px solid #ccc");
+		
+		if($("textarea[name=description]").val() == "")
+		{
+			$("textarea[name=description]").css("border","1px solid red");
+			valid = false;
+		}
+		else
+			$("textarea[name=description]").css("border","1px solid #ccc");
+		
+		return valid;
+	}
 	
 	function parseTimestamp(timestamp,targetId)
 	{
@@ -140,7 +173,7 @@
 <div class="col-sm-6">
 
 	<h1><span class="fa fa-sign-in"></span><% if(typeof data!=="undefined" && data!=null) { %> <%= edittournamentTxt %> <%=data.name %> <% } else { %> <%= newtournamentTxt %><% } %></h1>
-	<form <% if(typeof data!=="undefined" && data!=null) { %> action="/editTournament/<%=data.id %>" <% } else { %> action="/newTournament" <% } %> method="post" enctype="multipart/form-data">
+	<form <% if(typeof data!=="undefined" && data!=null) { %> action="/editTournament/<%=data.id %>" <% } else { %> action="/newTournament" <% } %> method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
 	<% if(typeof data!=="undefined" && data!=null) { %>
 		<input type="hidden" name="id" value="<%=data.id %>" />
 	<% } %>	
