@@ -908,7 +908,7 @@ module.exports = function(app, passport) {
 						csv.forEach(function(user)
 						{
 							if(user.password == req.body.password)
-								req.authordata = { "success":true, "author":user.name, "email":user.email };
+								req.authordata = { "success":true, "author":cleanUpAuthorName(user.name), "email":user.email };
 						});	
 						
 						if(typeof req.authordata=="undefined" || req.authordata==null)
@@ -1911,27 +1911,29 @@ function cleanUpAuthorName(authorName)
 {
 	if(typeof authorName!=="undefined" && authorName.length>0)
 	{
-		authorName = authorName.replace(/Č/g,"c");
+		authorName = authorName.replace(/Č/g,"C");
+		authorName = authorName.replace(/Č/,"C"); //testing
 		authorName = authorName.replace(/č/g,"c");
-		authorName = authorName.replace(/Ć/g,"c");
+		authorName = authorName.replace(/Ć/g,"C");
 		authorName = authorName.replace(/ć/g,"c");
-		authorName = authorName.replace(/Ž/g,"z");
+		authorName = authorName.replace(/Ž/g,"Z");
 		authorName = authorName.replace(/ž/g,"z");
-		authorName = authorName.replace(/Š/g,"s");
+		authorName = authorName.replace(/Š/g,"S");
 		authorName = authorName.replace(/š/g,"s");
-		authorName = authorName.replace(/Đ/g,"d");
+		authorName = authorName.replace(/Đ/g,"D");
 		authorName = authorName.replace(/đ/g,"d");
-		authorName = authorName.replace(/Ä/g,"a");
+		authorName = authorName.replace(/Ä/g,"A");
 		authorName = authorName.replace(/ä/g,"a");
-		authorName = authorName.replace(/Ö/g,"o");
+		authorName = authorName.replace(/Ö/g,"O");
 		authorName = authorName.replace(/ö/g,"o");
-		authorName = authorName.replace(/Ü/g,"u");
+		authorName = authorName.replace(/Ü/g,"U");
 		authorName = authorName.replace(/ü/g,"u");
-		authorName = authorName.replace(/Ë/g,"e");
+		authorName = authorName.replace(/Ë/g,"E");
 		authorName = authorName.replace(/ë/g,"e");
 		authorName = authorName.replace(/ +(?= )/g,''); //remove multiple whitespace (usually start and end of string)
 		authorName = authorName.replace(/ /g,'_'); //remove any spaces left with underscore, usually between name and surname
 		authorName = authorName.replace(/,/g,"_");
+		authorName = authorName.replace(/\s/g,"_");
 		authorName = authorName.trim();
 		return authorName;
 	}
