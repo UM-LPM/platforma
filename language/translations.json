@@ -343,5 +343,21 @@
 	 "mail_body":{
 		"si":"Pozdravljen! Tvoja oddaja je bila sprejeta, rezultate in poročila preverjanj si lahko ogledaš tukaj: ",
 		"eng":"Hello! Your submission was recieved. You will find your results and rating on the following link: "
-	 }
+	 },
+	 "rating_table_algorithm":{
+		"si":"Algoritem",
+		"eng":"Algorithm"
+	 },
+	  "rating_table_score":{
+		"si":"Rating",
+		"eng":"Rating"
+	 },
+	  "rating_table_min":{
+		"si":"Min",
+		"eng":"Min"
+	 },
+	  "rating_table_max":{
+		"si":"Max",
+		"eng":"Max"
+	 },
 }

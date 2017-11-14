@@ -272,6 +272,7 @@ module.exports = function(app, passport) {
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 						descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+						tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 						submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 						return;
 					  }
@@ -873,6 +874,7 @@ module.exports = function(app, passport) {
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 						descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+						tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 						submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});	
 						return;
 					}
@@ -889,6 +891,7 @@ module.exports = function(app, passport) {
 				choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 				uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 				descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+				tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 				submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});				
 				return;
 			}
@@ -920,6 +923,7 @@ module.exports = function(app, passport) {
 							choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 							uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 							descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+							tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 							submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 							return;
 						}
@@ -933,6 +937,7 @@ module.exports = function(app, passport) {
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 						descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+						tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 						submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 						return;
 					}
@@ -946,6 +951,7 @@ module.exports = function(app, passport) {
 					choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 					uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 					descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+					tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),				
 					submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 					return;
 				}
@@ -960,6 +966,7 @@ module.exports = function(app, passport) {
 				choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 				uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 				descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+				tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 				submitTxt:myLocalize.translate("submit"),benchTypeTxt:myLocalize.translate("benchmark_type")});
 				return;
 			}
@@ -993,6 +1000,7 @@ module.exports = function(app, passport) {
 							choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 							uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 							descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+							tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 							submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 							return;
 						}
@@ -1024,6 +1032,7 @@ module.exports = function(app, passport) {
 											choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 											uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 											descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+											tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											return;
 										});
@@ -1072,6 +1081,7 @@ module.exports = function(app, passport) {
 														choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 														uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 														descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+														tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 														submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 														deleteFolderAndContents(tmp_dir);
 														return;			
@@ -1112,6 +1122,7 @@ module.exports = function(app, passport) {
 																	choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 																	uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 																	descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+																	tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 																	submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 																	deleteFolderAndContents(tmp_dir);
 																	return;
@@ -1129,6 +1140,7 @@ module.exports = function(app, passport) {
 																passwordTxt:myLocalize.translate("empty_submission_password"),maxsizeTxt:myLocalize.translate("max_upload_size"),invalidformatTxt:myLocalize.translate("invalid_file_format"),
 																choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 																uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
+																tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 																descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
 																submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 																generateSubmissionReport(destFolder,authordata,submissionTimestamp);
@@ -1147,6 +1159,7 @@ module.exports = function(app, passport) {
 																choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 																uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 																descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+																tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 																submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 																deleteFolderAndContents(tmp_dir);
 																return;
@@ -1163,6 +1176,7 @@ module.exports = function(app, passport) {
 															choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 															uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 															descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+															tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 															submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 															deleteFolderAndContents(tmp_dir);
 															return;
@@ -1187,6 +1201,7 @@ module.exports = function(app, passport) {
 													choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 													uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 													descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+													tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 													submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 													deleteFolderAndContents(tmp_dir);
 													return;
@@ -1202,6 +1217,7 @@ module.exports = function(app, passport) {
 												choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 												uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 												descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+												tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 												submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 												deleteFolderAndContents(tmp_dir);
 												return;
@@ -1220,6 +1236,7 @@ module.exports = function(app, passport) {
 										choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 										uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 										descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+										tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 										submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 										return;
 									});
@@ -1234,6 +1251,7 @@ module.exports = function(app, passport) {
 									choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 									uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 									descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+									tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 									submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 									return;
 								}
@@ -1291,6 +1309,7 @@ module.exports = function(app, passport) {
 											choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 											uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 											descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+											tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											generateSubmissionReport(destFolder,authordata,submissionTimestamp)
 											compileSource(destFolder+'/'+req.files.submissionFile.name);
@@ -1308,6 +1327,7 @@ module.exports = function(app, passport) {
 											choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 											uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 											descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+											tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 											submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 											return;
 										});
@@ -1324,6 +1344,7 @@ module.exports = function(app, passport) {
 										choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 										uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 										descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+										tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 										submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 										return;
 									}
@@ -1348,6 +1369,7 @@ module.exports = function(app, passport) {
 									choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 									uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 									descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+									tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 									submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 									return;
 								}
@@ -1366,6 +1388,7 @@ module.exports = function(app, passport) {
 						choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 						uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 						descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+						tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 						submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 						return;
 					}
@@ -1381,6 +1404,7 @@ module.exports = function(app, passport) {
 					choosefileTxt:myLocalize.translate("choose_file_for_upload"),loginTxt:myLocalize.translate("login"), profileTxt:myLocalize.translate("profile"),
 					uploadSuccessTxt:myLocalize.translate("file_upload_success"),benchTxt:myLocalize.translate("benchmarks"),submissionTxt:myLocalize.translate("submission_date"),
 					descTxt:myLocalize.translate("description"),typesTxt:myLocalize.translate("valid_types"),filepasswordTxt:myLocalize.translate("submission_password"),
+					tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max"),
 					submitTxt:myLocalize.translate("submit"),password:password,benchTypeTxt:myLocalize.translate("benchmark_type")});
 					return;
 				}
