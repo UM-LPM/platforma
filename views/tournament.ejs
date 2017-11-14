@@ -20,7 +20,7 @@
             data: {
                 datasets: [
 				<% for(i=0; i<results.length; i++) { 					
-				results_table += '<td>'+results[i].playerId.substring(0,20)+'</td><td><%= results[i].rating.toFixed(2) %></td><td><%= results[i].rating.toFixed(2) %></td><td><%= results[i].ratingIntervalRight.toFixed(2) %></td>';
+				results_table += '<td><%=results[i].playerId.substring(0,20)%></td><td><%= results[i].rating.toFixed(2) %></td><td><%= results[i].rating.toFixed(2) %></td><td><%= results[i].ratingIntervalRight.toFixed(2) %></td>';
 				var randomColor='#'+(Math.random()*0xFFFFFF<<0).toString(16); %>
 				{
                     label: "<%= results[i].playerId.substring(0,20) %> (<%= results[i].rating.toFixed(2) %>)",
