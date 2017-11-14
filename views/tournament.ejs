@@ -12,16 +12,12 @@
 	
 	<% if(typeof results!=="undefined" && results!=null && results.length>0) { %>
 	 <script type="text/javascript">
-	 var results_table = '<table class="table">';
-	 results_table += '<thead><tr><th>Algoritem</th><th>Rating</th><th>Min</th><th>Max</th></tr></thead><tbody>';
-	 
         var config = {
             type: 'line',
             data: {
                 datasets: [
-				<% for(i=0; i<results.length; i++) { 					
-				results_table += '<td><%=results[i].playerId.substring(0,20)%></td><td><%= results[i].rating.toFixed(2) %></td><td><%= results[i].rating.toFixed(2) %></td><td><%= results[i].ratingIntervalRight.toFixed(2) %></td>';
-				var randomColor='#'+(Math.random()*0xFFFFFF<<0).toString(16); %>
+				<% 
+				for(i=0; i<results.length; i++) { 	var randomColor='#'+(Math.random()*0xFFFFFF<<0).toString(16); %>
 				{
                     label: "<%= results[i].playerId.substring(0,20) %> (<%= results[i].rating.toFixed(2) %>)",
                     backgroundColor: "<%= randomColor %>",
@@ -29,8 +25,7 @@
                     data: [{x: <%= results[i].ratingIntervalLeft.toFixed(2) %>, y: <%= i+1 %>},{x: <%= results[i].rating.toFixed(2) %>,y: <%= i+1 %>},{x: <%= results[i].ratingIntervalRight.toFixed(2) %>,y: <%= i+1 %>}],
                     fill: false,
                 }
-				<% if(i<results.length-1) { %>,<% } %>
-				<% } $("#resultsTableContainer").html(results_table); %>
+				<% if(i<results.length-1) { %>,<% } } %> 
 				]
             },
             options: {
@@ -178,7 +173,7 @@
 	<% });  } %>
 
 	
-	<form id="submissionForm" disabled style="display:none;clear:both;float:left;margin-top:20px;" action="/fileSubmission" method="post" enctype="multipart/form-data">
+	<form id="submissionForm" style="display:none;clear:both;float:left;margin-top:20px;" action="/fileSubmission" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="id" value="<%=data.id%>" />
 	<input type="file" name="submissionFile" id="submissionFile" class="form-control" accept=".java,.zip" />
 	<p><%= typesTxt %></p>
@@ -195,7 +190,16 @@
 			<canvas id="canvas"></canvas>
 		</div>
 		
-		<div id="resultsTableContainer" style="width:75%;float:left;margin-top:50px;"></div>
+		<div id="resultsTableContainer" style="width:75%;float:left;margin-top:50px;min-height:200px;">
+		<table class="table">
+		<thead><tr><th>Algoritem</th><th>Rating</th><th>Min</th><th>Max</th></tr></thead>
+		<tbody>
+		<% for(i=0; i<results.length; i++) { %>
+			<td><%=results[i].playerId.substring(0,20)%></td><td><%=results[i].rating.toFixed(2)%></td><td><%= results[i].ratingIntervalLeft.toFixed(2) %></td><td><%= results[i].ratingIntervalRight.toFixed(2) %></td>
+		<% } %>
+		</tbody>
+		</table>
+		</div>
 	<% } %>
 </div>
 </body>
