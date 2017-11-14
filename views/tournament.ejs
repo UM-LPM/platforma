@@ -194,7 +194,7 @@
 		<table class="table">
 		<thead><tr><th>Algoritem</th><th>Rating</th><th>Min</th><th>Max</th></tr></thead>
 		<tbody>
-		<% for(i=0; i<results.length; i++) { %>
+		<% for(i=results.length-1; i>=0; i--) { %>
 			<tr><td><%=results[i].playerId.substring(0,20)%></td><td><%=results[i].rating.toFixed(2)%></td><td><%= results[i].ratingIntervalLeft.toFixed(2) %></td><td><%= results[i].ratingIntervalRight.toFixed(2) %></td></tr>
 		<% } %>
 		</tbody>
