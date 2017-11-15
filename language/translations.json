@@ -353,12 +353,12 @@
 		"eng":"Rating"
 	 },
 	  "rating_table_min":{
-		"si":"Min",
-		"eng":"Min"
+		"si":"-2xRD",
+		"eng":"-2xRD"
 	 },
 	  "rating_table_max":{
-		"si":"Max",
-		"eng":"Max"
+		"si":"+2xRD",
+		"eng":"+2xRD"
 	 },
 	 "run_ears_override":{
 		"si":"Override",
