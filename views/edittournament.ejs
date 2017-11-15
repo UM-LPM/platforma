@@ -67,7 +67,45 @@
 		document.getElementById("end").setAttribute("min", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
 		document.getElementById("end").setAttribute("value", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
 		<% } %>
+		
 	});
+	
+	function validateForm()
+	{
+
+		if($("input[name=name]").val() == "")
+		{
+			$("input[name=name]").css("border","1px solid red");
+			return false;
+		}
+		else
+			$("input[name=name]").css("border","1px solid #ccc");
+						
+		
+		if($("input[name=path]").val() == "")
+		{
+			$("input[name=path]").css("border","1px solid red");
+			return false;
+		}
+		else
+			$("input[name=path]").css("border","1px solid #ccc");
+		
+		if($("textarea[name=description]").val() == "")
+		{
+			$("textarea[name=description]").css("border","1px solid red");
+			return false;
+		}
+		else
+			$("textarea[name=description]").css("border","1px solid #ccc");
+			
+		if($('input[type=file][name=passwordfile]').val().length>0 && $('input[type=file][name=passwordfile]').val().split('\\').pop()!="passwords.csv")
+		{
+			$('input[type=file][name=passwordfile]').val("");
+			alert("<%=invalidPasswordsFilename%>");
+			return false;
+		}
+		return true;
+	}
 	
 	function parseTimestamp(timestamp,targetId)
 	{
@@ -122,7 +160,15 @@
   $( function() {
     $( "#accordion" ).accordion();
   } );
- 
+	
+	<% if(typeof passwordfile!=="undefined" && passwordfile!=null && passwordfile.length>0) { %>
+	function confirmDeletePasswordFile()
+	{
+		var r = confirm("<%= deletePasswordFileConfirmation %>");
+		if(r==true)
+			window.location.href = '/deleteTournamentPasswordFile?tournamentId=<%= data.id %>';
+	}
+	<% } %>
 	</script>
 </head>
 <body>
@@ -140,7 +186,7 @@
 <div class="col-sm-6">
 
 	<h1><span class="fa fa-sign-in"></span><% if(typeof data!=="undefined" && data!=null) { %> <%= edittournamentTxt %> <%=data.name %> <% } else { %> <%= newtournamentTxt %><% } %></h1>
-	<form <% if(typeof data!=="undefined" && data!=null) { %> action="/editTournament/<%=data.id %>" <% } else { %> action="/newTournament" <% } %> method="post" enctype="multipart/form-data">
+	<form <% if(typeof data!=="undefined" && data!=null) { %> action="/editTournament/<%=data.id %>" <% } else { %> action="/newTournament" <% } %> method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
 	<% if(typeof data!=="undefined" && data!=null) { %>
 		<input type="hidden" name="id" value="<%=data.id %>" />
 	<% } %>	
@@ -157,7 +203,7 @@
       <select id="bnch" name="benchmarks"class="form-control">
 	  <% if(typeof benchmarks!=="undefined" && benchmarks!=null && benchmarks.length>0) {
 		benchmarks.forEach(function(entry) { %>
-	  <option <% if(typeof data!=="undefined" && data!=null && data.benchmarks!=="undefined" && data.benchmarks!=null && data.benchmarks==entry.fileName) {%> selected <% } %> value="<%=entry.name%>" ><%= entry.name %>(<%=entry.type%>)</option>
+	  <option <% if(typeof data!=="undefined" && data!=null && data.benchmarks!=="undefined" && data.benchmarks!=null && data.benchmarks==entry.fileName) {%> selected <% } %> value="<%=entry.fileName%>" ><%= entry.name %>(<%=entry.type%>)</option>
 	  <% }); } %>
 	  </select>
     </div>
@@ -177,7 +223,7 @@
       <label for="pwdfile"><%= passwordfileDesc %></label>
 	  <input type="file" id="pwdfile" name="passwordfile" class="form-control" accept=".csv" />
 	  <% if(typeof passwordfile!=="undefined" && passwordfile!=null && passwordfile.length>0) { %>
-		<p><a href="<%=passwordfile %>"><%= oldpasswordDesc %></a></p>
+		<p><a href="<%=passwordfile %>"><%= oldpasswordDesc %></a><a style="margin-left:15px;" href="#/" onclick="confirmDeletePasswordFile();"><%= deleteDesc %></a></p>
 	  <% } %>
     </div>
 	<div class="form-group" <% if(typeof passwordfile!=="undefined" && passwordfile!=null && passwordfile.length>0) { %> style="display:none;" <% } %>>
