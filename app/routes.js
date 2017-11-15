@@ -27,6 +27,8 @@ module.exports = function(app, passport) {
 	var myLocalize = new Localize('./language/');
 	myLocalize.setLocale(setLanguage);
 	
+	var EARSrunning = false;
+	
 
 
 	function getOAuthClient () {
@@ -1604,17 +1606,23 @@ module.exports = function(app, passport) {
 	app.get('/runEars:tournamentId?:override?', isLoggedIn, function(req, res) 
 	{
 		try
-		{	
-			var override = false;
-			var tournamentId = "";
-			if(typeof req.query.override!=="undefined" && req.query.override!=null && req.query.override=="true")
-				override = true;
+		{
+			if(!EARSrunning)
+			{
+				var override = false;
+				var tournamentId = "";
+				if(typeof req.query.override!=="undefined" && req.query.override!=null && req.query.override=="true")
+					override = true;
 
-			if(typeof req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0)	
-				tournamentId = req.query.tournamentId;
-
-			var result = runEARS(earsPath,tournamentId,override);
-			res.json({"success": result.success, "message":result.message});
+				if(typeof req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0)	
+					tournamentId = req.query.tournamentId;
+				EARSrunning = true;
+				var result = runEARS(earsPath,tournamentId,override);
+				res.json({"success": result.success, "message":result.message});
+				EARSrunning = false;
+			}
+			else
+				res.json({"success": true, "message":myLocalize.translate("ears_already_running")});
 		}
 		catch(EarsError) { console.log(EarsError); res.json({"success": false});}
 	});

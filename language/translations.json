@@ -363,5 +363,9 @@
 	 "run_ears_override":{
 		"si":"Override",
 		"eng":"Override"
+	 },
+	 "ears_already_running":{
+		"si":"EARS je že zagnan!",
+		"eng":"EARS is already running!"
 	 }
 }
