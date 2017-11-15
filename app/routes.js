@@ -1833,7 +1833,7 @@ function runEARS(earsPath,tournamentId,override)
 		if(fs.existsSync(earsPath))
 		{
 			if(tournamentId.length>0 && override)
-				var result = require('child_process').execSync('java -jar '+earsPath+' '+tournamentId+' override').toString(); 
+				var result = require('child_process').execSync('java -jar '+earsPath+' override '+tournamentId).toString(); 
 			else if(tournamentId.length>0)
 				var result = require('child_process').execSync('java -jar '+earsPath+' '+tournamentId).toString();
 			else if(override)
