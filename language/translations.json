@@ -359,5 +359,9 @@
 	  "rating_table_max":{
 		"si":"Max",
 		"eng":"Max"
+	 },
+	 "run_ears_override":{
+		"si":"Override",
+		"eng":"Override"
 	 }
 }

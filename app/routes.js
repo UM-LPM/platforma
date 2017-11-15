@@ -180,6 +180,7 @@ module.exports = function(app, passport) {
 			runEarsConfirm:myLocalize.translate("run_ears_confirm"),
 			runEarsFailed:myLocalize.translate("run_ears_failed"),
 			runEarsSuccess:myLocalize.translate("run_ears_success"),
+			runEarsOverride:myLocalize.translate("run_ears_override"),
 			loggedIn:true
 		});
 	});
@@ -1600,13 +1601,19 @@ module.exports = function(app, passport) {
 			}
 	});
 	
-	app.get('/runEars', isLoggedIn, function(req, res) 
+	app.get('/runEars:tournamentId?:override?', isLoggedIn, function(req, res) 
 	{
 		try
-		{
-			var result = runEARS(earsPath);
-			//console.log("suc: "+result.success);
-			//console.log("mes: "+result.message);
+		{	
+			var override = false;
+			var tournamentId = "";
+			if(typeof req.query.override!=="undefined" && req.query.override!=null && req.query.override=="true")
+				override = true;
+
+			if(typeof req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0)	
+				tournamentId = req.query.tournamentId;
+
+			var result = runEARS(earsPath,tournamentId,override);
 			res.json({"success": result.success, "message":result.message});
 		}
 		catch(EarsError) { console.log(EarsError); res.json({"success": false});}
@@ -1810,14 +1817,21 @@ function loadBenchmarks(req,res,next)
 	}
 }
 
-function runEARS(earsPath)
+function runEARS(earsPath,tournamentId,override)
 {
 	if(typeof earsPath!=="undefined" && earsPath!=null && earsPath.length>0)
 	{
 		var fs = require('fs');
 		if(fs.existsSync(earsPath))
 		{
-			var result = require('child_process').execSync('java -jar '+earsPath).toString();
+			if(tournamentId.length>0 && override)
+				var result = require('child_process').execSync('java -jar '+earsPath+' '+tournamentId+' override').toString(); 
+			else if(tournamentId.length>0)
+				var result = require('child_process').execSync('java -jar '+earsPath+' '+tournamentId).toString();
+			else if(override)
+				var result = require('child_process').execSync('java -jar '+earsPath+' override').toString();
+			else
+				var result = require('child_process').execSync('java -jar '+earsPath).toString();
 			return  { "success":true, "message":result };
 		}
 		else

@@ -22,18 +22,26 @@
 		}
 	}
 	
-	function runEars(sender)
-	{
-		if(typeof sender!=="undefined" && sender!=null)
-		{
+	 $(document).ready(function() { 
+		$(".runEarsForm").submit(function(e){
+			e.preventDefault();
+			
 			var r = confirm("<%= runEarsConfirm %>");
 			if(r==true)
 			{
+				var submitUrl = $(this).attr("action");
+				
+				if($(this).find('input[type=checkbox][name=override]').is(":checked"))
+					submitUrl += "?override=true";
+			
+				$("button[type=submit]").prop('disabled', true);	
+				$("input[type=checkbox]").prop('disabled', true);	
+				
 				$("#loader").css("display","block");
 				$(this).prop('disabled', true);
 				$.ajax({
 				type: 'GET',
-				url: "/runEars",
+				url: submitUrl,
 				success: function(data)
 				{
 					try
@@ -48,15 +56,18 @@
 								$("#earsMessageContainer").css("display","block");
  							}
 						}
-						$(this).prop('disabled', false);	
+						
+						$("button[type=submit]").prop('disabled', false);	
+						$("input[type=checkbox]").prop('disabled', false);	
+						$("input[type=checkbox]").prop('checked', false);	
 					}
 					catch(JSONError) { console.log(JSONError); }
 					$("#loader").css("display","none");
 				}
 				}); 
 			}
-		}
-	}
+		});
+	 });
 	</script>
 </head>
 <body>
@@ -86,9 +97,14 @@
 	
 	<div class="row">
 		<div class="col-sm-6" style="margin-bottom:10px;">
-			 <button type="button" class="btn btn-default btn-sm" onclick="runEars(this);">
+			<form action="/runEars" class="runEarsForm" method="get" enctype="multipart/form-data">
+			 <button type="submit" class="btn btn-default btn-sm">
 			  <span class="fa fa-flash"></span> <%= runEars %> 
 			</button>
+			<div class="checkbox">
+				<label><input type="checkbox" name="override"><%= runEarsOverride %></label>
+			</div>
+			</form>
 		</div>	
 	</div>
 
@@ -106,10 +122,18 @@
 		<% if (typeof tournaments!=="undefined" && typeof tournaments!=="undefined" && tournaments!=null && tournaments.length > 0) { %>
 		<div class="col-sm-6">
 				<% tournaments.forEach(function(entry) { %>
+				<form action="/runEars?tournamentId=<%=entry.id%>" class="runEarsForm" method="get" enctype="multipart/form-data" style="float:right;padding:10px;">
+						<button type="submit" class="btn btn-default btn-sm">
+						  <span class="fa fa-flash"></span> <%= runEars %> 
+						</button>
+						<div class="checkbox">
+							<label><input type="checkbox" name="override"><%= runEarsOverride %></label>
+						</div>
+					</form>
 				<div class="well">
 					<h3><span class="fa fa-user"></span><a href="/tournament/<%= entry.path %>" target="_blank"> <%= entry.name %></a></h3>
-						<p><a href="/editTournament/<%=entry.id%>"> <%= editDesc %></a></p>
-						<p><a href="#/" onclick="deleteTournament('<%=entry.id%>');"> <%= deleteDesc %></a></p>
+					<p><a href="/editTournament/<%=entry.id%>"> <%= editDesc %></a></p>
+					<p><a href="#/" onclick="deleteTournament('<%=entry.id%>');"> <%= deleteDesc %></a></p>
 				</div>
 			<%	}); %>
 		</div>
