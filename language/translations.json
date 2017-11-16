@@ -367,5 +367,26 @@
 	 "ears_already_running":{
 		"si":"EARS je že zagnan!",
 		"eng":"EARS is already running!"
+	 },
+	 "stored_passwords":{
+		"si":"Gesla",
+		"eng":"Passwords"
+	 }
+	 ,
+	 "stored_passwords_author":{
+		"si":"Avtor",
+		"eng":"Author"
+	 },
+	 "stored_passwords_email":{
+		"si":"Email",
+		"eng":"Email"
+	 },
+	 "stored_passwords_password":{
+		"si":"Geslo",
+		"eng":"Password"
+	 },
+	  "stored_passwords_delete_confirmation":{
+		"si":"Odstranim geslo?",
+		"eng":"Are you sure you want to delete this password?"
 	 }
 }

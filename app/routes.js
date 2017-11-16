@@ -294,6 +294,9 @@ module.exports = function(app, passport) {
 		passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 		submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
 		deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),invalidPasswordsFilename:myLocalize.translate("invalid_passwords_filename"),
+		storedPasswords:myLocalize.translate("stored_passwords"),storedPasswordsAuthor:myLocalize.translate("stored_passwords_author"),
+		storedPasswordsEmail:myLocalize.translate("stored_passwords_email"),storedPasswordsPassword:myLocalize.translate("stored_passwords_password"),
+		storedPasswordsDeleteconfirmation:myLocalize.translate("stored_passwords_delete_confirmation"),
 		submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission")} );
 		return;
 	});
@@ -388,14 +391,19 @@ module.exports = function(app, passport) {
 									if(typeof csv!=="undefined" && csv!=null && csv.length>0)
 									{
 										var  valid = true;
-										csv.forEach(function(user)
-										{
-											if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
-												|| user.name==null ||user.email==null || user.password==null
-												|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
-													valid = false;
-										});	
 										
+										try
+										{
+											csv.forEach(function(user)
+											{
+												if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
+													|| user.name==null ||user.email==null || user.password==null
+													|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
+														valid = false;
+											});	
+										}								
+										catch(CSVException) { valid=false; }	
+																			
 										if(!valid) //invalid password file structure
 										{
 											fs.unlinkSync("tournaments/"+hash+"/passwords.csv");
@@ -570,8 +578,27 @@ module.exports = function(app, passport) {
 			}
 			
 			var passwordfile;
+			var passwords = [];
+			
 			if(fs.existsSync("tournaments/"+tournament.id+"/passwords.csv"))
+			{
 				passwordfile = defaultUrl+"editTournament/"+tournament.id+"/passwords.csv";
+				var loader = require('csv-load-sync');
+				var csv = loader("tournaments/"+tournament.id+"/passwords.csv"); //validate password file structure
+				try
+				{
+					csv.forEach(function(user)
+					{
+						if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
+							|| user.name==null ||user.email==null || user.password==null
+							|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
+								valid = false;
+						else
+							passwords.push({name:user.name,email:user.email,password:user.password});
+					});	
+				}								
+				catch(CSVException) { valid=false; }				
+			}
 			
 			if(fs.existsSync("tournaments/"+tournament.id+"/images"))
 			{
@@ -579,13 +606,14 @@ module.exports = function(app, passport) {
 				  images.push(file);
 				})
 			}
-
+			
 			res.render('edittournament.ejs',{
 						data:tournament,
 						loggedIn:true,
 						submissions:submissions,
 						benchmarks:res.benchmarks,
 						passwordfile:passwordfile,
+						passwords:passwords,
 						images:images,
 						newtournamentTxt:myLocalize.translate("new_tournament"),
 						edittournamentTxt:myLocalize.translate("edit_tournament"),deleteSubmissionConfirmation:myLocalize.translate("delete_submissions_confirmation"),
@@ -596,6 +624,9 @@ module.exports = function(app, passport) {
 						submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
 						submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
 						deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),invalidPasswordsFilename:myLocalize.translate("invalid_passwords_filename"),
+						storedPasswords:myLocalize.translate("stored_passwords"),storedPasswordsAuthor:myLocalize.translate("stored_passwords_author"),
+						storedPasswordsEmail:myLocalize.translate("stored_passwords_email"),storedPasswordsPassword:myLocalize.translate("stored_passwords_password"),
+						storedPasswordsDeleteconfirmation:myLocalize.translate("stored_passwords_delete_confirmation"),
 						hasErrors:myLocalize.translate("submission_has_errors")});
 						return;
 		}
@@ -757,13 +788,17 @@ module.exports = function(app, passport) {
 							if(typeof csv!=="undefined" && csv!=null && csv.length>0)
 							{
 								var  valid = true;
-								csv.forEach(function(user)
+								try
 								{
-									if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
-										|| user.name==null ||user.email==null || user.password==null
-										|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
-											valid = false;
-								});	
+									csv.forEach(function(user)
+									{
+										if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
+											|| user.name==null ||user.email==null || user.password==null
+											|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
+												valid = false;
+									});
+								}								
+								catch(CSVException) { valid = false; }
 								
 								if(!valid) //invalid password file structure
 								{
@@ -808,6 +843,34 @@ module.exports = function(app, passport) {
 						return;
 					}
 				}
+				
+				if(typeof req.body.passwordsAuthors !=="undefined" && req.body.passwordsAuthors!=null && req.body.passwordsAuthors.length>0
+					&& typeof req.body.passwordsEmails !=="undefined" && req.body.passwordsEmails!=null && req.body.passwordsEmails.length>0
+					&& typeof req.body.passwordsPasswords !=="undefined" && req.body.passwordsPasswords!=null && req.body.passwordsPasswords.length>0
+					&& typeof req.body.passwordsAuthors[0] !=="undefined" && req.body.passwordsAuthors[0]!=null && req.body.passwordsAuthors[0].length>0
+					&& typeof req.body.passwordsEmails[0] !=="undefined" && req.body.passwordsEmails[0]!=null && req.body.passwordsEmails[0].length>0
+					&& typeof req.body.passwordsPasswords[0] !=="undefined" && req.body.passwordsPasswords[0]!=null && req.body.passwordsPasswords[0].length>0
+					&& req.body.passwordsPasswords[0].length == req.body.passwordsAuthors[0].length && req.body.passwordsEmails[0].length == req.body.passwordsAuthors[0].length )
+				{
+					var newpasswordsfile = "";
+					for(var i=0;i<req.body.passwordsAuthors[0].length;i++)
+					{
+						if(req.body.passwordsAuthors[0][i].length>0 && req.body.passwordsEmails[0][i].length>0 && req.body.passwordsPasswords[0][i].length>0)
+							newpasswordsfile+=req.body.passwordsAuthors[0][i]+','+req.body.passwordsEmails[0][i]+','+req.body.passwordsPasswords[0][i]+'\r\n';
+					}
+					
+					if(newpasswordsfile.length>0)	
+					{
+						try
+						{
+							newpasswordsfile = "name,email,password \n" + newpasswordsfile;
+							fs.writeFileSync("tournaments/"+tournament.id+"/passwords.csv", newpasswordsfile);
+						}
+						catch(IOError) { console.log(IOError); }
+					}
+				}
+				
+				
 				
 				if(typeof req.files.tournamentimages!=="undefined" && req.files.tournamentimages!=null)
 				{
@@ -911,11 +974,16 @@ module.exports = function(app, passport) {
 					var csv = loader("tournaments/"+tournament.id+"/passwords.csv");
 					if(typeof csv!=="undefined" && csv!=null && csv.length>0)
 					{
-						csv.forEach(function(user)
+					
+						try
 						{
-							if(user.password == req.body.password)
-								req.authordata = { "success":true, "author":cleanUpAuthorName(user.name), "email":user.email };
-						});	
+							csv.forEach(function(user)
+							{
+								if(user.password == req.body.password)
+									req.authordata = { "success":true, "author":cleanUpAuthorName(user.name), "email":user.email };
+							});	
+						}								
+						catch(CSVException) { }						
 						
 						if(typeof req.authordata=="undefined" || req.authordata==null)
 						{
