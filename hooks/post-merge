@@ -2,3 +2,10 @@
 #make sure it has executable rights(chmod +x post-merge) !
 #!/bin/sh
 pm2 restart server
+echo "generating new benchmarks"
+pwd
+java -cp EARS/ears.jar org.um.feri.ears.engine.GenerateBenchmarksFile
+echo "generated new benchmarks"
+echo "backuping tournaments"
+backup_folder="backups/"`date +%Y%m%d-tournaments.gz`
+cp -R tournaments ../$backup_folder
