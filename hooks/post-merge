@@ -8,3 +8,4 @@ echo "generated new benchmarks"
 echo "backuping tournaments"
 backup_folder="backups/"`date +%Y%m%d-tournaments.gz`
 cp -R tournaments ../$backup_folder
+echo "tournaments backup complete"
