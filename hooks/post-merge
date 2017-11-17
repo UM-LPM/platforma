@@ -3,7 +3,6 @@
 #!/bin/sh
 pm2 restart server
 echo "generating new benchmarks"
-pwd
 java -cp EARS/ears.jar org.um.feri.ears.engine.GenerateBenchmarksFile
 echo "generated new benchmarks"
 echo "backuping tournaments"
