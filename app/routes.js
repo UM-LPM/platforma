@@ -1775,13 +1775,11 @@ module.exports = function(app, passport) {
 					execCommand += " "+tournamentId;
 				else if(override)
 					execCommand += " override";
-
-				var exec = require('child_process').exec;
-				EARSmessages = [];
-				EARSerrors = [];
+					
+				require('child_process').exec(execCommand, function(error, stdout, stderr) {
+					EARSmessages = [];
+					EARSerrors = [];
 				
-				exec(execCommand, function(error, stdout, stderr) {
-					updateEarsProcessList();
 					if(typeof stdout!=="undefined" && stdout!=null && stdout.length>0)
 						EARSmessages.push(stdout);
 					
@@ -1791,8 +1789,9 @@ module.exports = function(app, passport) {
 					if (error !== null) {
 						console.log('exec error: ' + error);
 					}
-				});	
-					
+				});
+				
+				updateEarsProcessList();
 				return  { "success":true };
 			}
 			else
@@ -1807,13 +1806,13 @@ module.exports = function(app, passport) {
 		var ps = require('ps-node');
 		ps.lookup({
 			command: 'java',
-			arguments: 'ears',
+			arguments: ''
 			}, function(err, resultList ) {
 			if (err) {
 				throw new Error( err );
 			}
 			
-			//EARSinstances = []; //clear process list and rebuild it
+			EARSinstances = []; //clear process list and rebuild it
 			resultList.forEach(function( process ){
 				if(process){
 					if(!kill)

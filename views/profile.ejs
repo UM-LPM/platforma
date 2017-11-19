@@ -36,11 +36,14 @@
 					{
 						try
 						{
-							data = JSON.parse(data);
 							if(data.success)
-								location.reload();
+							{
+								setTimeout(function(){
+									location.reload();
+								},1000);
+							}
 						}
-						catch(JSONError) {}
+						catch(JSONError) { console.log(JSONError); }
 					}
 					});
 				}
@@ -90,17 +93,9 @@
 								alert("<%= runEarsFailed %>");
 						}
 						else
-						{
-							if(typeof data.message!=="undefined" && data.message!=null && data.message.length>0)
-							{
-								$("#earsMessage").html(data.message);
-								$("#earsMessageContainer").css("display","block");
- 							}
-						}
-						
-						/*$("button[type=submit]").prop('disabled', false);	
-						$("input[type=checkbox]").prop('disabled', false);	
-						$("input[type=checkbox]").prop('checked', false);*/
+							setTimeout(function(){
+									location.reload();
+								},1000);
 					}
 					catch(JSONError) { console.log(JSONError); }
 					$("#loader").css("display","none");
@@ -144,14 +139,14 @@
 			 <button type="submit" class="btn btn-default btn-sm" style="float:left;">
 			  <span class="fa fa-flash"></span> <%= runEars %> 
 			</button>
-			<div class="checkbox" style="float:left;margin-left:10px;">
+			<div class="checkbox" style="float:left;margin-left:10px;clear:right;">
 				<label><input type="checkbox" name="override"><%= runEarsOverride %></label>
 			</div>
 			</form>
 			
 			<% if(EARSmessages.length>0 || EARSerrors.length>0)
 			{ %>
-				<button type="button" class="btn btn-default btn-sm" onclick="$('#earsMessageContainer').css('display','block');" style="float:left;clear:both;margin-right:10px;">
+				<button type="button" class="btn btn-default btn-sm" onclick="$('#earsMessageContainer').css('display','block');" style="float:left;clear:left;margin-right:10px;">
 				  <span class="fa fa-bell"></span>
 				</button>
 			<% } %>
