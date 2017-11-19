@@ -295,8 +295,6 @@
 			<%	}); %>
 </div>
 <% } %>
-</div>
-
 
 <h3><%=storedPasswords%> (<% if(typeof passwords!=="undefined" && passwords!=null && passwords.length>0){ %><%= passwords.length %><% } else { %>0<% } %>)</h3>
 <div style="max-height:700px;overflow-y:scroll;">
@@ -310,10 +308,11 @@
 </tbody>
 </table>
 <input class="btn btn-warning" type="button" onclick="addRow();" value="+" />
-</form>	
-		
+</form>		
 </div>
 
+
+</div>
 <% } %>
 </div>
 </body>
