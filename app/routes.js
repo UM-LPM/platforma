@@ -1182,12 +1182,9 @@ module.exports = function(app, passport) {
 														if(authordata["success"])
 														{
 															//everything looks ok, move to submission folder and run Validathor
-															if (!fs.existsSync("tournaments/"+tournament.id+"/submissions"))
-															fs.mkdir("tournaments/"+tournament.id+"/submissions");
-														
 															var submissionTimestamp = Math.floor(Date.now() / 1000);
 															var destFolder = "tournaments/"+tournament.id+"/submissions/"+authordata['author']+"_"+submissionTimestamp;
-															fs.mkdir(destFolder);
+															fs.mkdirSync(destFolder);
 															
 															var source = fs.createReadStream(req.files.submissionFile.path);
 															var dest = fs.createWriteStream(destFolder+'/'+req.files.submissionFile.name);
@@ -1371,12 +1368,9 @@ module.exports = function(app, passport) {
 									if(authordata["success"])
 									{
 										var fs = require('fs');
-										if (!fs.existsSync("tournaments/"+tournament.id+"/submissions"))
-											fs.mkdir("tournaments/"+tournament.id+"/submissions");
-										
 										var submissionTimestamp = Math.floor(Date.now() / 1000);
 										var destFolder = "tournaments/"+tournament.id+"/submissions/"+authordata['author']+"_"+submissionTimestamp;
-										fs.mkdir(destFolder);
+										fs.mkdirSync(destFolder);
 										var source = fs.createReadStream(req.files.submissionFile.path);
 										var dest = fs.createWriteStream(destFolder+'/'+req.files.submissionFile.name);
 										source.pipe(dest);
