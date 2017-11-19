@@ -238,7 +238,7 @@ module.exports = function(app, passport) {
 					  else 
 					  {
 						var password = false;
-						if((typeof entry.password!=="undefined" && entry.password!=null && entry.password!=null) || fs.existsSync("tournaments/"+entry.id+"/passwords.csv"))
+						if((typeof entry.password!=="undefined" && entry.password!=null && entry.password.length>0) || fs.existsSync("tournaments/"+entry.id+"/passwords.csv"))
 							password = true;
 							
 						var images = [];
@@ -588,9 +588,9 @@ module.exports = function(app, passport) {
 			{
 				passwordfile = defaultUrl+"editTournament/"+tournament.id+"/passwords.csv";
 				var loader = require('csv-load-sync');
-				var csv = loader("tournaments/"+tournament.id+"/passwords.csv"); //validate password file structure
 				try
 				{
+					var csv = loader("tournaments/"+tournament.id+"/passwords.csv"); //validate password file structure
 					csv.forEach(function(user)
 					{
 						if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
@@ -601,7 +601,9 @@ module.exports = function(app, passport) {
 							passwords.push({name:user.name,email:user.email,password:user.password});
 					});	
 				}								
-				catch(CSVException) { valid=false; }				
+				catch(CSVException) { valid=false; }	
+
+				
 			}
 			
 			if(fs.existsSync("tournaments/"+tournament.id+"/images"))
@@ -975,10 +977,16 @@ module.exports = function(app, passport) {
 				if(typeof req.body.password!=="undefined" && req.body.password!=null && req.body.password.length>0)
 				{
 					var loader = require('csv-load-sync');
-					var csv = loader("tournaments/"+tournament.id+"/passwords.csv");
+					var csv = null;
+					try
+					{
+						var csv = loader("tournaments/"+tournament.id+"/passwords.csv");
+					}
+					catch(CSVError) {}
+					
+					
 					if(typeof csv!=="undefined" && csv!=null && csv.length>0)
 					{
-					
 						try
 						{
 							csv.forEach(function(user)
