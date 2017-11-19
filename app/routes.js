@@ -299,6 +299,21 @@ module.exports = function(app, passport) {
 		return;
 	});
 	
+	app.get('/downloadTournamentReport/:id', function(req, res) {
+			if(typeof req.params.id!=="undefined" && req.params.id!=null && req.params.id.length>0)
+			{
+				var fs = require('fs'); 
+				if(fs.existsSync("tournaments/"+req.params.id+"/benchmark_result_files/Report.txt"))
+					res.download("tournaments/"+req.params.id+"/benchmark_result_files/Report.txt");
+			}
+	});
+	
+	app.post('/downloadTournamentReport/:id', function(req, res) {
+		res.redirect("/");
+	});
+	
+	
+	
 	app.post('/newTournament',  isLoggedIn, function(req, res) {
 		if(typeof req.body.name!=="undefined" && req.body.name.length>0 && typeof req.body.ends!=="undefined" && req.body.ends.length>0
 			&& req.body.benchmarks!=="undefined" && req.body.benchmarks.length>0 && typeof req.body.path!=="undefined" && req.body.path.length>0)
@@ -1927,6 +1942,11 @@ function loadConfigFile(req,res,next)
 								if(tournament.benchmarks==bench.fileName)
 									tournament.selectedBenchmark = bench;
 							});
+							
+							if(fs.existsSync("tournaments/"+tournament.id+"/benchmark_result_files/Report.txt"))								
+								tournament.downloadReport = true;
+							else
+								tournament.downloadReport = false;
 						});
 					}
 				}

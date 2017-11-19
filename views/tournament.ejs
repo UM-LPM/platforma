@@ -199,6 +199,11 @@
 		</div>
 		
 		<div id="resultsTableContainer" style="width:75%;float:left;margin-top:50px;min-height:200px;">
+		<% if(data.downloadReport!=="undefined" && data.downloadReport!=null && data.downloadReport) { %>
+		<button type="button" class="btn btn-default btn-sm" onclick="window.location='/downloadTournamentReport/<%=data.id%>'" style="float:left;margin-right:10px;">
+		  <span class="fa fa-download"></span>
+		</button>
+		<% } %>
 		<table class="table">
 		<thead><tr><th><%=tableAlgorithm%></th><th><%=tableRating%></th><th><%=tableMin%></th><th><%=tableMax%></th></tr></thead>
 		<tbody>
