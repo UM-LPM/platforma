@@ -84,17 +84,11 @@ module.exports = function(app, passport) {
 								{
 									found = true;
 									req.session.email = email.value;
+									req.session.role = "admin";
 									res.redirect('/profile');
 								}
 							});
-							if(master.username==email.value)
-							{
-								found = true;
-								req.session.email = email.value;
-								res.redirect('/profile');
-							}
 						});
-						
 						
 						if(!found)
 						{
