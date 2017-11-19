@@ -388,5 +388,9 @@
 	  "stored_passwords_delete_confirmation":{
 		"si":"Odstranim geslo?",
 		"eng":"Are you sure you want to delete this password?"
+	 },
+	  "kill_ears_confirm":{
+		"si":"Ustavim vse trenutno zagnane verzije EARSA?",
+		"eng":"Are you sure you want to terminate all running EARS instances?"
 	 }
 }

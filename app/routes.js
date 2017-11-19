@@ -27,7 +27,9 @@ module.exports = function(app, passport) {
 	var myLocalize = new Localize('./language/');
 	myLocalize.setLocale(setLanguage);
 	
-	var EARSrunning = false;
+	var EARSinstances = [];
+	var EARSmessages = [];
+	var EARSerrors = [];
 	
 
 
@@ -177,12 +179,14 @@ module.exports = function(app, passport) {
 			loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),
 			logoutTxt:myLocalize.translate("logout"),newTournamentDesc:myLocalize.translate("new_tournament"),
 			createnewTournametDesc:myLocalize.translate("create_new_tournament"),deleteDesc:myLocalize.translate("delete_desc"),
+			EARSinstances:EARSinstances,EARSmessages:EARSmessages,EARSerrors:EARSerrors,
 			editDesc:myLocalize.translate("edit_tournament"),
 			runEars:myLocalize.translate("run_ears"),
 			runEarsConfirm:myLocalize.translate("run_ears_confirm"),
 			runEarsFailed:myLocalize.translate("run_ears_failed"),
 			runEarsSuccess:myLocalize.translate("run_ears_success"),
 			runEarsOverride:myLocalize.translate("run_ears_override"),
+			killEars:myLocalize.translate("kill_ears_confirm"),
 			loggedIn:true
 		});
 	});
@@ -1675,7 +1679,7 @@ module.exports = function(app, passport) {
 	{
 		try
 		{
-			if(!EARSrunning)
+			if(EARSinstances.length==0)
 			{
 				var override = false;
 				var tournamentId = "";
@@ -1684,15 +1688,26 @@ module.exports = function(app, passport) {
 
 				if(typeof req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0)	
 					tournamentId = req.query.tournamentId;
-				EARSrunning = true;
-				var result = runEARS(earsPath,tournamentId,override);
-				res.json({"success": result.success, "message":result.message});
-				EARSrunning = false;
+			
+				var result = runEARS(tournamentId,override);
+				res.json({"success": result.success});
 			}
 			else
-				res.json({"success": true, "message":myLocalize.translate("ears_already_running")});
+				res.json({"success": false, "message":myLocalize.translate("ears_already_running")});
 		}
 		catch(EarsError) { console.log(EarsError); res.json({"success": false});}
+	});
+	
+	
+	app.get('/killEARS', isLoggedIn, function(req,res)
+	{
+		updateEarsProcessList(true);
+		res.json({"success": true });
+	});
+	
+	app.post('/killEARS', isLoggedIn, function(req,res)
+	{
+		res.redirect('/');
 	});
 	
 	app.post('/deleteTournamentImage', function(req,res)
@@ -1732,6 +1747,80 @@ module.exports = function(app, passport) {
 			  }
 			});
 		}	
+	}
+
+	
+	function runEARS(tournamentId,override)
+	{
+		if(typeof earsPath!=="undefined" && earsPath!=null && earsPath.length>0)
+		{
+			var fs = require('fs');
+			if(fs.existsSync(earsPath))
+			{
+				var execCommand = "java -jar "+earsPath;
+				if(tournamentId.length>0 && override)
+					execCommand += " override "+tournamentId; 
+				else if(tournamentId.length>0)
+					execCommand += " "+tournamentId;
+				else if(override)
+					execCommand += " override";
+
+				var exec = require('child_process').exec;
+				EARSmessages = [];
+				EARSerrors = [];
+				
+				exec(execCommand, function(error, stdout, stderr) {
+					updateEarsProcessList();
+					if(typeof stdout!=="undefined" && stdout!=null && stdout.length>0)
+						EARSmessages.push(stdout);
+					
+					if(typeof stderr!=="undefined" && stderr!=null && stderr.length>0)	
+						EARSerrors.push(stderr);
+
+					if (error !== null) {
+						console.log('exec error: ' + error);
+					}
+				});	
+					
+				return  { "success":true };
+			}
+			else
+				return  { "success":false };
+		}
+		else
+			return  { "success":false };
+	}
+	
+	function updateEarsProcessList(kill = false)
+	{
+		var ps = require('ps-node');
+		ps.lookup({
+			command: 'java',
+			arguments: 'ears',
+			}, function(err, resultList ) {
+			if (err) {
+				throw new Error( err );
+			}
+			
+			//EARSinstances = []; //clear process list and rebuild it
+			resultList.forEach(function( process ){
+				if(process){
+					if(!kill)
+						EARSinstances.push(process.pid);
+					else
+					{
+						ps.kill(process.pid, 'SIGKILL', function( err ) {
+						if (err) {
+							throw new Error( err );
+						}
+						else {
+							
+						}
+						});
+					}
+				}
+			});
+		});	
 	}
 };
 
@@ -1891,30 +1980,6 @@ function loadBenchmarks(req,res,next)
 		return next();	
 		});
 	}
-}
-
-function runEARS(earsPath,tournamentId,override)
-{
-	if(typeof earsPath!=="undefined" && earsPath!=null && earsPath.length>0)
-	{
-		var fs = require('fs');
-		if(fs.existsSync(earsPath))
-		{
-			if(tournamentId.length>0 && override)
-				var result = require('child_process').execSync('java -jar '+earsPath+' override '+tournamentId).toString(); 
-			else if(tournamentId.length>0)
-				var result = require('child_process').execSync('java -jar '+earsPath+' '+tournamentId).toString();
-			else if(override)
-				var result = require('child_process').execSync('java -jar '+earsPath+' override').toString();
-			else
-				var result = require('child_process').execSync('java -jar '+earsPath).toString();
-			return  { "success":true, "message":result };
-		}
-		else
-			return  { "success":false };
-	}
-	else
-		return  { "success":false };
 }
 
 function compileSource(filePath)

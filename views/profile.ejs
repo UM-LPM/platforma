@@ -22,7 +22,42 @@
 		}
 	}
 	
+		<% if(EARSinstances.length>0)
+		{ %>			
+			function killEARS()
+			{
+				var r = confirm("<%= killEars %>");
+				if(r==true)
+				{
+					$.ajax({
+					type: 'GET',
+					url: "/killEARS",
+					success: function(data)
+					{
+						try
+						{
+							data = JSON.parse(data);
+							if(data.success)
+								location.reload();
+						}
+						catch(JSONError) {}
+					}
+					});
+				}
+			}
+		<% } %>
+	
+	
+	
 	 $(document).ready(function() { 
+		<% if(EARSinstances.length>0)
+		{ %>
+			$("button[type=submit]").prop('disabled', true);	
+			$("button[type=button]").prop('disabled', true);	
+			$("input[type=checkbox]").prop('disabled', true);
+			$("#killEARS").prop('disabled',false);
+		<% } %>
+	 
 		$(".runEarsForm").submit(function(e){
 			e.preventDefault();
 			
@@ -35,6 +70,7 @@
 					submitUrl += "?override=true";
 			
 				$("button[type=submit]").prop('disabled', true);	
+				$("button[type=button]").prop('disabled', true);	
 				$("input[type=checkbox]").prop('disabled', true);	
 				
 				$("#loader").css("display","block");
@@ -47,7 +83,12 @@
 					try
 					{
 						if(!data.success)
-							alert("<%= runEarsFailed %>");
+						{
+							if(typeof data.message!=="undefined" && data.message!=null && data.message.length>0)
+								alert(data.message);
+							else
+								alert("<%= runEarsFailed %>");
+						}
 						else
 						{
 							if(typeof data.message!=="undefined" && data.message!=null && data.message.length>0)
@@ -57,9 +98,9 @@
  							}
 						}
 						
-						$("button[type=submit]").prop('disabled', false);	
+						/*$("button[type=submit]").prop('disabled', false);	
 						$("input[type=checkbox]").prop('disabled', false);	
-						$("input[type=checkbox]").prop('checked', false);	
+						$("input[type=checkbox]").prop('checked', false);*/
 					}
 					catch(JSONError) { console.log(JSONError); }
 					$("#loader").css("display","none");
@@ -87,7 +128,8 @@
 	
 	<div id="earsMessageContainer" class="well" style="overflow-x:hidden;display:none;width:400px;position:fixed;top:20%;left:50%;margin-left:-200px;z-index:12;overflow-y:scroll;height:300px;">
 	<a href="#/" onclick="$('#earsMessageContainer').css('display','none');$('#earsMessage').html();" style="position:absolute;top:2px;right:2px;">X</a>
-	<p id="earsMessage"></p>
+	<p id="earsMessage" class="alert alert-success" style="overflow:hidden; word-wrap: break-word;"><% if(EARSmessages.length>0) { %><%=EARSmessages%><% } %></p>
+	<p id="earsError" class="alert alert-danger" style="overflow:hidden; word-wrap: break-word;"><% if(EARSerrors.length>0) { %><%=EARSerrors%><% } %></p>
 	</div>
 
 	<div class="page-header text-center">
@@ -98,13 +140,27 @@
 	<div class="row">
 		<div class="col-sm-6" style="margin-bottom:10px;">
 			<form action="/runEars" class="runEarsForm" method="get" enctype="multipart/form-data">
-			 <button type="submit" class="btn btn-default btn-sm">
+			 <button type="submit" class="btn btn-default btn-sm" style="float:left;">
 			  <span class="fa fa-flash"></span> <%= runEars %> 
 			</button>
-			<div class="checkbox">
+			<div class="checkbox" style="float:left;margin-left:10px;">
 				<label><input type="checkbox" name="override"><%= runEarsOverride %></label>
 			</div>
 			</form>
+			
+			<% if(EARSmessages.length>0 || EARSerrors.length>0)
+			{ %>
+				<button type="button" class="btn btn-default btn-sm" onclick="$('#earsMessageContainer').css('display','block');" style="float:left;clear:both;margin-right:10px;">
+				  <span class="fa fa-bell"></span>
+				</button>
+			<% } %>
+			
+			<% if(EARSinstances.length>0) { %>
+				<button id="killEARS" type="button" class="btn btn-default btn-sm" onclick="killEARS();" style="float:left;margin-right:10px;">
+				  <span class="fa fa-times-circle"></span>
+				</button>
+			<% } %>
+			
 		</div>	
 	</div>
 
