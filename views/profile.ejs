@@ -144,9 +144,10 @@
 			</div>
 			</form>
 			
+			<div style="float:left;clear:both">
 			<% if(EARSmessages.length>0 || EARSerrors.length>0)
 			{ %>
-				<button type="button" class="btn btn-default btn-sm" onclick="$('#earsMessageContainer').css('display','block');" style="float:left;clear:left;margin-right:10px;">
+				<button type="button" class="btn btn-default btn-sm" onclick="$('#earsMessageContainer').css('display','block');" style="float:left;margin-right:10px;">
 				  <span class="fa fa-bell"></span>
 				</button>
 			<% } %>
@@ -156,7 +157,7 @@
 				  <span class="fa fa-times-circle"></span>
 				</button>
 			<% } %>
-			
+			</div>
 		</div>	
 	</div>
 

@@ -1806,7 +1806,7 @@ module.exports = function(app, passport) {
 		var ps = require('ps-node');
 		ps.lookup({
 			command: 'java',
-			arguments: ''
+			arguments: 'ears.jar'
 			}, function(err, resultList ) {
 			if (err) {
 				throw new Error( err );
