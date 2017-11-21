@@ -68,6 +68,11 @@
 		document.getElementById("end").setAttribute("value", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
 		<% } %>
 		
+		 $(".passwordsForm").submit(function(e){		 
+			e.preventDefault();
+			$("#tournamentForm").submit();
+		});
+		
 	});
 	
 	function validateForm()
@@ -104,6 +109,12 @@
 			alert("<%=invalidPasswordsFilename%>");
 			return false;
 		}
+		
+	
+		$('.passwordsForm').find(':input[type=text]').each(function(){
+			$(this).clone().appendTo("#extracontent");
+		});
+
 		return true;
 	}
 	
@@ -169,11 +180,37 @@
 			window.location.href = '/deleteTournamentPasswordFile?tournamentId=<%= data.id %>';
 	}
 	<% } %>
+	
+	function removeRow(sender)
+	{
+		if(typeof sender!=="undefined" && sender!=null)
+		{
+			var r = confirm("<%= storedPasswordsDeleteconfirmation %>");
+			if(r==true)
+				$(sender).closest("tr").remove();
+		}
+	}
+	
+	function clearRow(sender)
+	{
+		if(typeof sender!=="undefined" && sender!=null && sender.id=="newPass")
+			$(sender).closest("tr").find("input").val("");
+	}
+
+	function addRow()
+	{
+		var newrow='<tr><td><input style="border:none;" type="text" name="passwordsAuthors[]" value="" placeholder="<%=storedPasswordsAuthor%>" />';
+		newrow+='<td><input style="border:none;" type="text" name="passwordsEmails[]" value="" placeholder="<%=storedPasswordsEmail%>" /></td><td>';
+		newrow+='<input type="text" style="border:none;" name="passwordsPasswords[]" value="" placeholder="<%=storedPasswordsPassword%>" /></td><td>';
+		newrow+='<a href="#/" id="newPass" onclick="removeRow(this);">X</a></td></tr>';					
+		$('.passwordsForm').find('tbody').append(newrow);
+	}
 	</script>
 </head>
 <body>
 
 <div class="menu">
+<a style="float:left;height:30px;"href="/" class="btn btn-default"><span class="fa fa-home"></span></a>
 <%  if(!loggedIn) { %>
 <a style="float:right;height:30px;"href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= loginTxt %></a>
 <% } else { %>
@@ -183,13 +220,14 @@
 
 <div class="container">
 
-<div class="col-sm-6">
+<div class="col-sm-5">
 
 	<h1><span class="fa fa-sign-in"></span><% if(typeof data!=="undefined" && data!=null) { %> <%= edittournamentTxt %> <%=data.name %> <% } else { %> <%= newtournamentTxt %><% } %></h1>
-	<form <% if(typeof data!=="undefined" && data!=null) { %> action="/editTournament/<%=data.id %>" <% } else { %> action="/newTournament" <% } %> method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+	<form id="tournamentForm" <% if(typeof data!=="undefined" && data!=null) { %> action="/editTournament/<%=data.id %>" <% } else { %> action="/newTournament" <% } %> method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
 	<% if(typeof data!=="undefined" && data!=null) { %>
 		<input type="hidden" name="id" value="<%=data.id %>" />
 	<% } %>	
+	<div style="display:none" id="extracontent"></div>
     <div class="form-group">
       <label for="name"><%= tournamentnameTxt %></label>
       <input type="text" id="name" name="name" <% if(typeof data!=="undefined" && data!=null) { %> value="<%=data.name %>" <% } %> class="form-control" />
@@ -235,7 +273,7 @@
 </div>
 
 <% if(typeof data!=="undefined" && data!=null) { %>
-<div class="col-sm-6" id="accordion" style="margin-top:90px;">
+<div class="col-sm-7" id="accordion" style="margin-top:90px;">
 <h3><%= imgdescTxt %> (<% if(typeof images!=="undefined" && images!=null && images.length>0) { %><%=images.length%><%} else {%>0<%}%>)</h3>
 <div style="max-height:300px;overflow-y:scroll;">
 <ul>
@@ -257,6 +295,23 @@
 			<%	}); %>
 </div>
 <% } %>
+
+<h3><%=storedPasswords%> (<% if(typeof passwords!=="undefined" && passwords!=null && passwords.length>0){ %><%= passwords.length %><% } else { %>0<% } %>)</h3>
+<div style="max-height:700px;overflow-y:scroll;">
+<form class="passwordsForm" action="/editPasswordFile" method="post" enctype="multipart/form-data">
+<table class="table">
+<thead><tr><th><%=storedPasswordsAuthor%></th><th><%=storedPasswordsEmail%></th><th><%=storedPasswordsPassword%></th><td></td></tr></thead>
+<tbody>
+	<%passwords.forEach(function(entry) { %>
+				<tr><td><input style="border:none;" type="text" name="passwordsAuthors[]" value="<%=entry.name%>" /><td><input style="border:none;" type="text" name="passwordsEmails[]" value="<%=entry.email%>" /></td><td><input type="text" style="border:none;" name="passwordsPasswords[]" value="<%=entry.password%>" /></td><td><a href="#/" onclick="removeRow(this);">X</a></td></tr>
+			<%	}); %>
+</tbody>
+</table>
+<input class="btn btn-warning" type="button" onclick="addRow();" value="+" />
+</form>		
+</div>
+
+
 </div>
 <% } %>
 </div>

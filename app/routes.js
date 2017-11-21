@@ -27,7 +27,9 @@ module.exports = function(app, passport) {
 	var myLocalize = new Localize('./language/');
 	myLocalize.setLocale(setLanguage);
 	
-	var EARSrunning = false;
+	var EARSinstances = [];
+	var EARSmessages = [];
+	var EARSerrors = [];
 	
 
 
@@ -82,17 +84,11 @@ module.exports = function(app, passport) {
 								{
 									found = true;
 									req.session.email = email.value;
+									req.session.role = "admin";
 									res.redirect('/profile');
 								}
 							});
-							if(master.username==email.value)
-							{
-								found = true;
-								req.session.email = email.value;
-								res.redirect('/profile');
-							}
 						});
-						
 						
 						if(!found)
 						{
@@ -177,12 +173,14 @@ module.exports = function(app, passport) {
 			loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),
 			logoutTxt:myLocalize.translate("logout"),newTournamentDesc:myLocalize.translate("new_tournament"),
 			createnewTournametDesc:myLocalize.translate("create_new_tournament"),deleteDesc:myLocalize.translate("delete_desc"),
+			EARSinstances:EARSinstances,EARSmessages:EARSmessages,EARSerrors:EARSerrors,
 			editDesc:myLocalize.translate("edit_tournament"),
 			runEars:myLocalize.translate("run_ears"),
 			runEarsConfirm:myLocalize.translate("run_ears_confirm"),
 			runEarsFailed:myLocalize.translate("run_ears_failed"),
 			runEarsSuccess:myLocalize.translate("run_ears_success"),
 			runEarsOverride:myLocalize.translate("run_ears_override"),
+			killEars:myLocalize.translate("kill_ears_confirm"),
 			loggedIn:true
 		});
 	});
@@ -234,7 +232,7 @@ module.exports = function(app, passport) {
 					  else 
 					  {
 						var password = false;
-						if((typeof entry.password!=="undefined" && entry.password!=null && entry.password!=null) || fs.existsSync("tournaments/"+entry.id+"/passwords.csv"))
+						if((typeof entry.password!=="undefined" && entry.password!=null && entry.password.length>0) || fs.existsSync("tournaments/"+entry.id+"/passwords.csv"))
 							password = true;
 							
 						var images = [];
@@ -294,9 +292,27 @@ module.exports = function(app, passport) {
 		passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 		submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
 		deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),invalidPasswordsFilename:myLocalize.translate("invalid_passwords_filename"),
+		storedPasswords:myLocalize.translate("stored_passwords"),storedPasswordsAuthor:myLocalize.translate("stored_passwords_author"),
+		storedPasswordsEmail:myLocalize.translate("stored_passwords_email"),storedPasswordsPassword:myLocalize.translate("stored_passwords_password"),
+		storedPasswordsDeleteconfirmation:myLocalize.translate("stored_passwords_delete_confirmation"),
 		submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission")} );
 		return;
 	});
+	
+	app.get('/downloadTournamentReport/:id', function(req, res) {
+			if(typeof req.params.id!=="undefined" && req.params.id!=null && req.params.id.length>0)
+			{
+				var fs = require('fs'); 
+				if(fs.existsSync("tournaments/"+req.params.id+"/benchmark_result_files/Report.txt"))
+					res.download("tournaments/"+req.params.id+"/benchmark_result_files/Report.txt");
+			}
+	});
+	
+	app.post('/downloadTournamentReport/:id', function(req, res) {
+		res.redirect("/");
+	});
+	
+	
 	
 	app.post('/newTournament',  isLoggedIn, function(req, res) {
 		if(typeof req.body.name!=="undefined" && req.body.name.length>0 && typeof req.body.ends!=="undefined" && req.body.ends.length>0
@@ -388,14 +404,19 @@ module.exports = function(app, passport) {
 									if(typeof csv!=="undefined" && csv!=null && csv.length>0)
 									{
 										var  valid = true;
-										csv.forEach(function(user)
-										{
-											if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
-												|| user.name==null ||user.email==null || user.password==null
-												|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
-													valid = false;
-										});	
 										
+										try
+										{
+											csv.forEach(function(user)
+											{
+												if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
+													|| user.name==null ||user.email==null || user.password==null
+													|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
+														valid = false;
+											});	
+										}								
+										catch(CSVException) { valid=false; }	
+																			
 										if(!valid) //invalid password file structure
 										{
 											fs.unlinkSync("tournaments/"+hash+"/passwords.csv");
@@ -570,8 +591,29 @@ module.exports = function(app, passport) {
 			}
 			
 			var passwordfile;
+			var passwords = [];
+			
 			if(fs.existsSync("tournaments/"+tournament.id+"/passwords.csv"))
+			{
 				passwordfile = defaultUrl+"editTournament/"+tournament.id+"/passwords.csv";
+				var loader = require('csv-load-sync');
+				try
+				{
+					var csv = loader("tournaments/"+tournament.id+"/passwords.csv"); //validate password file structure
+					csv.forEach(function(user)
+					{
+						if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
+							|| user.name==null ||user.email==null || user.password==null
+							|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
+								valid = false;
+						else
+							passwords.push({name:user.name,email:user.email,password:user.password});
+					});	
+				}								
+				catch(CSVException) { valid=false; }	
+
+				
+			}
 			
 			if(fs.existsSync("tournaments/"+tournament.id+"/images"))
 			{
@@ -579,13 +621,14 @@ module.exports = function(app, passport) {
 				  images.push(file);
 				})
 			}
-
+			
 			res.render('edittournament.ejs',{
 						data:tournament,
 						loggedIn:true,
 						submissions:submissions,
 						benchmarks:res.benchmarks,
 						passwordfile:passwordfile,
+						passwords:passwords,
 						images:images,
 						newtournamentTxt:myLocalize.translate("new_tournament"),
 						edittournamentTxt:myLocalize.translate("edit_tournament"),deleteSubmissionConfirmation:myLocalize.translate("delete_submissions_confirmation"),
@@ -596,6 +639,9 @@ module.exports = function(app, passport) {
 						submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
 						submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
 						deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),invalidPasswordsFilename:myLocalize.translate("invalid_passwords_filename"),
+						storedPasswords:myLocalize.translate("stored_passwords"),storedPasswordsAuthor:myLocalize.translate("stored_passwords_author"),
+						storedPasswordsEmail:myLocalize.translate("stored_passwords_email"),storedPasswordsPassword:myLocalize.translate("stored_passwords_password"),
+						storedPasswordsDeleteconfirmation:myLocalize.translate("stored_passwords_delete_confirmation"),
 						hasErrors:myLocalize.translate("submission_has_errors")});
 						return;
 		}
@@ -757,13 +803,17 @@ module.exports = function(app, passport) {
 							if(typeof csv!=="undefined" && csv!=null && csv.length>0)
 							{
 								var  valid = true;
-								csv.forEach(function(user)
+								try
 								{
-									if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
-										|| user.name==null ||user.email==null || user.password==null
-										|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
-											valid = false;
-								});	
+									csv.forEach(function(user)
+									{
+										if(typeof user.name=="undefined" || typeof user.email=="undefined" || typeof user.password=="undefined"
+											|| user.name==null ||user.email==null || user.password==null
+											|| user.name.length<=0 || user.email.length<=0 || user.password.length<=0)
+												valid = false;
+									});
+								}								
+								catch(CSVException) { valid = false; }
 								
 								if(!valid) //invalid password file structure
 								{
@@ -808,6 +858,34 @@ module.exports = function(app, passport) {
 						return;
 					}
 				}
+				
+				if(typeof req.body.passwordsAuthors !=="undefined" && req.body.passwordsAuthors!=null && req.body.passwordsAuthors.length>0
+					&& typeof req.body.passwordsEmails !=="undefined" && req.body.passwordsEmails!=null && req.body.passwordsEmails.length>0
+					&& typeof req.body.passwordsPasswords !=="undefined" && req.body.passwordsPasswords!=null && req.body.passwordsPasswords.length>0
+					&& typeof req.body.passwordsAuthors[0] !=="undefined" && req.body.passwordsAuthors[0]!=null && req.body.passwordsAuthors[0].length>0
+					&& typeof req.body.passwordsEmails[0] !=="undefined" && req.body.passwordsEmails[0]!=null && req.body.passwordsEmails[0].length>0
+					&& typeof req.body.passwordsPasswords[0] !=="undefined" && req.body.passwordsPasswords[0]!=null && req.body.passwordsPasswords[0].length>0
+					&& req.body.passwordsPasswords[0].length == req.body.passwordsAuthors[0].length && req.body.passwordsEmails[0].length == req.body.passwordsAuthors[0].length )
+				{
+					var newpasswordsfile = "";
+					for(var i=0;i<req.body.passwordsAuthors[0].length;i++)
+					{
+						if(req.body.passwordsAuthors[0][i].length>0 && req.body.passwordsEmails[0][i].length>0 && req.body.passwordsPasswords[0][i].length>0)
+							newpasswordsfile+=req.body.passwordsAuthors[0][i]+','+req.body.passwordsEmails[0][i]+','+req.body.passwordsPasswords[0][i]+'\r\n';
+					}
+					
+					if(newpasswordsfile.length>0)	
+					{
+						try
+						{
+							newpasswordsfile = "name,email,password \n" + newpasswordsfile;
+							fs.writeFileSync("tournaments/"+tournament.id+"/passwords.csv", newpasswordsfile);
+						}
+						catch(IOError) { console.log(IOError); }
+					}
+				}
+				
+				
 				
 				if(typeof req.files.tournamentimages!=="undefined" && req.files.tournamentimages!=null)
 				{
@@ -908,14 +986,25 @@ module.exports = function(app, passport) {
 				if(typeof req.body.password!=="undefined" && req.body.password!=null && req.body.password.length>0)
 				{
 					var loader = require('csv-load-sync');
-					var csv = loader("tournaments/"+tournament.id+"/passwords.csv");
+					var csv = null;
+					try
+					{
+						var csv = loader("tournaments/"+tournament.id+"/passwords.csv");
+					}
+					catch(CSVError) {}
+					
+					
 					if(typeof csv!=="undefined" && csv!=null && csv.length>0)
 					{
-						csv.forEach(function(user)
+						try
 						{
-							if(user.password == req.body.password)
-								req.authordata = { "success":true, "author":cleanUpAuthorName(user.name), "email":user.email };
-						});	
+							csv.forEach(function(user)
+							{
+								if(user.password == req.body.password)
+									req.authordata = { "success":true, "author":cleanUpAuthorName(user.name), "email":user.email };
+							});	
+						}								
+						catch(CSVException) { }						
 						
 						if(typeof req.authordata=="undefined" || req.authordata==null)
 						{
@@ -1102,12 +1191,9 @@ module.exports = function(app, passport) {
 														if(authordata["success"])
 														{
 															//everything looks ok, move to submission folder and run Validathor
-															if (!fs.existsSync("tournaments/"+tournament.id+"/submissions"))
-															fs.mkdir("tournaments/"+tournament.id+"/submissions");
-														
 															var submissionTimestamp = Math.floor(Date.now() / 1000);
 															var destFolder = "tournaments/"+tournament.id+"/submissions/"+authordata['author']+"_"+submissionTimestamp;
-															fs.mkdir(destFolder);
+															fs.mkdirSync(destFolder);
 															
 															var source = fs.createReadStream(req.files.submissionFile.path);
 															var dest = fs.createWriteStream(destFolder+'/'+req.files.submissionFile.name);
@@ -1291,12 +1377,9 @@ module.exports = function(app, passport) {
 									if(authordata["success"])
 									{
 										var fs = require('fs');
-										if (!fs.existsSync("tournaments/"+tournament.id+"/submissions"))
-											fs.mkdir("tournaments/"+tournament.id+"/submissions");
-										
 										var submissionTimestamp = Math.floor(Date.now() / 1000);
 										var destFolder = "tournaments/"+tournament.id+"/submissions/"+authordata['author']+"_"+submissionTimestamp;
-										fs.mkdir(destFolder);
+										fs.mkdirSync(destFolder);
 										var source = fs.createReadStream(req.files.submissionFile.path);
 										var dest = fs.createWriteStream(destFolder+'/'+req.files.submissionFile.name);
 										source.pipe(dest);
@@ -1607,7 +1690,7 @@ module.exports = function(app, passport) {
 	{
 		try
 		{
-			if(!EARSrunning)
+			if(EARSinstances.length==0)
 			{
 				var override = false;
 				var tournamentId = "";
@@ -1616,15 +1699,26 @@ module.exports = function(app, passport) {
 
 				if(typeof req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0)	
 					tournamentId = req.query.tournamentId;
-				EARSrunning = true;
-				var result = runEARS(earsPath,tournamentId,override);
-				res.json({"success": result.success, "message":result.message});
-				EARSrunning = false;
+			
+				var result = runEARS(tournamentId,override);
+				res.json({"success": result.success});
 			}
 			else
-				res.json({"success": true, "message":myLocalize.translate("ears_already_running")});
+				res.json({"success": false, "message":myLocalize.translate("ears_already_running")});
 		}
 		catch(EarsError) { console.log(EarsError); res.json({"success": false});}
+	});
+	
+	
+	app.get('/killEARS', isLoggedIn, function(req,res)
+	{
+		updateEarsProcessList(true);
+		res.json({"success": true });
+	});
+	
+	app.post('/killEARS', isLoggedIn, function(req,res)
+	{
+		res.redirect('/');
 	});
 	
 	app.post('/deleteTournamentImage', function(req,res)
@@ -1664,6 +1758,79 @@ module.exports = function(app, passport) {
 			  }
 			});
 		}	
+	}
+
+	
+	function runEARS(tournamentId,override)
+	{
+		if(typeof earsPath!=="undefined" && earsPath!=null && earsPath.length>0)
+		{
+			var fs = require('fs');
+			if(fs.existsSync(earsPath))
+			{
+				var execCommand = "java -jar "+earsPath;
+				if(tournamentId.length>0 && override)
+					execCommand += " override "+tournamentId; 
+				else if(tournamentId.length>0)
+					execCommand += " "+tournamentId;
+				else if(override)
+					execCommand += " override";
+					
+				require('child_process').exec(execCommand, function(error, stdout, stderr) {
+					EARSmessages = [];
+					EARSerrors = [];
+				
+					if(typeof stdout!=="undefined" && stdout!=null && stdout.length>0)
+						EARSmessages.push(stdout);
+					
+					if(typeof stderr!=="undefined" && stderr!=null && stderr.length>0)	
+						EARSerrors.push(stderr);
+
+					if (error !== null) {
+						console.log('exec error: ' + error);
+					}
+				});
+				
+				updateEarsProcessList();
+				return  { "success":true };
+			}
+			else
+				return  { "success":false };
+		}
+		else
+			return  { "success":false };
+	}
+	
+	function updateEarsProcessList(kill = false)
+	{
+		var ps = require('ps-node');
+		ps.lookup({
+			command: 'java',
+			arguments: 'ears.jar'
+			}, function(err, resultList ) {
+			if (err) {
+				throw new Error( err );
+			}
+			
+			EARSinstances = []; //clear process list and rebuild it
+			resultList.forEach(function( process ){
+				if(process){
+					if(!kill)
+						EARSinstances.push(process.pid);
+					else
+					{
+						ps.kill(process.pid, 'SIGKILL', function( err ) {
+						if (err) {
+							throw new Error( err );
+						}
+						else {
+							
+						}
+						});
+					}
+				}
+			});
+		});	
 	}
 };
 
@@ -1774,6 +1941,11 @@ function loadConfigFile(req,res,next)
 								if(tournament.benchmarks==bench.fileName)
 									tournament.selectedBenchmark = bench;
 							});
+							
+							if(fs.existsSync("tournaments/"+tournament.id+"/benchmark_result_files/Report.txt"))								
+								tournament.downloadReport = true;
+							else
+								tournament.downloadReport = false;
 						});
 					}
 				}
@@ -1823,30 +1995,6 @@ function loadBenchmarks(req,res,next)
 		return next();	
 		});
 	}
-}
-
-function runEARS(earsPath,tournamentId,override)
-{
-	if(typeof earsPath!=="undefined" && earsPath!=null && earsPath.length>0)
-	{
-		var fs = require('fs');
-		if(fs.existsSync(earsPath))
-		{
-			if(tournamentId.length>0 && override)
-				var result = require('child_process').execSync('java -jar '+earsPath+' override '+tournamentId).toString(); 
-			else if(tournamentId.length>0)
-				var result = require('child_process').execSync('java -jar '+earsPath+' '+tournamentId).toString();
-			else if(override)
-				var result = require('child_process').execSync('java -jar '+earsPath+' override').toString();
-			else
-				var result = require('child_process').execSync('java -jar '+earsPath).toString();
-			return  { "success":true, "message":result };
-		}
-		else
-			return  { "success":false };
-	}
-	else
-		return  { "success":false };
 }
 
 function compileSource(filePath)

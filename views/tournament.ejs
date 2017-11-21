@@ -17,7 +17,15 @@
             data: {
                 datasets: [
 				<% 
-				for(i=0; i<results.length; i++) { 	var randomColor='#'+(Math.random()*0xFFFFFF<<0).toString(16); %>
+				var colorArray = ['#003366','#00ff00','#006600','#003300','#333300','#003399','#000099','#000066','#ff0066','#ff3300','#993300','#996600','#990099','#663300','#ff99cc','#cc00ff','#ffff00','#660066','#0000ff','#99ff99'];
+				for(i=0; i<results.length; i++) { 	
+					if(typeof colorArray!=="undefined" && colorArray!=null && colorArray.length>0) 
+					{
+						var index = Math.floor(Math.random()*colorArray.length);
+						var randomColor = colorArray[index];
+						colorArray.splice(index, 1);
+					}		
+					else var randomColor='#'+(Math.random()*0xFFFFFF<<0).toString(16); %>
 				{
                     label: "<%= results[i].playerId.substring(0,20) %> (<%= results[i].rating.toFixed(2) %>)",
                     backgroundColor: "<%= randomColor %>",
@@ -137,6 +145,7 @@
 </head>
 <body>
 <div class="menu">
+<a style="float:left;height:30px;"href="/" class="btn btn-default"><span class="fa fa-home"></span></a>
 <%  if(typeof loggedIn=="undefined" || loggedIn==null || !loggedIn) { %>
 <a style="float:right;height:30px;"href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= loginTxt %></a>
 <% } else { %>
@@ -191,6 +200,11 @@
 		</div>
 		
 		<div id="resultsTableContainer" style="width:75%;float:left;margin-top:50px;min-height:200px;">
+		<% if(data.downloadReport!=="undefined" && data.downloadReport!=null && data.downloadReport) { %>
+		<button type="button" class="btn btn-default btn-sm" onclick="window.location='/downloadTournamentReport/<%=data.id%>'" style="float:left;margin-right:10px;">
+		  <span class="fa fa-download"></span>
+		</button>
+		<% } %>
 		<table class="table">
 		<thead><tr><th><%=tableAlgorithm%></th><th><%=tableRating%></th><th><%=tableMin%></th><th><%=tableMax%></th></tr></thead>
 		<tbody>
