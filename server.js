@@ -19,7 +19,7 @@ app.configure(function() {
 	app.use(express.static(__dirname + '/public'));
 
 	// required for passport
-	app.use(express.session({ secret: 'yoursecret',cookie: { maxAge: 3600000 } })); // session secret
+	app.use(express.session({ secret: 'pikachuisayellowrat',cookie: { maxAge: 3600000 } })); // session secret
 	
 	app.use(flash()); // use connect-flash for flash messages stored in session
 

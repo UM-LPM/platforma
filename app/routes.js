@@ -30,8 +30,8 @@ module.exports = function(app, passport) {
 	var EARSinstances = [];
 	var EARSmessages = [];
 	var EARSerrors = [];
+	var authorsList = [];
 	
-
 
 	function getOAuthClient () {
 		return new OAuth2(ClientId ,  ClientSecret, RedirectionUrl);
@@ -75,38 +75,49 @@ module.exports = function(app, passport) {
 					var master = require('../config/master.json');
 					if(typeof master.admins!=="undefined" && typeof master.admins!=null && master.admins.length>0)
 					{
-						var found = false;
 						data.emails.forEach(function(email) 
 						{
 							master.admins.forEach(function(admin) 
 							{
 								if(admin.username==email.value)
 								{
-									found = true;
 									req.session.email = email.value;
 									req.session.role = "admin";
 									res.redirect('/profile');
+									return;
 								}
 							});
+							
+							if(req.session.role!="admin" && authorsList.length>0)
+							{
+								for(var i=0;i<authorsList.length;i++)
+								{
+									if(authorsList[i].email==email.value)
+									{
+										req.session.email = email.value;
+										req.session.role = "user";
+										res.redirect('/profile');
+										return;
+									}
+								}
+							}
 						});
-						
-						if(!found)
-						{
-							res.render('login.ejs', { message: myLocalize.translate("not_authorized"), googleAuthUrl:getAuthUrl(),
-							emailTxt:myLocalize.translate("email"), passwordTxt:myLocalize.translate("password"),
-							loginTxt:myLocalize.translate("login"),googleTxt:myLocalize.translate("google_login"), orgoTxt:myLocalize.translate("or_go"),homeTxt:myLocalize.translate("home") });
-							return;
-						}
 					}
-					else
-					{
-						res.render('error.ejs',{
-						loggedIn:true,
-						message:myLocalize.translate("google_error"),
-						gobackTxt:myLocalize.translate("go_back"),
-						link:"/"});
-						return;
-					}
+
+					//no valid profile found
+					res.render('login.ejs', { message: myLocalize.translate("not_authorized"), googleAuthUrl:getAuthUrl(),
+					emailTxt:myLocalize.translate("email"), passwordTxt:myLocalize.translate("password"),
+					loginTxt:myLocalize.translate("login"),googleTxt:myLocalize.translate("google_login"), orgoTxt:myLocalize.translate("or_go"),homeTxt:myLocalize.translate("home") });
+					return;
+				}
+				else
+				{
+					res.render('error.ejs',{
+					loggedIn:true,
+					message:myLocalize.translate("google_error"),
+					gobackTxt:myLocalize.translate("go_back"),
+					link:"/"});
+					return;
 				}
 			})
 		  }
@@ -125,7 +136,7 @@ module.exports = function(app, passport) {
 	// HOME PAGE (with login links) ========
 	// =====================================
 	app.get('/', loadConfigFile, function(req, res) 
-	{
+	{	
 		loggedIn = false;
 		if(typeof req.session.email!=="undefined" && req.session.email!=null && req.session.email.length>0)
 			loggedIn = true;
@@ -162,41 +173,67 @@ module.exports = function(app, passport) {
 	// PROFILE SECTION =========================
 	// =====================================
 	// we will want this protected so you have to be logged in to visit
-	// we will use route middleware to verify this (the isLoggedIn function)
-	app.get('/profile', isLoggedIn, loadConfigFile, function(req, res) 
+	// we will use route middleware to verify this (the isLoggedAsAdmin function)
+	app.get('/profile', loadConfigFile, function(req, res) 
 	{
-		res.render('profile.ejs', {
-			user : req.session,
-			tournaments: res.tournaments,
-			controlPanel:myLocalize.translate("control_panel"),
-			deleteTournamentConfirm:myLocalize.translate("delete_tournament_confirmation"),
-			loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),
-			logoutTxt:myLocalize.translate("logout"),newTournamentDesc:myLocalize.translate("new_tournament"),
-			createnewTournametDesc:myLocalize.translate("create_new_tournament"),deleteDesc:myLocalize.translate("delete_desc"),
-			EARSinstances:EARSinstances,EARSmessages:EARSmessages,EARSerrors:EARSerrors,
-			editDesc:myLocalize.translate("edit_tournament"),
-			runEars:myLocalize.translate("run_ears"),
-			runEarsConfirm:myLocalize.translate("run_ears_confirm"),
-			runEarsFailed:myLocalize.translate("run_ears_failed"),
-			runEarsSuccess:myLocalize.translate("run_ears_success"),
-			runEarsOverride:myLocalize.translate("run_ears_override"),
-			killEars:myLocalize.translate("kill_ears_confirm"),
-			loggedIn:true
-		});
+		if(typeof req.session.role!=="undefined" && req.session.role!=null && req.session.role=="admin")
+		{
+				res.render('profile.ejs', {
+				user : req.session,
+				tournaments: res.tournaments,
+				controlPanel:myLocalize.translate("control_panel"),
+				deleteTournamentConfirm:myLocalize.translate("delete_tournament_confirmation"),
+				loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),
+				logoutTxt:myLocalize.translate("logout"),newTournamentDesc:myLocalize.translate("new_tournament"),
+				createnewTournametDesc:myLocalize.translate("create_new_tournament"),deleteDesc:myLocalize.translate("delete_desc"),
+				EARSinstances:EARSinstances,EARSmessages:EARSmessages,EARSerrors:EARSerrors,
+				editDesc:myLocalize.translate("edit_tournament"),
+				runEars:myLocalize.translate("run_ears"),
+				runEarsConfirm:myLocalize.translate("run_ears_confirm"),
+				runEarsFailed:myLocalize.translate("run_ears_failed"),
+				runEarsSuccess:myLocalize.translate("run_ears_success"),
+				runEarsOverride:myLocalize.translate("run_ears_override"),
+				killEars:myLocalize.translate("kill_ears_confirm"),
+				loggedIn:true
+			});
+		}
+		else if(typeof req.session.role!=="undefined" && req.session.role!=null && req.session.role=="user")
+		{	
+			var authorHistory = null;
+			for(var i=0;i<authorsList.length;i++)
+			{
+				if(authorsList[i].email == req.session.email)
+				{
+					authorHistory = authorsList[i];
+					break;
+				}
+			}
+			res.render('userprofile.ejs', {
+				user : req.session,
+				authorsSubmissions:authorHistory,
+				loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),
+				controlPanel:myLocalize.translate("control_panel"),
+				logoutTxt:myLocalize.translate("logout"),newTournamentDesc:myLocalize.translate("new_tournament"),
+				loggedIn:true
+			});
+		}
+		else
+			res.redirect('/');		
 	});
 
 	// =====================================
 	// LOGOUT ==============================
 	// =====================================
 	app.get('/logout', function(req, res) {
-		req.session.destroy();
+		req.session.destroy(); 
+		req.session = null;
 		res.redirect('/');
 	});
 	
 	// =====================================
 	// WORKLOG ==============================
 	// =====================================
-	app.get('/worklog', isLoggedIn, function(req, res) 
+	app.get('/worklog', isLoggedAsAdmin, function(req, res) 
 	{
 		res.render('worklog.ejs', {
 			user : req.session
@@ -283,7 +320,7 @@ module.exports = function(app, passport) {
 		}
 	});
 	
-	app.get('/newTournament',  isLoggedIn, loadBenchmarks, function(req, res) {
+	app.get('/newTournament',  isLoggedAsAdmin, loadBenchmarks, function(req, res) {
 		res.render('edittournament.ejs', { loggedIn:true, benchmarks:res.benchmarks,newtournamentTxt:myLocalize.translate("new_tournament"),
 		edittournamentTxt:myLocalize.translate("edit_tournament"),deleteSubmissionConfirmation:myLocalize.translate("delete_submissions_confirmation"),
 		deleteimageConfirmation:myLocalize.translate("delete_image_confirmation"),loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),
@@ -314,7 +351,7 @@ module.exports = function(app, passport) {
 	
 	
 	
-	app.post('/newTournament',  isLoggedIn, function(req, res) {
+	app.post('/newTournament',  isLoggedAsAdmin, function(req, res) {
 		if(typeof req.body.name!=="undefined" && req.body.name.length>0 && typeof req.body.ends!=="undefined" && req.body.ends.length>0
 			&& req.body.benchmarks!=="undefined" && req.body.benchmarks.length>0 && typeof req.body.path!=="undefined" && req.body.path.length>0)
 			{
@@ -358,7 +395,7 @@ module.exports = function(app, passport) {
 						
 						var end = Date.parse(req.body.ends);
 						end = end/1000;
-						obj.push({id:hash,name: req.body.name, timestamp:Math.floor(new Date() / 1000), ends:end, benchmarks:req.body.benchmarks, path:req.body.path, description:req.body.description, password:req.body.password}); //add some data
+						obj.push({id:hash,name: req.body.name, timestamp:Math.floor(new Date() / 1000), ends:end, benchmarks:req.body.benchmarks, path:cleanUpAuthorName(req.body.path), description:req.body.description, password:req.body.password}); //add some data
 						obj.sort(function(a, b) {
 						return parseInt(b.timestamp) - parseInt(a.timestamp); //sort in descending order
 						});
@@ -496,7 +533,7 @@ module.exports = function(app, passport) {
 	});
 	
 	
-	app.get('/editTournament/:url/passwords.csv',  isLoggedIn, loadConfigFile, function(req, res) 
+	app.get('/editTournament/:url/passwords.csv',  isLoggedAsAdmin, loadConfigFile, function(req, res) 
 	{
 		var tournaments = res.tournaments;
 		var found = false;
@@ -540,7 +577,7 @@ module.exports = function(app, passport) {
 		}
 	});
 	
-	app.get('/editTournament/:url',  isLoggedIn, loadConfigFile, loadBenchmarks, function(req, res) 
+	app.get('/editTournament/:url',  isLoggedAsAdmin, loadConfigFile, loadBenchmarks, function(req, res) 
 	{
 		var tournaments = res.tournaments;
 		var found = false;
@@ -656,7 +693,7 @@ module.exports = function(app, passport) {
 		}
 	});
 	
-	app.post('/deleteTournament/:id', isLoggedIn, function(req,res)
+	app.post('/deleteTournament/:id', isLoggedAsAdmin, function(req,res)
 	{
 		var configFile = "tournaments/list.json";
 		var fs = require('fs');
@@ -727,7 +764,7 @@ module.exports = function(app, passport) {
 		}
 	});
 	
-	app.post('/editTournament/:url',  isLoggedIn, function(req, res) 
+	app.post('/editTournament/:url',  isLoggedAsAdmin, function(req, res) 
 	{
 		var configFile = "tournaments/list.json";
 		var fs = require('fs');
@@ -756,12 +793,8 @@ module.exports = function(app, passport) {
 					tournament.name = req.body.name;
 					tournament.description = req.body.description;
 					tournament.benchmarks = req.body.benchmarks;
-					//rename directory if different
 					if(tournament.path!=req.body.path)
-					{
-						fs.rename("tournaments/"+tournament.path,"tournaments/"+req.body.path);
-						tournament.path = req.body.path;
-					}
+						tournament.path = cleanUpAuthorName(req.body.path);
 					
 					tournament.ends = Date.parse(req.body.ends)/1000;
 					tournament.password = req.body.password;
@@ -1594,7 +1627,7 @@ module.exports = function(app, passport) {
 		}
 	});
 	
-	app.get('/deleteSubmission', isLoggedIn, function(req, res) 
+	app.get('/deleteSubmission', isLoggedAsAdmin, function(req, res) 
 	{
 		if(req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0
 			&& req.query.submissionId!=="undefined" && req.query.submissionId!==null && req.query.submissionId.length>0)
@@ -1627,7 +1660,7 @@ module.exports = function(app, passport) {
 		res.redirect('/');
 	});
 	
-	app.get('/deleteTournamentImage', isLoggedIn, function(req, res) 
+	app.get('/deleteTournamentImage', isLoggedAsAdmin, function(req, res) 
 	{
 		if(req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0
 			&& req.query.fileName!=="undefined" && req.query.fileName!==null && req.query.fileName.length>0)
@@ -1657,7 +1690,7 @@ module.exports = function(app, passport) {
 			}
 	});
 	
-	app.get('/deleteTournamentPasswordFile', isLoggedIn, function(req, res) 
+	app.get('/deleteTournamentPasswordFile', isLoggedAsAdmin, function(req, res) 
 	{
 		if(req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0)
 			{
@@ -1686,7 +1719,7 @@ module.exports = function(app, passport) {
 			}
 	});
 	
-	app.get('/runEars:tournamentId?:override?', isLoggedIn, function(req, res) 
+	app.get('/runEars:tournamentId?:override?', isLoggedAsAdmin, function(req, res) 
 	{
 		try
 		{
@@ -1710,13 +1743,13 @@ module.exports = function(app, passport) {
 	});
 	
 	
-	app.get('/killEARS', isLoggedIn, function(req,res)
+	app.get('/killEARS', isLoggedAsAdmin, function(req,res)
 	{
 		updateEarsProcessList(true);
 		res.json({"success": true });
 	});
 	
-	app.post('/killEARS', isLoggedIn, function(req,res)
+	app.post('/killEARS', isLoggedAsAdmin, function(req,res)
 	{
 		res.redirect('/');
 	});
@@ -1779,7 +1812,8 @@ module.exports = function(app, passport) {
 				require('child_process').exec(execCommand, function(error, stdout, stderr) {
 					EARSmessages = [];
 					EARSerrors = [];
-				
+					updateEarsProcessList();
+					
 					if(typeof stdout!=="undefined" && stdout!=null && stdout.length>0)
 						EARSmessages.push(stdout);
 					
@@ -1832,12 +1866,253 @@ module.exports = function(app, passport) {
 			});
 		});	
 	}
+	
+	function loadConfigFile(req,res,next)
+	{
+		var fs = require('fs');
+		var Localize = require('localize');
+		var myLocalize = new Localize('./language/');
+		myLocalize.setLocale("si");
+		
+		if(!fs.existsSync("tournaments"))
+			fs.mkdirSync("tournaments");
+		
+		if(!fs.existsSync("tournaments/list.json"))
+			fs.writeFileSync("tournaments/list.json");
+			
+		if(!fs.existsSync("tmp"))
+			fs.mkdirSync("tmp");
+		
+		fs.readFile("tournaments/list.json", 'utf8', function readFileCallback(err, data){
+		if (err)
+		{
+			res.render('error.ejs',{
+			loggedIn:true,
+			message:myLocalize.translate("invalid_tournament_config"),
+			gobackTxt:myLocalize.translate("go_back"),
+			link:"/" });
+			return;
+		} 
+		
+		if(data.length>0)
+		{
+			try 
+			{
+			  res.tournaments = JSON.parse(data);
+			  updateAuthorsList(res.tournaments);
+			  if(fs.existsSync("config/benchmarks.json"))
+			  {
+				var data = 	fs.readFileSync("config/benchmarks.json","UTF-8"); 
+				if(typeof data!=="undefined" && data!=null && data.length>0)
+				{
+					try
+					{
+						var benchmarks = JSON.parse(data);
+						if(benchmarks.length>0)
+						{
+							res.tournaments.forEach(function(tournament)
+							{
+								benchmarks.forEach(function(bench) 
+								{
+									if(tournament.benchmarks==bench.fileName)
+										tournament.selectedBenchmark = bench;
+								});
+								
+								if(fs.existsSync("tournaments/"+tournament.id+"/benchmark_result_files/Report.txt"))								
+									tournament.downloadReport = true;
+								else
+									tournament.downloadReport = false;
+							});
+						}
+					}
+					catch(BenchError) { console.log(BenchError); }	
+				}
+			  }
+			  
+			}
+			catch(JSONError) {}
+		}
+		
+		return next();	
+		});
+	}
+
+	/*Authors structure*/
+	/*Name,Passwords,submissionUrls*/
+	function updateAuthorsList(tournaments)
+	{
+		if(typeof tournaments!=="undefined" && tournaments!=null && tournaments.length>0)
+		{
+			tournaments.forEach(function(tournament)
+			{
+				var fs = require('fs');
+				fs.readFile("tournaments/"+tournament.id+"/submissions/submission_list.json", "UTF-8", function read(err, data) {
+					if(!err) 
+					{
+						try
+						{
+							authors = JSON.parse(data);
+							authors.forEach(function(author)
+							{
+								fs.readFile("tournaments/"+tournament.id+"/submissions/"+author.author+"_"+author.timestamp+"/submission_report.json", "UTF-8", function read(sub_err, sub_data) 
+								{
+									if(!sub_err)
+									{
+										sub_data = JSON.parse(sub_data);
+										if(typeof sub_data.email!=="undefined" && sub_data.email!=null && sub_data.email.length>0 && typeof author.submissionUrl!=="undefined" && author.submissionUrl!=null && author.submissionUrl.length>0)
+										{									
+											var loader = require('csv-load-sync');
+											var password = "";
+											var authorName = author.author;
+											var authorEmail = sub_data.email;
+											var submissionUrl = tournament.path+"/submission/"+author.author+"_"+author.timestamp;
+											
+											try
+											{
+												var csv = loader("tournaments/"+tournament.id+"/passwords.csv"); //validate password file structure
+												if(typeof csv!=="undefined" && csv!=null && csv.length>0)
+												{
+													csv.forEach(function(user)
+													{
+														if(typeof user.name!=="undefined" && user.name!=null && typeof user.email!=="undefined" && typeof user.password!=="undefined" && user.email!=null && user.password!=null
+															&& user.email == sub_data.email)
+														{
+															password = user.password;
+															authorName = user.name;
+															authorEmail = user.email;
+															return;
+														}
+													});		
+												}
+											}								
+											catch(CSVException) { /*inexistent or invalid csv*/ }
+											//problem if he has only one submission and it is on a tournament without a password :)
+											
+											if(password.length==0 && tournament.password.length>0)
+												password = tournament.password;
+											
+											if(password.length>0 && authorName.length>0 && submissionUrl.length>0)
+											{
+												var found = false;
+												for(var i=0; i<authorsList.length;i++)
+												{
+													if(typeof authorsList[i].email!=="undefined" && authorsList[i].email!=null && authorsList[i].email==authorEmail)
+													{
+														authorsList[i].passwords.indexOf(password) === -1 ? authorsList[i].passwords.push(password):null;
+														found = true; //we found the author if we are in here :)
+														var tournament_position = -1;
+														for(var k=0; k<authorsList[i].tournaments.length;k++)
+														{
+															if(authorsList[i].tournaments[k].id == tournament.id)
+															{
+																tournament_position = k;
+																break;
+															}
+														}
+														
+														if(tournament_position>-1) //we found him in this tournament append submission
+														{
+															var submission_position=-1;
+															for(var c=0;c<authorsList[i].tournaments[tournament_position].submissions.length;c++)
+															{
+																if(authorsList[i].tournaments[tournament_position].submissions[c].id == author.id)
+																{
+																	submission_position = c;
+																	break;
+																}
+															}
+															
+															if(submission_position==-1) //not a duplicate
+															{
+																authorsList[i].tournaments[tournament_position].submissions.push({id:author.id,timestamp:sub_data.timestamp,url:submissionUrl,date_readable:sub_data.date_readable});
+																authorsList[i].tournaments[tournament_position].submissions.sort(function(a, b) {
+																	return b.timestamp-a.timestamp; //sort in ascending order
+																});	
+															}
+														}
+														else //he is not yet present in the current tournament
+														{
+															var submissions = [{id:author.id,timestamp:sub_data.timestamp,url:submissionUrl,date_readable:sub_data.date_readable}];
+															let tmp_tournament = Object.assign({},tournament);
+															tmp_tournament.submissions = submissions;
+															authorsList[i].tournaments.push(tmp_tournament);
+															break;
+														}
+													}
+												}
+															
+												if(!found) //new entry
+												{
+													var submissions = [{id:author.id,timestamp:sub_data.timestamp,email:authorEmail,url:submissionUrl,date_readable:sub_data.date_readable}];
+													let tmp_tournament = Object.assign({},tournament);
+													tmp_tournament.submissions = submissions;
+													authorsList.push({ name:authorName,email:authorEmail,passwords:[password],tournaments:[tmp_tournament]});
+												}
+											}
+										}
+									}
+								});
+							});
+						}
+						catch(JSONError) { console.log(JSONError); }
+					}
+				});
+			});	
+		}
+	}
+	
+	function authenticate(req, res, next) {
+		var master = require('../config/master.json');
+		var Localize = require('localize');
+		var myLocalize = new Localize('./language/');
+		myLocalize.setLocale("si");
+		
+		if(typeof master.admins!=="undefined" && typeof master.admins!=null && master.admins.length>0)
+		{
+			master.admins.forEach(function(admin) 
+			{
+				if(admin.username==req.body.email)
+				{
+					if(typeof admin.password!=="undefined" && admin.password!=null && admin.password.length>0 && admin.password==req.body.password)
+					{
+						req.session.email = req.body.email;
+						req.session.role = "admin";
+						return next();
+					}
+				}
+			});
+		}
+
+		if(authorsList!=null && authorsList.length>0)
+		{
+			for(var i=0;i<authorsList.length;i++)
+			{
+				if(authorsList[i].email == req.body.email)
+				{
+					for(var j=0;j<authorsList[i].passwords.length;j++)
+					{
+						if(authorsList[i].passwords[j] == req.body.password)
+						{
+							req.session.email = req.body.email;
+							req.session.role = "user";
+							return next();
+						}
+					}
+				}
+			}
+		}
+			
+			
+		req.flash('loginMessage',myLocalize.translate("invalid_login_credentials")); // create the loginMessage and save it to session as flashdata		
+		return next();	
+	}
 };
 
 // route middleware to make sure
-function isLoggedIn(req, res, next) {
+function isLoggedAsAdmin(req, res, next) {
 	// if user is authenticated in the session, carry on
-	if (typeof req.session.email!=="undefined" && req.session.email!=null && req.session.email.length>0)
+	if (typeof req.session.email!=="undefined" && req.session.email!=null && req.session.email.length>0 && typeof req.session.role!=="undefined"
+		&& req.session.role!=null && req.session.role == "admin")
 		return next();
 
 	// if they aren't redirect them to the home page
@@ -1850,38 +2125,6 @@ function deleteFolderAndContents(folderPath)
 	rimraf(folderPath, function () {  });
 }
 
-function authenticate(req, res, next) {
-	var master = require('../config/master.json');
-	var Localize = require('localize');
-	var myLocalize = new Localize('./language/');
-	myLocalize.setLocale("si");
-	
-	if(typeof master.admins!=="undefined" && typeof master.admins!=null && master.admins.length>0)
-	{
-		var found = false;
-		master.admins.forEach(function(admin) 
-		{
-			if(admin.username==req.body.email)
-			{
-				if(typeof admin.password!=="undefined" && admin.password!=null && admin.password.length>0 && admin.password==req.body.password)
-				{
-
-					sess = req.session;
-					sess.email = req.body.email;
-					found = true;
-				}
-			}
-		});
-	
-		
-		if(!found)
-			req.flash('loginMessage',myLocalize.translate("invalid_login_credentials")); // create the loginMessage and save it to session as flashdata
-	}
-	else
-		req.flash('loginMessage',myLocalize.translate("invalid_tournament_config")); 
-	return next();	
-}
-
 function makeid() {
   var text = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -1890,75 +2133,6 @@ function makeid() {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
 
   return text;
-}
-
-function loadConfigFile(req,res,next)
-{
-	var fs = require('fs');
-	var Localize = require('localize');
-	var myLocalize = new Localize('./language/');
-	myLocalize.setLocale("si");
-	
-	if(!fs.existsSync("tournaments"))
-		fs.mkdirSync("tournaments");
-	
-	if(!fs.existsSync("tournaments/list.json"))
-		fs.writeFileSync("tournaments/list.json");
-		
-	if(!fs.existsSync("tmp"))
-		fs.mkdirSync("tmp");
-	
-	fs.readFile("tournaments/list.json", 'utf8', function readFileCallback(err, data){
-	if (err)
-	{
-		res.render('error.ejs',{
-		loggedIn:true,
-		message:myLocalize.translate("invalid_tournament_config"),
-		gobackTxt:myLocalize.translate("go_back"),
-		link:"/" });
-		return;
-	} 
-	
-	if(data.length>0)
-	{
-		try 
-		{
-		  res.tournaments = JSON.parse(data);
-		  if(fs.existsSync("config/benchmarks.json"))
-		  {
-			var data = 	fs.readFileSync("config/benchmarks.json","UTF-8"); 
-			if(typeof data!=="undefined" && data!=null && data.length>0)
-			{
-				try
-				{
-					var benchmarks = JSON.parse(data);
-					if(benchmarks.length>0)
-					{
-						res.tournaments.forEach(function(tournament)
-						{
-							benchmarks.forEach(function(bench) 
-							{
-								if(tournament.benchmarks==bench.fileName)
-									tournament.selectedBenchmark = bench;
-							});
-							
-							if(fs.existsSync("tournaments/"+tournament.id+"/benchmark_result_files/Report.txt"))								
-								tournament.downloadReport = true;
-							else
-								tournament.downloadReport = false;
-						});
-					}
-				}
-				catch(BenchError) { console.log(BenchError); }	
-			}
-		  }
-		  
-		}
-		catch(JSONError) {}
-	}
-	
-	return next();	
-	});
 }
 
 function loadBenchmarks(req,res,next)
