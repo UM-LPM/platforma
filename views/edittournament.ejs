@@ -13,8 +13,11 @@
 	<script type="text/javascript">
 	$( document ).ready(function() 
 	{
-		var date = new Date();
-		date.setDate(date.getDate() + 1);
+		$("#end").datepicker();
+		$("#start").datepicker();
+		$("#end").datepicker("option", "dateFormat", "yy-mm-dd");
+		$("#start").datepicker("option", "dateFormat", "yy-mm-dd");
+		var date = new Date();		
 		var month = date.getUTCMonth()+1;
 		if(month<10)
 			var month="0"+month;
@@ -22,50 +25,72 @@
 		if(day<10)
 			var day="0"+day;
 		
-	
+		
+		var result = date.getUTCFullYear()+"-"+month+"-"+day;
+		$("#end").datepicker("setDate", result);
+		$("#start").datepicker("setDate", result);
+		
+		var hours = date.getUTCHours();
+		if(hours<10)
+			var hours = "0"+hours;
+		
+		var minutes = date.getUTCMinutes()
+		if(minutes<10)
+			var minutes = "0"+minutes;
+			
+		
+		$("#start_hour").val(hours+":"+minutes);
+		$("#end_hour").val(hours+":"+minutes);
+		
+		
 		<% if(typeof data!=="undefined" && data!=null) 
 		{ %>
+			<% if(typeof data.starts!=="undefined" && data.starts>0) { %>
+				var date = new Date(<%=data.starts*1000%>);
+				var month = date.getUTCMonth()+1;
+				if(month<10)
+					var month="0"+month;
+				var day = date.getUTCDate();
+				if(day<10)
+					var day="0"+day;
+				
+				var result = date.getUTCFullYear()+"-"+month+"-"+day;
+				$("#start").datepicker("setDate", result);
+				
+				var hours = date.getUTCHours();
+				if(hours<10)
+					var hours = "0"+hours;
+				
+				var minutes = date.getUTCMinutes()
+				if(minutes<10)
+					var minutes = "0"+minutes;
 			
-			var date = new Date(<%= data.timestamp*1000 %>);
-			var month = date.getUTCMonth()+1;
-			if(month<10)
-				var month="0"+month;
-			var day = date.getUTCDate();
-			if(day<10)
-				var day="0"+day;
+				$("#start_hour").val(hours+":"+minutes);
+			<% } %>
 			
-			var hours = date.getUTCHours();
-		    if(hours<10)
-				var hours = "0"+hours;
-			
-			var minutes = date.getUTCMinutes()
-			if(minutes<10)
-				var minutes = "0"+minutes;	
-			
-			document.getElementById("end").setAttribute("min", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
-			
-			var date = new Date(<%= data.ends*1000 %>);
-			var month = date.getUTCMonth()+1;
-			if(month<10)
-				var month="0"+month;
-			var day = date.getUTCDate();
-			if(day<10)
-				var day="0"+day;
-			
-			var hours = date.getUTCHours();
-		    if(hours<10)
-				var hours = "0"+hours;
-			
-			var minutes = date.getUTCMinutes()
-			if(minutes<10)
-				var minutes = "0"+minutes;			
-	
-			document.getElementById("end").setAttribute("value", date.getUTCFullYear()+"-"+month+"-"+day+"T"+hours+":"+minutes);	
-			
-			
-		<% } else {%>
-		document.getElementById("end").setAttribute("min", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
-		document.getElementById("end").setAttribute("value", date.getUTCFullYear()+"-"+month+"-"+day+"T00:00");	
+			<% if(typeof data.ends!=="undefined" && data.ends>0) { %>
+				var date = new Date(<%=data.ends*1000%>);
+				var month = date.getUTCMonth()+1;
+				if(month<10)
+					var month="0"+month;
+				var day = date.getUTCDate();
+				if(day<10)
+					var day="0"+day;
+				var result = date.getUTCFullYear()+"-"+month+"-"+day;
+				$("#end").datepicker("setDate", result);
+				var hours = date.getUTCHours();
+				if(hours<10)
+					var hours = "0"+hours;
+				
+				var minutes = date.getUTCMinutes()
+				if(minutes<10)
+					var minutes = "0"+minutes;
+					
+				$("#end_hour").val(hours+":"+minutes);
+			<% } %>		
+		<% } else {%>		
+			$("#end").datepicker("option", "minDate", result);
+			$("#start").datepicker("option", "minDate", result);
 		<% } %>
 		
 		 $(".passwordsForm").submit(function(e){		 
@@ -232,9 +257,13 @@
       <label for="name"><%= tournamentnameTxt %></label>
       <input type="text" id="name" name="name" <% if(typeof data!=="undefined" && data!=null) { %> value="<%=data.name %>" <% } %> class="form-control" />
     </div>
+	<div class="form-group">
+      <label for="start"><%= submissiondateStartTxt %></label>
+      <input type="text" id="start" name="starts" class="form-control" style="width:79%;display:inline-block;"  /><input style="width:20%;display:inline-block;" class="form-control" type="text" id="start_hour" name="start_hour" placeholder="09:33" />
+    </div>
     <div class="form-group">
       <label for="end"><%= submissiondateTxt %></label>
-      <input type="datetime-local" id="end" name="ends" class="form-control" value="2017-09-10T00:00" />
+      <input type="text" id="end" name="ends" class="form-control" style="width:79%;display:inline-block;" /><input style="width:20%;display:inline-block;" class="form-control" type="text" id="end_hour" name="end_hour" placeholder="23:44" />
     </div>
 	<div class="form-group">
       <label for="bnch"><%= behcmarksTxt %></label>
@@ -253,6 +282,9 @@
       <label for="dsc"><%= descTxt %></label>
       <textarea name="description" id="dsc" class="form-control"><% if(typeof data!=="undefined" && data!=null) { %><%=data.description %> <% } %></textarea>
     </div>
+	<div class="form-group">
+	  <label><%=visibleDesc%> <input type="checkbox" style="margin-left:10px;" name="visible" <%if(typeof data!=="undefined" && data!=null && data.visible!=="undefined" && data.visible){%> checked<%}%> /></label>
+	</div>
 	<div class="form-group">
 	 <label for="imgs"><%= imgdescTxt %></label>
 	 <input id="imgs" name="tournamentimages" type="file" accept="image/*" multiple />

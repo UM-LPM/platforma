@@ -188,9 +188,17 @@
 		"si":"Testni primeri:",
 		"eng":"Benchmarks: "
 	 },
-	 "submission_date":{
+	 "submission_date_start":{
+		"si":"Začetek oddaje:",
+		"eng":"Submission start date:"
+	 },
+	  "submission_date":{
 		"si":"Rok oddaje:",
-		"eng":"Submission date:"
+		"eng":"Submission due date:"
+	 },
+	 "submission_visible":{
+		"si":"Viden:",
+		"eng":"Visible"
 	 },
 	 "description": {
 		"si":"Opis:",

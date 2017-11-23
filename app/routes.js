@@ -251,20 +251,15 @@ module.exports = function(app, passport) {
 		{ 
 			tournaments.forEach(function(entry) 
 			{
-				if(entry.id!=="undefined" && entry.id!=null && entry.id.length>0 && entry.path==req.params.url)
+				if(entry.id!=="undefined" && entry.id!=null && entry.id.length>0 && entry.path==req.params.url && entry.visible)
 				{
 					var fs = require('fs');
 					fs.stat("tournaments/" +entry.id, function (err, stats){
 					  if (err) {
-						// Directory doesn't exist or something.
-						/*console.log('Folder doesn\'t exist, so I made the folder ' + seriesid);
-						return fs.mkdir("temp/" + seriesid, callback);*/
 					  }
 					  if (typeof stats==="undefined" || !stats.isDirectory()) {
 						console.log("notadir");
 						return;
-						// This isn't a directory!
-						//callback(new Error('temp is not a directory!'));
 					  } 
 					  else 
 					  {
@@ -324,8 +319,8 @@ module.exports = function(app, passport) {
 		res.render('edittournament.ejs', { loggedIn:true, benchmarks:res.benchmarks,newtournamentTxt:myLocalize.translate("new_tournament"),
 		edittournamentTxt:myLocalize.translate("edit_tournament"),deleteSubmissionConfirmation:myLocalize.translate("delete_submissions_confirmation"),
 		deleteimageConfirmation:myLocalize.translate("delete_image_confirmation"),loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),
-		tournamentnameTxt:myLocalize.translate("tournament_name"),submissiondateTxt:myLocalize.translate("submission_date"), behcmarksTxt:myLocalize.translate("benchmarks"),
-		tournamentUrlTxt:myLocalize.translate("tournament_url"),descTxt:myLocalize.translate("description"),imgdescTxt:myLocalize.translate("tournament_images"),
+		tournamentnameTxt:myLocalize.translate("tournament_name"),submissiondateTxt:myLocalize.translate("submission_date"),submissiondateStartTxt:myLocalize.translate("submission_date_start"),visibleDesc:myLocalize.translate("submission_visible"),
+		behcmarksTxt:myLocalize.translate("benchmarks"),tournamentUrlTxt:myLocalize.translate("tournament_url"),descTxt:myLocalize.translate("description"),imgdescTxt:myLocalize.translate("tournament_images"),
 		passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 		submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
 		deletePasswordFileConfirmation:myLocalize.translate("delete_password_file"),invalidPasswordsFilename:myLocalize.translate("invalid_passwords_filename"),
@@ -392,10 +387,28 @@ module.exports = function(app, passport) {
 						var hash = makeid();
 						var obj = [];
 						try { obj = JSON.parse(data); } catch(ex) { /*probs empty*/} 
+										
+						var end_hour = "23:59";
+						var start_hour = "23:59";
 						
-						var end = Date.parse(req.body.ends);
-						end = end/1000;
-						obj.push({id:hash,name: req.body.name, timestamp:Math.floor(new Date() / 1000), ends:end, benchmarks:req.body.benchmarks, path:cleanUpAuthorName(req.body.path), description:req.body.description, password:req.body.password}); //add some data
+						try
+						{
+							if(typeof req.body.end_hour!=="undefined" && req.body.end_hour!=null && req.body.end_hour.length==5 && req.body.end_hour.indexOf(":")==2 && parseInt(req.body.end_hour.substring(0,2))<24 && parseInt(req.body.end_hour.substring(3,4))<59)
+								end_hour = req.body.end_hour;
+							
+							if(typeof req.body.start_hour!=="undefined" && req.body.start_hour!=null && req.body.start_hour.length==5 && req.body.start_hour.indexOf(":")==2 && parseInt(req.body.start_hour.substring(0,2))<24 && parseInt(req.body.start_hour.substring(3,4))<59)
+								start_hour = req.body.start_hour;
+						}
+						catch(hoursError) {}
+						
+						var end = Date.parse(req.body.ends+"T"+end_hour+":59")/1000;
+						var start =  Date.parse(req.body.starts+"T"+start_hour+":59")/1000;
+						
+						var visible = false;
+						if(typeof req.body.visible!=="undefined" && req.body.visible!=null && req.body.visible.length>0)
+							visible = true;
+						
+						obj.push({id:hash,name: req.body.name, timestamp:Math.floor(new Date() / 1000), starts:start, ends:end, benchmarks:req.body.benchmarks, path:cleanUpAuthorName(req.body.path), description:req.body.description, password:req.body.password, visible:visible }); //add some data
 						obj.sort(function(a, b) {
 						return parseInt(b.timestamp) - parseInt(a.timestamp); //sort in descending order
 						});
@@ -670,8 +683,9 @@ module.exports = function(app, passport) {
 						newtournamentTxt:myLocalize.translate("new_tournament"),
 						edittournamentTxt:myLocalize.translate("edit_tournament"),deleteSubmissionConfirmation:myLocalize.translate("delete_submissions_confirmation"),
 						deleteimageConfirmation:myLocalize.translate("delete_image_confirmation"),loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),
-						tournamentnameTxt:myLocalize.translate("tournament_name"),submissiondateTxt:myLocalize.translate("submission_date"), behcmarksTxt:myLocalize.translate("benchmarks"),
-						tournamentUrlTxt:myLocalize.translate("tournament_url"),descTxt:myLocalize.translate("description"),imgdescTxt:myLocalize.translate("tournament_images"),
+						tournamentnameTxt:myLocalize.translate("tournament_name"),submissiondateTxt:myLocalize.translate("submission_date"),submissiondateStartTxt:myLocalize.translate("submission_date_start"),
+						visibleDesc:myLocalize.translate("submission_visible"),behcmarksTxt:myLocalize.translate("benchmarks"),tournamentUrlTxt:myLocalize.translate("tournament_url"),
+						descTxt:myLocalize.translate("description"),imgdescTxt:myLocalize.translate("tournament_images"),
 						passwordfileDesc:myLocalize.translate("tournament_passwordfile_desc"),oldpasswordDesc:myLocalize.translate("oldpasswordfile_desc"),
 						submissionpasswordDesc:myLocalize.translate("submissionpassword_desc"),saveDesc:myLocalize.translate("save_btn"),cancelDesc:myLocalize.translate("cancel_btn"),
 						submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
@@ -796,8 +810,26 @@ module.exports = function(app, passport) {
 					if(tournament.path!=req.body.path)
 						tournament.path = cleanUpAuthorName(req.body.path);
 					
-					tournament.ends = Date.parse(req.body.ends)/1000;
+					var end_hour = "23:59";
+					var start_hour = "23:59";
+					
+					try
+					{
+						if(typeof req.body.end_hour!=="undefined" && req.body.end_hour!=null && req.body.end_hour.length==5 && req.body.end_hour.indexOf(":")==2 && parseInt(req.body.end_hour.substring(0,2))<24 && parseInt(req.body.end_hour.substring(3,4))<59)
+							end_hour = req.body.end_hour;
+						
+						if(typeof req.body.start_hour!=="undefined" && req.body.start_hour!=null && req.body.start_hour.length==5 && req.body.start_hour.indexOf(":")==2 && parseInt(req.body.start_hour.substring(0,2))<24 && parseInt(req.body.start_hour.substring(3,4))<59)
+							start_hour = req.body.start_hour;
+					}
+					catch(hoursError) {}
+					
+					tournament.ends = Date.parse(req.body.ends+"T"+end_hour+":59Z")/1000;
 					tournament.password = req.body.password;
+					tournament.starts = Date.parse(req.body.starts+"T"+start_hour+":59Z")/1000;
+					tournament.visible = false;
+					if(typeof req.body.visible!=="undefined" && req.body.visible!=null && req.body.visible.length>0)
+						tournament.visible = true;
+					
 					found = true;
 					break;
 				}
@@ -978,7 +1010,7 @@ module.exports = function(app, passport) {
 					if((typeof tournament.password!=="undefined" && tournament.password!=null && tournament.password!=null) || fs.existsSync("tournaments/"+tournament.id+"/passwords.csv"))
 						password = true;
 					
-					if(tournament.ends>new Date().getTime()/1000)
+					if(tournament.visible && tournament.starts<new Date().getTime()/1000 && tournament.ends>new Date().getTime()/1000)
 						found = true;
 					else
 					{

@@ -14,27 +14,32 @@ $( document ).ready(function()
 {
 	<% if (typeof tournaments!=="undefined" && typeof tournaments!=="undefined" && tournaments!=null && tournaments.length > 0) { %>
 	var result = "";
-	<% tournaments.forEach(function(entry) { %>
+	<% tournaments.forEach(function(entry) { if(typeof entry.visible!=="undefined" && entry.visible) { %>
 	var date = new Date(<%= entry.ends*1000 %>);
-			var month = date.getUTCMonth()+1;
-			if(month<10)
-				var month="0"+month;
-			var day = date.getUTCDate();
-			if(day<10)
-				var day="0"+day;
-			var hours = date.getUTCHours();
-		    if(hours<10)
-				var hours = "0"+hours;
-			
-			var minutes = date.getUTCMinutes()
-			if(minutes<10)
-				var minutes = "0"+minutes;
-		
+	var month = date.getUTCMonth()+1;
+	if(month<10)
+		var month="0"+month;
+	var day = date.getUTCDate();
+	if(day<10)
+		var day="0"+day;
+	var hours = date.getUTCHours();
+	if(hours<10)
+		var hours = "0"+hours;
+	
+	var minutes = date.getUTCMinutes()
+	if(minutes<10)
+		var minutes = "0"+minutes;
+	
+	var start_date = 0;
+	<% if(typeof entry.starts!=="undefined" && entry.starts>0) { %>
+		var start_date = new Date(<%= entry.starts*1000 %>);	
+	<% } %>	
+	
 	result+='<li class="list-group-item"><a href="/tournament/<%= entry.path %>"><%= entry.name %></a> <span class="badge"';
-	if(date>new Date().getTime())
+	if(date>new Date().getTime() && start_date<new Date().getTime())
 		result+=' style="background-color: #29a329;"';
 	result+='>'+day+'.'+month+'.'+date.getUTCFullYear()+" "+hours+":"+minutes+'</span></li>';
-	<% }); %>
+	<% }} ); %>
 	document.getElementById("tournamentList").innerHTML = result;
 	<% } else { %>
 	document.getElementById("tournamentList").innerHTML = "<%= nothingYet %>";
