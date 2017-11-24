@@ -5,5 +5,3 @@ config/master.json
 server.js
 /tournaments
 /tmp
-package.json
-package-lock.json

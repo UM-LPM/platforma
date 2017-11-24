@@ -387,12 +387,31 @@ module.exports = function(app, passport) {
 						var hash = makeid();
 						var obj = [];
 						try { obj = JSON.parse(data); } catch(ex) { /*probs empty*/} 
-										
+						
+						var date = new Date();		
+						var month = date.getUTCMonth()+1;
+						if(month<10)
+							var month="0"+month;
+						var day = date.getUTCDate();
+						if(day<10)
+							var day="0"+day;
+						
+						var start_date = date.getUTCFullYear()+"-"+month+"-"+day;
+						var end_date = date.getUTCFullYear()+"-"+month+"-"+day;
+				
 						var end_hour = "23:59";
-						var start_hour = "23:59";
+						var start_hour = "00:00";
 						
 						try
 						{
+							if(typeof req.body.starts!=="undefined" && req.body.starts!=null && req.body.starts.length==10 && req.body.starts.indexOf("-")==4 && req.body.starts.lastIndexOf("-")==7 && parseInt(req.body.starts.substring(0,4))>date.getUTCFullYear()-1 
+								&& parseInt(req.body.starts.substring(5,7))>0 && parseInt(req.body.starts.substring(5,7))<=12 && parseInt(req.body.starts.substring(8,10))>0 && parseInt(req.body.starts.substring(8,10))<=31)
+								start_date = req.body.starts;
+
+							if(typeof req.body.ends!=="undefined" && req.body.ends!=null && req.body.ends.length==10 && req.body.ends.indexOf("-")==4 && req.body.ends.lastIndexOf("-")==7 && parseInt(req.body.ends.substring(0,4))>date.getUTCFullYear()-1 
+								&& parseInt(req.body.ends.substring(5,7))>0 && parseInt(req.body.ends.substring(5,7))<=12 && parseInt(req.body.ends.substring(8,10))>0 && parseInt(req.body.ends.substring(8,10))<=31)
+								end_date = req.body.ends;
+
 							if(typeof req.body.end_hour!=="undefined" && req.body.end_hour!=null && req.body.end_hour.length==5 && req.body.end_hour.indexOf(":")==2 && parseInt(req.body.end_hour.substring(0,2))<24 && parseInt(req.body.end_hour.substring(3,4))<59)
 								end_hour = req.body.end_hour;
 							
@@ -401,8 +420,8 @@ module.exports = function(app, passport) {
 						}
 						catch(hoursError) {}
 						
-						var end = Date.parse(req.body.ends+"T"+end_hour+":59")/1000;
-						var start =  Date.parse(req.body.starts+"T"+start_hour+":59")/1000;
+						var end = Date.parse(end_date+"T"+end_hour+":59Z")/1000;
+						var start =  Date.parse(start_date+"T"+start_hour+":59Z")/1000;
 						
 						var visible = false;
 						if(typeof req.body.visible!=="undefined" && req.body.visible!=null && req.body.visible.length>0)
@@ -810,22 +829,41 @@ module.exports = function(app, passport) {
 					if(tournament.path!=req.body.path)
 						tournament.path = cleanUpAuthorName(req.body.path);
 					
+					var date = new Date();				
+					var month = date.getUTCMonth()+1;
+					if(month<10)
+						var month="0"+month;
+					var day = date.getUTCDate();
+					if(day<10)
+						var day="0"+day;
+						
+					var start_date = date.getUTCFullYear()+"-"+month+"-"+day;
+					var end_date = date.getUTCFullYear()+"-"+month+"-"+day;
+				
 					var end_hour = "23:59";
-					var start_hour = "23:59";
-					
+					var start_hour = "00:00";
+						
 					try
 					{
+						if(typeof req.body.starts!=="undefined" && req.body.starts!=null && req.body.starts.length==10 && req.body.starts.indexOf("-")==4 && req.body.starts.lastIndexOf("-")==7 && parseInt(req.body.starts.substring(0,4))>date.getUTCFullYear()-1 
+							&& parseInt(req.body.starts.substring(5,7))>0 && parseInt(req.body.starts.substring(5,7))<=12 && parseInt(req.body.starts.substring(8,10))>0 && parseInt(req.body.starts.substring(8,10))<=31)
+								start_date = req.body.starts;
+
+						if(typeof req.body.ends!=="undefined" && req.body.ends!=null && req.body.ends.length==10 && req.body.ends.indexOf("-")==4 && req.body.ends.lastIndexOf("-")==7 && parseInt(req.body.ends.substring(0,4))>date.getUTCFullYear()-1 
+							&& parseInt(req.body.ends.substring(5,7))>0 && parseInt(req.body.ends.substring(5,7))<=12 && parseInt(req.body.ends.substring(8,10))>0 && parseInt(req.body.ends.substring(8,10))<=31)
+								end_date = req.body.ends;
+
 						if(typeof req.body.end_hour!=="undefined" && req.body.end_hour!=null && req.body.end_hour.length==5 && req.body.end_hour.indexOf(":")==2 && parseInt(req.body.end_hour.substring(0,2))<24 && parseInt(req.body.end_hour.substring(3,4))<59)
 							end_hour = req.body.end_hour;
-						
+							
 						if(typeof req.body.start_hour!=="undefined" && req.body.start_hour!=null && req.body.start_hour.length==5 && req.body.start_hour.indexOf(":")==2 && parseInt(req.body.start_hour.substring(0,2))<24 && parseInt(req.body.start_hour.substring(3,4))<59)
 							start_hour = req.body.start_hour;
 					}
 					catch(hoursError) {}
-					
-					tournament.ends = Date.parse(req.body.ends+"T"+end_hour+":59Z")/1000;
+						
+					tournament.ends = Date.parse(end_date+"T"+end_hour+":59Z")/1000;
 					tournament.password = req.body.password;
-					tournament.starts = Date.parse(req.body.starts+"T"+start_hour+":59Z")/1000;
+					tournament.starts = Date.parse(start_date+"T"+start_hour+":59Z")/1000;
 					tournament.visible = false;
 					if(typeof req.body.visible!=="undefined" && req.body.visible!=null && req.body.visible.length>0)
 						tournament.visible = true;
