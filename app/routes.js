@@ -400,7 +400,7 @@ module.exports = function(app, passport) {
 						var end_date = date.getUTCFullYear()+"-"+month+"-"+day;
 				
 						var end_hour = "23:59";
-						var start_hour = "23:59";
+						var start_hour = "00:00";
 						
 						try
 						{
@@ -841,7 +841,7 @@ module.exports = function(app, passport) {
 					var end_date = date.getUTCFullYear()+"-"+month+"-"+day;
 				
 					var end_hour = "23:59";
-					var start_hour = "23:59";
+					var start_hour = "00:00";
 						
 					try
 					{
