@@ -83,8 +83,8 @@ module.exports = function(app, passport) {
 								{
 									req.session.email = email.value;
 									req.session.role = "admin";
-									res.redirect('/profile');
-									return;
+									res.redirect(302,'/profile');
+									res.end();
 								}
 							});
 							
@@ -96,8 +96,8 @@ module.exports = function(app, passport) {
 									{
 										req.session.email = email.value;
 										req.session.role = "user";
-										res.redirect('/profile');
-										return;
+										res.redirect(302,'/profile');
+										res.end();
 									}
 								}
 							}
