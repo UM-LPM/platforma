@@ -1,0 +1,54 @@
+<!-- views/profile.ejs -->
+<!doctype html>
+<html>
+<head>
+	<title><%= controlPanel %></title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<link rel="stylesheet" href="/styles/style.css"> <!-- load fontawesome -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="menu">
+<a style="float:left;height:30px;"href="/" class="btn btn-default"><span class="fa fa-home"></span></a>
+<%  if(!loggedIn) { %>
+<a style="float:right;height:30px;"href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= loginTxt %></a>
+<% } else { %>
+<a style="float:right;height:30px;"href="/profile" class="btn btn-default"><span class="fa fa-user"></span><%= profileTxt %></a>
+<% } %>
+</div>
+
+<div class="container">
+	<div class="page-header text-center">
+		<h1><span class="fa fa-anchor"></span> <%= controlPanel %></h1>
+		<a href="/logout" class="btn btn-default btn-sm"><%= logoutTxt %></a>
+	</div>
+	
+
+	<div class="row">
+
+		<!-- LOCAL INFORMATION -->
+		
+		<% if (typeof authorsSubmissions!=="undefined" && authorsSubmissions!=null && typeof authorsSubmissions.tournaments!=="undefined" && authorsSubmissions.tournaments!=null && authorsSubmissions.tournaments.length > 0) { %>
+		<div class="col-sm-6">
+				<% authorsSubmissions.tournaments.forEach(function(entry) {  %>
+				<p><a href="/tournament/<%= entry.path %>" target="_blank"><%=entry.name%></a></p>
+				<p><%=entry.benchmarks%></p>
+				<% if(typeof entry.submissions!=="undefined" && entry.submissions!=null && entry.submissions.length>0) {
+					for(var i=0;i<entry.submissions.length;i++) { %>
+							<a href="<%=entry.submissions[i].url%>">
+							<div class="well">
+							<h3><%= entry.name %></h3>
+							<p><%=entry.submissions[i].date_readable%></p>
+							</div>
+							</a>
+					<% } } %>
+			<%	}); %>
+		</div>
+		<% } %>
+	</div>
+
+</div>
+</body>
+</html>
