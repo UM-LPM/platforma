@@ -17,7 +17,7 @@ module.exports = function(app, passport) {
 		var appMailPassword = settings.appMailPassword;
 		var setLanguage = settings.setLanguage;
 	}
-	catch(MissingConfig) {  console.log("Missing config.js file in config folder!" ); process.exit(); }
+	catch(MissingConfig) {  console.log("Error in config file: " + MissingConfig); process.exit(); }
 	
 	var google = require('googleapis');
 	var OAuth2 = google.auth.OAuth2;

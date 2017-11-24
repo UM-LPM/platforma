@@ -1,6 +1,13 @@
 {
-  "name": "node-authentication",
+  "name": "ears_submission_platform",
   "main": "server.js",
+  "version": "1.0.0",
+  "description": "Online submission platform for EARS",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "LPM",
+  "license": "GNU GENERAL PUBLIC LICENSE",
   "dependencies": {
     "bcrypt-nodejs": "latest",
     "clear-require": "^2.0.0",

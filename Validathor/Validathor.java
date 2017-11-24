@@ -25,6 +25,69 @@ public class Validathor {
 		}
 	}
 
+	private static boolean removePackageFromFiles(String algorithmDir) {
+		
+		File folder = new File(algorithmDir);
+		File[] listOfFiles = folder.listFiles();
+		String fileName, line, fileData;
+		boolean hasPackage = false;
+		for (File file : listOfFiles) {
+			if (file.isFile()) {
+				fileName = file.getName();
+
+				if(getFileExtension(fileName).equals("java")) {
+
+					try(BufferedReader br = new BufferedReader(new FileReader(file))) {
+						hasPackage = false;
+						fileData = "";
+						while ((line = br.readLine()) != null) {
+							if(line.contains("package ")) {
+								hasPackage = true;
+								continue;
+							}
+							fileData += line;
+							fileData +="\n";
+						}
+
+						if(hasPackage) {
+							FileWriter fw = new FileWriter(file, false);
+							fw.write(fileData);
+							fw.close();
+						}
+
+					} catch (Exception e) {
+						errors.append("Error while removing package files in directory: "+ e.toString());
+						return false;
+					}
+
+				}
+			}
+		}
+		return true;
+	}
+
+	private static boolean hasParameterlessPublicConstructor(String algorithmDir, String algorithmName) {
+		
+		try{
+			File f = new File(algorithmDir);
+			URL[] cp = {f.toURI().toURL()};
+			URLClassLoader urlcl = new URLClassLoader(cp);
+			Class<?> clazz = urlcl.loadClass(algorithmName);
+
+			for (Constructor<?> constructor : clazz.getConstructors()) {
+				// In Java 7-, use getParameterTypes and check the length of the array returned
+				if (constructor.getParameterCount() == 0) { 
+					return true;
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+
 	public static void main(String[] args) {
 		errors = new StringBuilder();
 		if (args.length == 2) {
@@ -62,7 +125,6 @@ public class Validathor {
 				return;
 			}
 
-
 			try {
 			
 				ProcessBuilder pb;
@@ -70,6 +132,18 @@ public class Validathor {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+
+			removePackageFromFiles(userAlgorithmFolder);
+
+			// write error if algorithm 
+			if(!hasParameterlessPublicConstructor(userAlgorithmFolder,userAlgorithmFilename.substring(0, userAlgorithmFilename.lastIndexOf(".")))) {
+				errors.append(" No parameterless public constructor found!");
+			}
+			else {
+				//TODO create object and get algorithm info (author + name), @author no longer needed
+				//write info to submissions file
+			}
+
 			
 			try( PrintWriter out = new PrintWriter(targetFile) )
 			{
