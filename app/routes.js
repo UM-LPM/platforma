@@ -164,7 +164,10 @@ module.exports = function(app, passport) {
 			res.render('login.ejs', { message: req.flash('loginMessage'), googleAuthUrl:getAuthUrl(),emailTxt:myLocalize.translate("email"), 
 			passwordTxt:myLocalize.translate("password"),loginTxt:myLocalize.translate("login"),googleTxt:myLocalize.translate("google_login"), orgoTxt:myLocalize.translate("or_go"),homeTxt:myLocalize.translate("home") });
 		else
+		{
 			res.redirect('/profile');
+			res.end();
+		}
 	});
 
 	
