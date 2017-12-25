@@ -1253,12 +1253,12 @@ module.exports = function(app, passport) {
 														{
 															if(tmp.indexOf('extends MOAlgorithm')>=0)
 																source_file = file;
-															algorithmName = extractAlgorithmName(source_file,"extends MOAlgorithm");	
+															algorithmName = extractAlgorithmName(tmp,"extends MOAlgorithm");	
 														}
 														else if(tmp.indexOf('extends Algorithm') >= 0)
 														{
 															source_file = file;
-															algorithmName = extractAlgorithmName(source_file,"extends MOAlgorithm");	
+															algorithmName = extractAlgorithmName(tmp,"extends Algorithm");	
 														}
 													}
 													catch(errorreading) { console.log(errorreading);}
@@ -2572,6 +2572,6 @@ function extractAlgorithmName(sourceFile,type)
 				return sourceFile;
 			}
 		}
-		catch(AlgorithmParseError) {}
+		catch(AlgorithmParseError) { }
 	}
 }
