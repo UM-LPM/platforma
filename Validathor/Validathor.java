@@ -127,6 +127,8 @@ public class Validathor {
 				return;
 			}
 			
+			removePackageFromFiles(userAlgorithmFolder);
+			
 			try {
 			ProcessBuilder pb = new ProcessBuilder("javac","-sourcepath",userAlgorithmFolder,"-cp",earsPath,userAlgorithmFilename);
 
@@ -145,8 +147,6 @@ public class Validathor {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
-			removePackageFromFiles(userAlgorithmFolder);
 
 			// write error if algorithm 
 			if(!hasParameterlessPublicConstructor(userAlgorithmFolder,userAlgorithmFilename.substring(0, userAlgorithmFilename.lastIndexOf(".")))) {
