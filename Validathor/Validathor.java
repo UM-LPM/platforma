@@ -8,6 +8,8 @@
  ******************************************************************************/
 import java.util.*;
 import java.io.*;
+import java.net.*;
+import java.lang.reflect.Constructor;
 
 public class Validathor {
 
@@ -23,6 +25,17 @@ public class Validathor {
 		while ((s = stdError.readLine()) != null) {
 			errors.append(s);
 		}
+	}
+	
+	private static String getFileExtension(String fileName){
+		String extension = "";
+		if(fileName.length()>5)
+		{
+			int i = fileName.lastIndexOf('.');
+			if(i>0) 
+				extension = fileName.substring(i+1);
+		}
+		return extension;
 	}
 
 	private static boolean removePackageFromFiles(String algorithmDir) {
@@ -114,6 +127,8 @@ public class Validathor {
 				return;
 			}
 			
+			removePackageFromFiles(userAlgorithmFolder);
+			
 			try {
 			ProcessBuilder pb = new ProcessBuilder("javac","-sourcepath",userAlgorithmFolder,"-cp",earsPath,userAlgorithmFilename);
 
@@ -132,8 +147,6 @@ public class Validathor {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
-			removePackageFromFiles(userAlgorithmFolder);
 
 			// write error if algorithm 
 			if(!hasParameterlessPublicConstructor(userAlgorithmFolder,userAlgorithmFilename.substring(0, userAlgorithmFilename.lastIndexOf(".")))) {
