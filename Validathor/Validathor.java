@@ -39,7 +39,6 @@ public class Validathor {
 	}
 
 	private static boolean removePackageFromFiles(String algorithmDir) {
-		
 		File folder = new File(algorithmDir);
 		File[] listOfFiles = folder.listFiles();
 		String fileName, line, fileData;
@@ -47,7 +46,6 @@ public class Validathor {
 		for (File file : listOfFiles) {
 			if (file.isFile()) {
 				fileName = file.getName();
-
 				if(getFileExtension(fileName).equals("java")) {
 
 					try(BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -84,7 +82,8 @@ public class Validathor {
 		try{
 			File f = new File(algorithmDir);
 			URL[] cp = {f.toURI().toURL()};
-			URLClassLoader urlcl = new URLClassLoader(cp);
+
+			URLClassLoader urlcl = new URLClassLoader(cp);		
 			Class<?> clazz = urlcl.loadClass(algorithmName);
 
 			for (Constructor<?> constructor : clazz.getConstructors()) {
@@ -110,17 +109,19 @@ public class Validathor {
 			final File f = new File(Validathor.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 			String earsPath = f.getParent()+File.separator.toString();
 		
-			try{
-						
-			File file = new File(earsPath+"config"+File.separator+"config.js");
-			final Scanner scanner = new Scanner(file);
-			while (scanner.hasNextLine()) {
-			   final String lineFromFile = scanner.nextLine();
-			   if(lineFromFile.contains("earsPath")) { 
-				   earsPath+=lineFromFile.substring(lineFromFile.indexOf("\"")+1,lineFromFile.lastIndexOf("\""));
-				   break;
-			   }
-			}
+			try
+			{			
+				File file = new File(earsPath+"config"+File.separator+"config.js");
+				final Scanner scanner = new Scanner(file);
+				while (scanner.hasNextLine()) 
+				{
+				   final String lineFromFile = scanner.nextLine();
+				   if(lineFromFile.contains("earsPath")) 
+				   { 
+					   earsPath=lineFromFile.substring(lineFromFile.indexOf("\"")+1,lineFromFile.lastIndexOf("\""));
+					   break;
+				   }
+				}
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -129,22 +130,25 @@ public class Validathor {
 			
 			removePackageFromFiles(userAlgorithmFolder);
 			
-			try {
-			ProcessBuilder pb = new ProcessBuilder("javac","-sourcepath",userAlgorithmFolder,"-cp",earsPath,userAlgorithmFilename);
-
-			pb.directory(new File(userAlgorithmFolder));
-			startProcess(pb);
-
-			} catch (Exception e) {
+			try 
+			{
+				ProcessBuilder pb = new ProcessBuilder("javac","-sourcepath",userAlgorithmFolder,"-cp",earsPath,userAlgorithmFilename);
+				pb.directory(new File(userAlgorithmFolder));
+				startProcess(pb);
+			}
+			catch (Exception e) 
+			{
 				e.printStackTrace();
 				return;
 			}
 
-			try {
-			
+			try 
+			{
 				ProcessBuilder pb;
-				pb = new ProcessBuilder("java","-cp",earsPath+File.pathSeparator+userAlgorithmFolder+"/",userAlgorithmFilename.substring(0, userAlgorithmFilename.lastIndexOf(".")));
-			} catch (Exception e) {
+				pb = new ProcessBuilder("java","-cp",userAlgorithmFolder+File.separator,userAlgorithmFilename.substring(0, userAlgorithmFilename.lastIndexOf(".")));
+			} 
+			catch (Exception e) 
+			{
 				e.printStackTrace();
 			}
 

@@ -330,7 +330,9 @@ module.exports = function(app, passport) {
 		storedPasswords:myLocalize.translate("stored_passwords"),storedPasswordsAuthor:myLocalize.translate("stored_passwords_author"),
 		storedPasswordsEmail:myLocalize.translate("stored_passwords_email"),storedPasswordsPassword:myLocalize.translate("stored_passwords_password"),
 		storedPasswordsDeleteconfirmation:myLocalize.translate("stored_passwords_delete_confirmation"),
-		submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission")} );
+		submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
+		rating_table_score:myLocalize.translate("rating_table_score"),rating_table_min:myLocalize.translate("rating_table_min"), 
+		rating_table_max:myLocalize.translate("rating_table_max"),hasErrors:myLocalize.translate("submission_has_errors")} );
 		return;
 	});
 	
@@ -629,8 +631,33 @@ module.exports = function(app, passport) {
 		if(found)
 		{
 			var submissions;
+			var results;
 			var images = [];
 			var fs = require('fs');
+			
+			if(fs.existsSync("tournaments/"+tournament.id+"/submissions/submission_list.json"))
+			{
+				var fs = require('fs');
+				
+				try { 
+				  var obj =  fs.readFileSync("tournaments/"+tournament.id+"/benchmark_result_files/results.json","UTF-8");
+				  if(obj.length>0)
+				  {
+					var results = [];
+					try
+					{
+						results = JSON.parse(obj);
+						results.sort(function(a, b) 
+						{
+							return a.ratingIntervalRight - b.ratingIntervalRight; //sort in ascending order
+						});	
+					}
+					catch(JSONException) { console.log(JSONException); }
+				  }
+				}
+				catch (subseciption) {}
+			}
+			
 			
 			if(fs.existsSync("tournaments/"+tournament.id+"/submissions/submission_list.json"))
 			{
@@ -653,6 +680,19 @@ module.exports = function(app, passport) {
 								error = JSON.parse(error);
 								if(typeof error.error_list!=="undefined" && error.error_list!=null && error.error_list.length>0)
 									sub.hasErrors = true;
+								if(typeof results!=="undefined" && results!=null && results.length>0)
+								{
+									results.forEach(function(result)
+									{
+										if(typeof result.submissionId!=="undefined" && result.submissionId!=null && result.submissionId == sub.id)
+										{
+											sub.score_left = result.ratingIntervalLeft;
+											sub.score_right = result.ratingIntervalRight;
+											sub.score_rating = result.rating;
+											return;
+										}
+									});
+								}								
 							}
 						});
 					}
@@ -702,6 +742,7 @@ module.exports = function(app, passport) {
 						passwordfile:passwordfile,
 						passwords:passwords,
 						images:images,
+						results:results,
 						newtournamentTxt:myLocalize.translate("new_tournament"),
 						edittournamentTxt:myLocalize.translate("edit_tournament"),deleteSubmissionConfirmation:myLocalize.translate("delete_submissions_confirmation"),
 						deleteimageConfirmation:myLocalize.translate("delete_image_confirmation"),loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),
@@ -715,7 +756,9 @@ module.exports = function(app, passport) {
 						storedPasswords:myLocalize.translate("stored_passwords"),storedPasswordsAuthor:myLocalize.translate("stored_passwords_author"),
 						storedPasswordsEmail:myLocalize.translate("stored_passwords_email"),storedPasswordsPassword:myLocalize.translate("stored_passwords_password"),
 						storedPasswordsDeleteconfirmation:myLocalize.translate("stored_passwords_delete_confirmation"),
-						hasErrors:myLocalize.translate("submission_has_errors")});
+						hasErrors:myLocalize.translate("submission_has_errors"),rating_table_score:myLocalize.translate("rating_table_score"),rating_table_min:myLocalize.translate("rating_table_min"), 
+						rating_table_max:myLocalize.translate("rating_table_max"),tournament_results:myLocalize.translate("tournament_results"),tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),
+						tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max")});
 						return;
 		}
 		else
@@ -1635,6 +1678,7 @@ module.exports = function(app, passport) {
 				var submission_report;
 				var info_txt;
 				var error_txt;
+				var files;
 				
 				try {
 				  var obj = fs.readFileSync(submissionFolder+"/compile_report.json","UTF-8");
@@ -1659,16 +1703,31 @@ module.exports = function(app, passport) {
 				}
 				catch (e) {  }
 				
+				try {
+					var files = [];
+					var tmp = fs.readdirSync(submissionFolder);
+					tmp.forEach(file => {
+						if(file.indexOf(".java")>0 || file.indexOf(".zip")>0)
+							files.push(file);
+					  });  
+				}
+				catch (e) {}
+				
+				var enableFileDownloads = false;
+				if(typeof req.session.role !=="undefined" && req.session.role!=null && req.session.role == "admin")
+					enableFileDownloads = true;
 				
 				res.render('showresults.ejs',{
 				data:tournament, submission_report:submission_report, compile_report:compile_report,loggedIn:loggedIn,
 				error_txt:error_txt,info_txt:info_txt,
+				files:files,
 				passwordRequired:myLocalize.translate("empty_submission_password"),maxsizeDesc:myLocalize.translate("max_upload_size"),
 				invalidFormat:myLocalize.translate("invalid_file_format"),chooseFile:myLocalize.translate("choose_file_for_upload"),
 				loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),uploadSuccess:myLocalize.translate("file_upload_success"),
 				benchmarks:myLocalize.translate("benchmarks"),submissionDate:myLocalize.translate("submission_date"),description:myLocalize.translate("description"),
 				author:myLocalize.translate("author"),submittedDate:myLocalize.translate("submitted_date"),compileReport:myLocalize.translate("compile_report"),
-				noErrors:myLocalize.translate("no_errors"),submissionProcessing:myLocalize.translate("submission_being_processed")});
+				noErrors:myLocalize.translate("no_errors"),submissionProcessing:myLocalize.translate("submission_being_processed"),
+				submitted_files:myLocalize.translate("submitted_files"),submission_url:req.params.authorfolder,enableFileDownloads:enableFileDownloads});
 				return;
 			}
 			else
@@ -1681,7 +1740,8 @@ module.exports = function(app, passport) {
 				loginTxt:myLocalize.translate("login"),profileTxt:myLocalize.translate("profile"),uploadSuccess:myLocalize.translate("file_upload_success"),
 				benchmarks:myLocalize.translate("benchmarks"),submissionDate:myLocalize.translate("submission_date"),description:myLocalize.translate("description"),
 				author:myLocalize.translate("author"),submittedDate:myLocalize.translate("submitted_date"),compileReport:myLocalize.translate("compile_report"),
-				noErrors:myLocalize.translate("no_errors"),submissionProcessing:myLocalize.translate("submission_being_processed")});
+				noErrors:myLocalize.translate("no_errors"),submissionProcessing:myLocalize.translate("submission_being_processed"),
+				submitted_files:myLocalize.translate("submitted_files"),submission_url:req.params.authorfolder,enableFileDownloads:enableFileDownloads});
 				return;
 			}	
 		}
@@ -1698,6 +1758,17 @@ module.exports = function(app, passport) {
 			noErrors:myLocalize.translate("no_errors"),submissionProcessing:myLocalize.translate("submission_being_processed")});
 			return;
 		}
+	});
+	
+	app.get('/downloadSubmissionFile', isLoggedAsAdmin, function(req, res) {
+			if(typeof req.query.url!=="undefined" && req.query.url!=null && req.query.url.length>0 && req.query.fileName!=="undefined" && req.query.fileName!=null && req.query.fileName.length>0
+			&& req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0)
+			{
+				var fs = require('fs');
+				var submissionFolder = "tournaments/"+req.query.tournamentId+"/submissions/"+req.query.url+"/"+req.query.fileName;
+				if(fs.existsSync(submissionFolder))
+					res.download(submissionFolder);	
+			}				
 	});
 	
 	app.get('/deleteSubmission', isLoggedAsAdmin, function(req, res) 

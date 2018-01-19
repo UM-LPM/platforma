@@ -400,5 +400,13 @@
 	  "kill_ears_confirm":{
 		"si":"Ustavim vse trenutno zagnane verzije EARSA?",
 		"eng":"Are you sure you want to terminate all running EARS instances?"
+	 },
+	 "tournament_results":{
+		"si": "Rezultati algoritmov",
+		"eng": "Tournament results"
+	 },
+	 "submitted_files":{
+		"si": "Oddane datoteke",
+		"eng": "Submitted files"
 	 }
 }

@@ -321,10 +321,29 @@
 				<div class="well">
 					<h3><span class="fa fa-user" style="margin-right:10px;"></span><%= entry.author %><% if(typeof entry.hasErrors!=="undefined" && entry.hasErrors) {%><span style="color:red;margin-left:10px;" class="glyphicon glyphicon-fire" title="<%= hasErrors %>"></span><%}%></h3>
 						<p id="<%= entry.timestamp %>"><script>parseTimestamp(<%= entry.timestamp %>);</script></p>
+						<% if(typeof entry.score_rating!=="undefined" && entry.score_rating!=null) { %>
+						<p><b><%= rating_table_score %></b> <%= entry.score_rating%></p>
+						<p><b><%= rating_table_min %></b> <%= entry.score_left%></p>
+						<p><b><%= rating_table_max %></b> <%= entry.score_right%></p>
+						<% } %>
 						<p><a href="/<%=data.path%>/submission/<%=entry.author%>_<%= entry.timestamp %>"> <%= viewSubmission %></a></p>
 						<p><a href="#/" onclick="deleteSubmission('<%= entry.id %>');"><%= deleteDesc %></a></p>
 				</div>
 			<%	}); %>
+</div>
+<% } %>
+
+<% if(typeof results!=="undefined" && results!=null){ %>
+<h3><%= tournament_results %> (<%= results.length %>)</h3>
+<div style="max-height:700px;overflow-y:scroll;">
+<table class="table">
+<thead><tr><th><%=tableAlgorithm%></th><th><%=tableRating%></th><th><%=tableMin%></th><th><%=tableMax%></th></tr></thead>
+<tbody>
+<% for(i=results.length-1; i>=0; i--) { %>
+	<tr><td><% if(typeof results[i].submissionAuthor!="undefined" && results[i].submissionAuthor!=null && results[i].submissionAuthor.length>0){%><%=results[i].submissionAuthor.substring(0,20)%><%} else {%><%=results[i].playerId.substring(0,20)%><% } %></td><td><%=results[i].rating.toFixed(2)%></td><td><%= results[i].ratingIntervalLeft.toFixed(2) %></td><td><%= results[i].ratingIntervalRight.toFixed(2) %></td></tr>
+<% } %>
+</tbody>
+</table>
 </div>
 <% } %>
 

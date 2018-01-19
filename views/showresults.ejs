@@ -118,6 +118,20 @@
 	<% } else { %>
 	<div class="alert alert-success"><p><%= noErrors %></p></div>
 	<% } %>
+	
+	<% if(typeof files!=="undefined" && files!=null){ %>
+	<div style="max-height:700px;overflow-y:scroll;">
+	<table class="table">
+	<thead><tr><th><%=submitted_files%></th><th></th></tr></thead>
+	<tbody>
+	<% for(i=0; i<files.length; i++) { %>
+		<tr><td><%if(typeof enableFileDownloads!=="undefined" && enableFileDownloads!=null && enableFileDownloads){%><a href="/downloadSubmissionFile?tournamentId=<%=data.id%>&url=<%=submission_url%>&fileName=<%=files[i]%>"><%=files[i] %><% } else { %> <%=files[i]%> <% } %></a></td></tr>
+	<% } %>
+	</tbody>
+	</table>
+	</div>
+	<% } %>
+	
 </div>
 </div>
 </body>
