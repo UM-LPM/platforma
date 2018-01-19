@@ -1716,6 +1716,8 @@ module.exports = function(app, passport) {
 				var enableFileDownloads = false;
 				if(typeof req.session.role !=="undefined" && req.session.role!=null && req.session.role == "admin")
 					enableFileDownloads = true;
+				else if(req.session.role !=="undefined" && req.session.role!=null && req.session.role == "user" && isHisSubmission(req.session.email,tournament.id,req.params.authorfolder))
+					enableFileDownloads = true;
 				
 				res.render('showresults.ejs',{
 				data:tournament, submission_report:submission_report, compile_report:compile_report,loggedIn:loggedIn,
@@ -1760,15 +1762,58 @@ module.exports = function(app, passport) {
 		}
 	});
 	
-	app.get('/downloadSubmissionFile', isLoggedAsAdmin, function(req, res) {
-			if(typeof req.query.url!=="undefined" && req.query.url!=null && req.query.url.length>0 && req.query.fileName!=="undefined" && req.query.fileName!=null && req.query.fileName.length>0
+	function isHisSubmission(email,tournamentId,submissionUrl) 
+	{
+		if(typeof email!=="undefined" && email!=null && email.length>0 && authorsList.length>0 && typeof tournamentId!=="undefined" && tournamentId!=null && tournamentId.length>0
+			&& typeof submissionUrl!=="undefined" && submissionUrl!=null && submissionUrl.length>0)
+		{
+			for(var i=0;i<authorsList.length;i++)
+			{
+				if(authorsList[i].email == email)
+				{
+					for(var k=0;k<authorsList[i].tournaments.length;k++)
+					{
+						if(authorsList[i].tournaments[k].id == tournamentId)
+						{				
+							for(var j=0;j<authorsList[i].tournaments[k].submissions.length;j++)
+							{
+								if(authorsList[i].tournaments[k].submissions[j].url == authorsList[i].tournaments[k].path+"/submission/"+submissionUrl)
+									return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
+		}
+		else
+			return false;
+	}
+	
+	app.get('/downloadSubmissionFile', function(req, res) {
+			if(typeof req.session.role!=="undefined" && req.session.role!=null && (req.session.role=="admin" || req.session.role == "user") && typeof req.query.url!=="undefined" && req.query.url!=null 
+			&& req.query.url.length>0 && req.query.fileName!=="undefined" && req.query.fileName!=null && req.query.fileName.length>0
 			&& req.query.tournamentId!=="undefined" && req.query.tournamentId!=null && req.query.tournamentId.length>0)
 			{
-				var fs = require('fs');
-				var submissionFolder = "tournaments/"+req.query.tournamentId+"/submissions/"+req.query.url+"/"+req.query.fileName;
-				if(fs.existsSync(submissionFolder))
-					res.download(submissionFolder);	
-			}				
+				if(req.session.role == "admin")
+				{
+					var fs = require('fs');
+					var submissionFolder = "tournaments/"+req.query.tournamentId+"/submissions/"+req.query.url+"/"+req.query.fileName;
+					if(fs.existsSync(submissionFolder))
+						res.download(submissionFolder);
+				}
+				else if(isHisSubmission(req.session.email,req.query.tournamentId,req.query.url))
+				{
+					var fs = require('fs');
+					var submissionFolder = "tournaments/"+req.query.tournamentId+"/submissions/"+req.query.url+"/"+req.query.fileName;
+					if(fs.existsSync(submissionFolder))
+						res.download(submissionFolder);
+				}
+				else
+					res.redirect("/");
+			}	
+			else
+				res.redirect("/");
 	});
 	
 	app.get('/deleteSubmission', isLoggedAsAdmin, function(req, res) 
