@@ -78,7 +78,7 @@ public class Validathor {
 	}
 
 	private static boolean hasParameterlessPublicConstructor(String algorithmDir, String algorithmName) {
-		
+		System.out.println("Checking for constructor in: "+algorithmDir+ " for class: "+algorithmName);
 		try{
 			File f = new File(algorithmDir);
 			URL[] cp = {f.toURI().toURL()};
@@ -128,12 +128,15 @@ public class Validathor {
 				e.printStackTrace();
 				return;
 			}
-			
+			System.out.println("EARS PATH: "+earsPath);
 			removePackageFromFiles(userAlgorithmFolder);
 			
 			try 
 			{
-				ProcessBuilder pb = new ProcessBuilder("javac","-sourcepath",userAlgorithmFolder,"-cp",earsPath,userAlgorithmFilename);
+				ProcessBuilder pb= new ProcessBuilder("javac","-sourcepath",userAlgorithmFolder,"-cp",earsPath, userAlgorithmFilename);
+				//System.out.println("pb command: "+pb.command().toString());
+				//pb = new ProcessBuilder("javac","-sourcepath",userAlgorithmFolder,"-cp",earsPath+File.pathSeparator+userAlgorithmFolder+"/",userAlgorithmFilename);
+
 				pb.directory(new File(userAlgorithmFolder));
 				startProcess(pb);
 			}
@@ -144,25 +147,14 @@ public class Validathor {
 				return;
 			}
 
-			try 
-			{
-				ProcessBuilder pb;
-				pb = new ProcessBuilder("java","-cp",userAlgorithmFolder+File.separator,userAlgorithmFilename.substring(0, userAlgorithmFilename.lastIndexOf(".")));
-			} 
-			catch (Exception e) 
-			{
-				System.err.println("Error while compiling file :"+userAlgorithmFilename +"\n EARS path: "+earsPath);
-				e.printStackTrace();
-			}
-
 			// write error if algorithm 
-			if(!hasParameterlessPublicConstructor(userAlgorithmFolder,userAlgorithmFilename.substring(0, userAlgorithmFilename.lastIndexOf(".")))) {
+			/*if(!hasParameterlessPublicConstructor(userAlgorithmFolder,userAlgorithmFilename.substring(0, userAlgorithmFilename.lastIndexOf(".")))) {
 				errors.append(" No parameterless public constructor found!");
 			}
 			else {
 				//TODO create object and get algorithm info (author + name), @author no longer needed
 				//write info to submissions file
-			}
+			}*/
 
 			
 			try( PrintWriter out = new PrintWriter(targetFile) )
