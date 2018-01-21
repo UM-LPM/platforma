@@ -118,7 +118,7 @@ public class Validathor {
 				   final String lineFromFile = scanner.nextLine();
 				   if(lineFromFile.contains("earsPath")) 
 				   { 
-					   earsPath=lineFromFile.substring(lineFromFile.indexOf("\"")+1,lineFromFile.lastIndexOf("\""));
+					   earsPath+=lineFromFile.substring(lineFromFile.indexOf("\"")+1,lineFromFile.lastIndexOf("\""));
 					   break;
 				   }
 				}
