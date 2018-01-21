@@ -94,6 +94,7 @@ public class Validathor {
 			}
 
 		} catch (Exception e) {
+			System.err.println("Error when checking for paramterelss public constructor at: "+algorithmDir);
 			e.printStackTrace();
 		}
 		
@@ -138,6 +139,7 @@ public class Validathor {
 			}
 			catch (Exception e) 
 			{
+				System.err.println("Error while compiling file :"+userAlgorithmFilename +"\n EARS path: "+earsPath);
 				e.printStackTrace();
 				return;
 			}
@@ -149,6 +151,7 @@ public class Validathor {
 			} 
 			catch (Exception e) 
 			{
+				System.err.println("Error while compiling file :"+userAlgorithmFilename +"\n EARS path: "+earsPath);
 				e.printStackTrace();
 			}
 
