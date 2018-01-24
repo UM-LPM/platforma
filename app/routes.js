@@ -1707,7 +1707,9 @@ module.exports = function(app, passport) {
 					var files = [];
 					var tmp = fs.readdirSync(submissionFolder);
 					tmp.forEach(file => {
-						if(file.indexOf(".java")>0 || file.indexOf(".zip")>0)
+						if(typeof req.session.role !=="undefined" && req.session.role!=null && req.session.role == "admin")
+							files.push(file);
+						else if(file.indexOf(".java")>0 || file.indexOf(".zip")>0)
 							files.push(file);
 					  });  
 				}
