@@ -1910,6 +1910,44 @@ module.exports = function(app, passport) {
 			}
 	});
 	
+	app.get('/runValidathor:submissionURL?', function(req, res) 
+	{
+		try
+		{
+			
+				var submissionURL = "";
+				if(typeof req.query.submissionURL!=="undefined" && req.query.submissionURL!=null && req.query.submissionURL.length>0)
+					submissionURL = req.query.submissionURL;
+					
+				if(submissionURL.length>0 && submissionURL.length>0)
+				{
+					var fs = require('fs');
+					submissionURL = "tournaments/"+submissionURL;
+					if(fs.existsSync(submissionURL))
+					{
+						try 
+						{
+							var files = [];
+							var tmp = fs.readdirSync(submissionURL);
+							tmp.forEach(file => {
+							if(file.indexOf(".java")>0)
+							{
+								var tmp = fs.readFileSync(submissionURL+"/"+file);
+								if(tmp.indexOf("extends Algorithm")>=0 || tmp.indexOf("extend MOAlgorithm")>=0)
+								{
+									compileSource(submissionURL+"/"+file);
+									return;
+								}
+							}
+						  });  
+						}
+						catch (e) {}
+					}
+				}				
+		}
+		catch(EarsError) { console.log(EarsError); res.json({"success": false});}
+	});
+	
 	app.get('/runEars:tournamentId?:override?', isLoggedAsAdmin, function(req, res) 
 	{
 		try

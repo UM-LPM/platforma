@@ -327,6 +327,7 @@
 						<p><b><%= rating_table_max %></b> <%= entry.score_right%></p>
 						<% } %>
 						<p><a href="/<%=data.path%>/submission/<%=entry.author%>_<%= entry.timestamp %>"> <%= viewSubmission %></a></p>
+						<p><a href="/runValidathor?submissionURL=<%=data.id%>/submissions/<%=entry.author%>_<%= entry.timestamp %>">Run Validathor</a></p>
 						<p><a href="#/" onclick="deleteSubmission('<%= entry.id %>');"><%= deleteDesc %></a></p>
 				</div>
 			<%	}); %>
