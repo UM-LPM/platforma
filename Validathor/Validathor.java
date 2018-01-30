@@ -159,7 +159,7 @@ public class Validathor {
 			
 			try( PrintWriter out = new PrintWriter(targetFile) )
 			{
-				out.println("{\"error_list\": \""+errors.toString().replaceAll("\"","\\\\\"")+"\"}");
+				out.println("{\"error_list\": \""+errors.toString().replaceAll("[^a-zA-Z0-9\\s]", "")+"\"}");
 			} catch(Exception b) {}
 		} else
 			System.out.println(
