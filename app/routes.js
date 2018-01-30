@@ -756,6 +756,7 @@ module.exports = function(app, passport) {
 						storedPasswords:myLocalize.translate("stored_passwords"),storedPasswordsAuthor:myLocalize.translate("stored_passwords_author"),
 						storedPasswordsEmail:myLocalize.translate("stored_passwords_email"),storedPasswordsPassword:myLocalize.translate("stored_passwords_password"),
 						storedPasswordsDeleteconfirmation:myLocalize.translate("stored_passwords_delete_confirmation"),
+						runValidathorTXT:myLocalize.translate("run_validathor"),validathorFinished:myLocalize.translate("validathor_finished"),
 						hasErrors:myLocalize.translate("submission_has_errors"),rating_table_score:myLocalize.translate("rating_table_score"),rating_table_min:myLocalize.translate("rating_table_min"), 
 						rating_table_max:myLocalize.translate("rating_table_max"),tournament_results:myLocalize.translate("tournament_results"),tableAlgorithm:myLocalize.translate("rating_table_algorithm"),tableRating:myLocalize.translate("rating_table_score"),
 						tableMin:myLocalize.translate("rating_table_min"),tableMax:myLocalize.translate("rating_table_max")});
@@ -1914,7 +1915,6 @@ module.exports = function(app, passport) {
 	{
 		try
 		{
-			
 				var submissionURL = "";
 				if(typeof req.query.submissionURL!=="undefined" && req.query.submissionURL!=null && req.query.submissionURL.length>0)
 					submissionURL = req.query.submissionURL;
@@ -1933,9 +1933,10 @@ module.exports = function(app, passport) {
 							if(file.indexOf(".java")>0)
 							{
 								var tmp = fs.readFileSync(submissionURL+"/"+file);
-								if(tmp.indexOf("extends Algorithm")>=0 || tmp.indexOf("extend MOAlgorithm")>=0)
+								if(tmp.indexOf("extends Algorithm")>=0 || tmp.indexOf("extends MOAlgorithm")>=0)
 								{
 									compileSource(submissionURL+"/"+file);
+									res.json({"success": true})
 									return;
 								}
 							}

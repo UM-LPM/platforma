@@ -230,6 +230,26 @@
 		newrow+='<a href="#/" id="newPass" onclick="removeRow(this);">X</a></td></tr>';					
 		$('.passwordsForm').find('tbody').append(newrow);
 	}
+	
+	function runValidathor(url)
+	{
+		if(typeof url!=="undefined" && url!=null && url.length>0)
+		{
+			$.ajax({
+			type: 'GET',
+			url: "/runValidathor?submissionURL="+url,
+			success: function(data)
+			{
+				try
+				{
+					if(data.success!=="undefined" && data.success!=null && data)
+						alert("<%= validathorFinished %>");
+				}
+				catch(JSONError) { console.log(JSONError); }
+			}
+		});
+		}	
+	}
 	</script>
 </head>
 <body>
@@ -327,7 +347,7 @@
 						<p><b><%= rating_table_max %></b> <%= entry.score_right%></p>
 						<% } %>
 						<p><a href="/<%=data.path%>/submission/<%=entry.author%>_<%= entry.timestamp %>"> <%= viewSubmission %></a></p>
-						<p><a href="/runValidathor?submissionURL=<%=data.id%>/submissions/<%=entry.author%>_<%= entry.timestamp %>">Run Validathor</a></p>
+						<p><a href="#/" onclick="runValidathor('<%=data.id%>/submissions/<%=entry.author%>_<%= entry.timestamp %>');"><%= runValidathorTXT %></a></p>
 						<p><a href="#/" onclick="deleteSubmission('<%= entry.id %>');"><%= deleteDesc %></a></p>
 				</div>
 			<%	}); %>

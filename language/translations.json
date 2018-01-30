@@ -408,5 +408,13 @@
 	 "submitted_files":{
 		"si": "Oddane datoteke",
 		"eng": "Submitted files"
+	 },
+	 "run_validathor":{
+		"si": "Zaženi validator",
+		"eng": "Run Validathor"
+	 },
+	 "validathor_finished":{
+		"si": "Validathor je bil zagnan",
+		"eng": "Validathor was run"
 	 }
 }
