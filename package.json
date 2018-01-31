@@ -19,6 +19,7 @@
     "express-session": "^1.15.5",
     "extract-zip": "^1.6.5",
     "googleapis": "^21.2.0",
+    "is-utf8": "^0.2.1",
     "localize": "^0.4.7",
     "mongoose": "~3.8.1",
     "nodemailer": "^4.4.0",
