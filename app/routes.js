@@ -2418,7 +2418,7 @@ function convertToUTF8(folderPath)
 			{
 				var currentFile = fs.readFileSync(folderPath+"/"+file)
 				if(!isUtf8(currentFile)) 
-					fs.writeFileSync(folderPath+"/"+file,currentFile+'\t','utf8');
+					fs.writeFileSync(folderPath+"/"+file,'\ufeff'+currentFile,'utf8');
 			});
 		}
 		catch (e) {console.log(e);}

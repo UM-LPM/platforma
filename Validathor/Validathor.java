@@ -128,7 +128,6 @@ public class Validathor {
 				e.printStackTrace();
 				return;
 			}
-			System.out.println("EARS PATH: "+earsPath);
 			removePackageFromFiles(userAlgorithmFolder);
 			
 			try 
