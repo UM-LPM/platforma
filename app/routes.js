@@ -2401,6 +2401,31 @@ function loadBenchmarks(req,res,next)
 	}
 }
 
+
+function convertToUTF8(folderPath)
+{
+	var fs = require('fs');
+	var isUtf8 = require('is-utf8');
+	console.log(folderPath);
+
+	if(fs.existsSync(folderPath))
+	{
+		try 
+		{
+			var files = [];
+			var tmp = fs.readdirSync(folderPath);
+			tmp.forEach(file => 
+			{
+				var currentFile = fs.readFileSync(folderPath+"/"+file)
+				if(!isUtf8(currentFile)) 
+					fs.writeFileSync(folderPath+"/"+file,currentFile+'\t','utf8');
+			});
+		}
+		catch (e) {console.log(e);}
+	}
+		
+}
+
 function compileSource(filePath)
 {
 	if(typeof filePath!=="undefined" && filePath!=null && filePath.length>0)
@@ -2412,6 +2437,7 @@ function compileSource(filePath)
 			if(lastIndex>0)
 			{
 				var folderPath = filePath.substring(0,lastIndex);
+				convertToUTF8(folderPath);
 				if(fs.existsSync(folderPath))
 				{
 					const { exec } = require('child_process');
