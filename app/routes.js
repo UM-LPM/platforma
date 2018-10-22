@@ -332,6 +332,8 @@ module.exports = function(app, passport) {
 		storedPasswordsDeleteconfirmation:myLocalize.translate("stored_passwords_delete_confirmation"),
 		submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
 		rating_table_score:myLocalize.translate("rating_table_score"),rating_table_min:myLocalize.translate("rating_table_min"), 
+		runValidathorTXT:myLocalize.translate("run_validathor"),validathorFinished:myLocalize.translate("validathor_finished"),
+		tournament_results:myLocalize.translate("tournament_results"),tableAlgorithm:myLocalize.translate("rating_table_algorithm"),
 		rating_table_max:myLocalize.translate("rating_table_max"),hasErrors:myLocalize.translate("submission_has_errors")} );
 		return;
 	});
