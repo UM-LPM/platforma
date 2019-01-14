@@ -332,6 +332,8 @@ module.exports = function(app, passport) {
 		storedPasswordsDeleteconfirmation:myLocalize.translate("stored_passwords_delete_confirmation"),
 		submittedDesc:myLocalize.translate("submitted_desc"),deleteDesc:myLocalize.translate("delete_desc"),viewSubmission:myLocalize.translate("view_submission"),
 		rating_table_score:myLocalize.translate("rating_table_score"),rating_table_min:myLocalize.translate("rating_table_min"), 
+		runValidathorTXT:myLocalize.translate("run_validathor"),validathorFinished:myLocalize.translate("validathor_finished"),
+		tournament_results:myLocalize.translate("tournament_results"),tableAlgorithm:myLocalize.translate("rating_table_algorithm"),
 		rating_table_max:myLocalize.translate("rating_table_max"),hasErrors:myLocalize.translate("submission_has_errors")} );
 		return;
 	});
@@ -1911,7 +1913,7 @@ module.exports = function(app, passport) {
 			}
 	});
 	
-	app.get('/runValidathor:submissionURL?', function(req, res) 
+	app.get('/runValidathor:submissionURL?', isLoggedAsAdmin, function(req, res) 
 	{
 		try
 		{
@@ -1936,15 +1938,23 @@ module.exports = function(app, passport) {
 								if(tmp.indexOf("extends Algorithm")>=0 || tmp.indexOf("extends MOAlgorithm")>=0)
 								{
 									compileSource(submissionURL+"/"+file);
-									res.json({"success": true})
 									return;
 								}
 							}
+
+							
+							
 						  });  
+						res.json({"success": true});
+						return;
 						}
-						catch (e) {}
+						catch (e) { console.log(e); }
 					}
-				}				
+					else
+						res.json({"success": false});
+				}
+				else
+					res.json({"success": false});				
 		}
 		catch(EarsError) { console.log(EarsError); res.json({"success": false});}
 	});
@@ -2406,7 +2416,6 @@ function convertToUTF8(folderPath)
 {
 	var fs = require('fs');
 	var isUtf8 = require('is-utf8');
-	console.log(folderPath);
 
 	if(fs.existsSync(folderPath))
 	{
@@ -2418,12 +2427,33 @@ function convertToUTF8(folderPath)
 			{
 				var currentFile = fs.readFileSync(folderPath+"/"+file)
 				if(!isUtf8(currentFile)) 
-					fs.writeFileSync(folderPath+"/"+file,'\ufeff'+currentFile,'utf8');
+				{
+					fs.writeFileSync(folderPath+"/"+file,'/*Scanned by Validathor on:'+getDateTime()+' \ufeff*/\r\n'+currentFile,'utf8');
+				}
 			});
+
+			return true;
 		}
 		catch (e) {console.log(e);}
 	}
-		
+	return false;
+}
+
+function getDateTime() 
+{
+    var date = new Date();
+    var hour = date.getHours();
+    hour = (hour < 10 ? "0" : "") + hour;
+    var min  = date.getMinutes();
+    min = (min < 10 ? "0" : "") + min;
+    var sec  = date.getSeconds();
+    sec = (sec < 10 ? "0" : "") + sec;
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    month = (month < 10 ? "0" : "") + month;
+    var day  = date.getDate();
+    day = (day < 10 ? "0" : "") + day;
+    return day+"."+month+"."+year + ":"+ hour + ":" + min + ":" + sec;
 }
 
 function compileSource(filePath)
